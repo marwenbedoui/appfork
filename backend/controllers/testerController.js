@@ -63,7 +63,7 @@ const register = async (req, res) => {
     const token = jwt.sign(
       {
         user: savedUser._id,
-        userrole: savedUser.role,
+        userRole: savedUser.role,
       },
       process.env.TOKEN_KEY
     );
@@ -113,7 +113,7 @@ const login = async (req, res) => {
     const token = jwt.sign(
       {
         user: existingUser._id,
-        userROle: existingUser.role,
+        userRole: existingUser.role,
       },
       process.env.TOKEN_KEY
     );
@@ -130,6 +130,7 @@ const login = async (req, res) => {
   }
 };
 
+//function : logout user
 const logout = (req, res) => {
   res
     .cookie("token", "", {
@@ -141,7 +142,33 @@ const logout = (req, res) => {
     .send({ message: "logged out successfully" });
 };
 
+//function : verify if the user is logged in or not
+const verifyLoggedIn = (req,res)=>{
+  try {
+    const token = req.cookies.token;
+
+    if (!token) {
+      res.send({
+        loggedIn: false,
+        type: "nothing",
+        username: "no one",
+        userid: "null",
+      });
+    } else {
+      const verified = jwt.verify(token, process.env.TOKEN_KEY);
+      res.send({
+        loggedIn: true,
+        userid: verified.user,
+        role: verified.userRole,
+      });
+    }
+  } catch (error) {
+    res.json({"message" : false});
+  }
+}
+
 //exports
 exports.register = register;
 exports.login = login;
 exports.logout = logout;
+exports.verifyLoggedIn=verifyLoggedIn

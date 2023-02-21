@@ -8,6 +8,8 @@ router.post("/register",testerController.register)
 router.post("/login",testerController.login)
 //logout
 router.get("/logout",testerController.logout)
+//verify login
+router.get("/loggedIn",testerController.verifyLoggedIn)
 
 
 module.exports = router;
