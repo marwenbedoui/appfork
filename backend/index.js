@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 //routers path
 const testerRouter=require("./routers/testerRouter")
 
@@ -10,7 +11,7 @@ require("./config/database").connect();
 const PORT = process.env.PORT || 5000;
  //server express
 const app = express();
-
+app.use(cookieParser());
 // donner une exception à la partie react de consommer le backend
 var corsOptions = {
   origin: "http://localhost:3000",
