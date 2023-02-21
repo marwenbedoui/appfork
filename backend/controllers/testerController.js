@@ -150,8 +150,7 @@ const verifyLoggedIn = (req,res)=>{
     if (!token) {
       res.send({
         loggedIn: false,
-        type: "nothing",
-        username: "no one",
+        role: "null",
         userid: "null",
       });
     } else {
