@@ -46,27 +46,15 @@ const register = async (req, res) => {
     const passwordHash = await bcrypt.hash(password, salt);
 
     //save a new user account to database
-
-    const newUser = new User({
+    await new User({
       email,
       lastname,
       firstname,
       passwordHash,
       role,
-    });
-    // const savedUser = 
-    await newUser.save();
+    }).save();
 
-    //Creating the token
-    // const token = jwt.sign(
-    //   {
-    //     user: savedUser._id,
-    //     userRole: savedUser.role,
-    //   },
-    //   process.env.TOKEN_KEY
-    // );
 
-    //send the token in a http-only cookie
     res.status(200).send({ message: "Registred successfully!" });
   } catch (error) {
     // res.json({ message: error });
@@ -84,38 +72,37 @@ const login = async (req, res) => {
         .status(400)
         .json({ error: "Please enter all required fields" });
     }
+
     const existingUser = await User.findOne({ email });
     if (!existingUser) {
-      return res.status(401).json({
-        error: "Wrong email or password",
-      });
-    }
-    const passwordCorrect = await bcrypt.compare(
-      password,
-      existingUser.passwordHash
-    );
-    if (!passwordCorrect) {
-      return res.status(401).json({
-        error: "Wrong email or password",
-      });
-    }
-    //Creating the token
+      res.status(400).send({ message: 'Invalid email or password' });
+    } else {
+      // Compare passwords
+      const isMatch = await bcrypt.compare(password, existingUser.passwordHash);
+      if (isMatch) {
+        // Generate a JSON Web Token (JWT)
+        const token = jwt.sign({
+          userId: existingUser._id,
+          userRole: existingUser.role
+        },
+          process.env.TOKEN_KEY);
+        res.header('Authorization', `${token}`);
+        res.cookie('token',
+          token,
+          {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none"
+          })
+        res.send({
+          message: "Logged in successfully!",
+          token: token
+        });
 
-    const token = jwt.sign(
-      {
-        user: existingUser._id,
-        userRole: existingUser.role,
-      },
-      process.env.TOKEN_KEY
-    );
-    //send the token in a http-only cookie
-    res
-      .cookie("token", token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-      })
-      .send({ message: "Logged in successfully!" });
+      } else {
+        res.status(400).send({ message: 'Invalid email or password' });
+      }
+    }
   } catch (error) {
     res.status(500).send(error);
   }
@@ -136,24 +123,25 @@ const logout = (req, res) => {
 //function : verify if the user is logged in or not
 const verifyLoggedIn = (req, res) => {
   try {
+
     const token = req.cookies.token;
     //console.log(req)
     if (!token) {
       res.send({
         loggedIn: false,
-        role: "null",
-        userid: "null",
+        userId: "null",
+        role: "null"
       });
     } else {
       const verified = jwt.verify(token, process.env.TOKEN_KEY);
       res.send({
         loggedIn: true,
-        userid: verified.user,
+        userId: verified.userId,
         role: verified.userRole,
       });
     }
   } catch (error) {
-    res.json({ "message": false });
+    res.json({ "message": "some error happened" });
   }
 }
 
