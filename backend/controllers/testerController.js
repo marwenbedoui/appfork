@@ -143,10 +143,9 @@ const logout = (req, res) => {
 };
 
 //function : verify if the user is logged in or not
-const verifyLoggedIn = (req,res)=>{
+const verifyLoggedIn = (req, res) => {
   try {
     const token = req.cookies.token;
-
     if (!token) {
       res.send({
         loggedIn: false,
@@ -162,12 +161,12 @@ const verifyLoggedIn = (req,res)=>{
       });
     }
   } catch (error) {
-    res.json({"message" : false});
+    res.json({ message: false });
   }
-}
+};
 
 //exports
 exports.register = register;
 exports.login = login;
 exports.logout = logout;
-exports.verifyLoggedIn=verifyLoggedIn
+exports.verifyLoggedIn = verifyLoggedIn;
