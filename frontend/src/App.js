@@ -10,7 +10,7 @@ import AdminPage from "./pages/adminPage";
 import UserSimplePage from "./pages/userSimplePage";
 
 function App() {
-  if (localStorage.getItem("user") === "usersimple") {
+  if (localStorage.getItem("user") === "simpleUser") {
     return (
       <div>
         <Router>
