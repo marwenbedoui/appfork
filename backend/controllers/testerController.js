@@ -8,24 +8,7 @@ const register = async (req, res) => {
   try {
     const { lastname, firstname, email, password, passwordVerify, role } =
       req.body;
-
-    //validation
-    if (
-      !email ||
-      !password ||
-      !passwordVerify ||
-      !lastname ||
-      !firstname ||
-      !role
-    ) {
-      return res
-        .status(400)
-        .json({ error: "Please enter all required fields" });
-    } else if (password.length < 8) {
-      return res.status(400).json({ error: "Password must be 8" });
-    } else if (password !== passwordVerify) {
-      return res.status(400).json({ error: "Please enter the same password" });
-    }
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{}[\]\\|;:'",.<>\/?])[A-Za-z\d!@#$%^&*()\-_=+{}[\]\\|;:'",.<>\/?]{8,}$/;
 
     //finding if existing user with the same email
     const lcemail = email.toLowerCase();
@@ -42,6 +25,24 @@ const register = async (req, res) => {
         .status(400)
         .json({ error: "An account with those informations already exists" });
     }
+
+    if (
+      !email ||
+      !password ||
+      !passwordVerify ||
+      !lastname ||
+      !firstname ||
+      !role
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Please enter all required fields" });
+    } else if (!passwordRegex.test(password)) {
+      return res.status(400).json({ error: "Invalid password : Password must contain ..." });
+    } else if (password !== passwordVerify) {
+      return res.status(400).json({ error: "Please enter the same password" });
+    }
+
 
     //hash the password
 
@@ -77,8 +78,8 @@ const register = async (req, res) => {
       })
       .send({ message: "Registred successfully!" });
   } catch (error) {
-    res.json(error);
-    res.status(500).send({ error: "error in registring" });
+    // res.json({ message: error });
+    res.status(500).send({ message: error.message });
   }
 };
 
@@ -143,10 +144,10 @@ const logout = (req, res) => {
 };
 
 //function : verify if the user is logged in or not
-const verifyLoggedIn = (req,res)=>{
+const verifyLoggedIn = (req, res) => {
   try {
     const token = req.cookies.token;
-
+    //console.log(req)
     if (!token) {
       res.send({
         loggedIn: false,
@@ -162,7 +163,7 @@ const verifyLoggedIn = (req,res)=>{
       });
     }
   } catch (error) {
-    res.json({"message" : false});
+    res.json({ "message": false });
   }
 }
 
@@ -170,4 +171,4 @@ const verifyLoggedIn = (req,res)=>{
 exports.register = register;
 exports.login = login;
 exports.logout = logout;
-exports.verifyLoggedIn=verifyLoggedIn
+exports.verifyLoggedIn = verifyLoggedIn
