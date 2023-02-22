@@ -54,25 +54,20 @@ const register = async (req, res) => {
       passwordHash,
       role,
     });
-    const savedUser = await newUser.save();
+    // const savedUser = 
+    await newUser.save();
 
     //Creating the token
-    const token = jwt.sign(
-      {
-        user: savedUser._id,
-        userRole: savedUser.role,
-      },
-      process.env.TOKEN_KEY
-    );
+    // const token = jwt.sign(
+    //   {
+    //     user: savedUser._id,
+    //     userRole: savedUser.role,
+    //   },
+    //   process.env.TOKEN_KEY
+    // );
 
     //send the token in a http-only cookie
-    res
-      .cookie("token", token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-      })
-      .send({ message: "Registred successfully!" });
+    res.status(200).send({ message: "Registred successfully!" });
   } catch (error) {
     // res.json({ message: error });
     res.status(500).send({ message: error.message });
