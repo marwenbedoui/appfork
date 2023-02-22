@@ -94,7 +94,10 @@ const login = async (req, res) => {
             secure: true,
             sameSite: "none"
           })
-        res.send({ message: "Logged in successfully!" });
+        res.send({
+          message: "Logged in successfully!",
+          token: token
+        });
 
       } else {
         res.status(400).send({ message: 'Invalid email or password' });
