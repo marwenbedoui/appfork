@@ -2,16 +2,18 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 //routers path
-const testerRouter=require("./routers/testerRouter")
+const testerRouter = require("./routers/testerRouter");
+
+//server express
+const app = express();
+app.use(cookieParser());
 
 // connexion avec la base de données
 require("dotenv").config();
 require("./config/database").connect();
 
 const PORT = process.env.PORT || 5000;
- //server express
-const app = express();
-app.use(cookieParser());
+
 // donner une exception à la partie react de consommer le backend
 var corsOptions = {
   origin: "http://localhost:3000",
@@ -23,12 +25,9 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
-
-
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
 
 //routers
-app.use("/api/v1",testerRouter);
+app.use("/api/v1", testerRouter);

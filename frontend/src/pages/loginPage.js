@@ -1,7 +1,7 @@
 import React from "react";
 import { Formik } from "formik";
 import { Input } from "antd";
-import { Login } from "../services/TesterServices";
+import TestAuthService, { Login } from "../services/TesterServices";
 
 export const LoginPage = () => (
   <div>
@@ -10,7 +10,7 @@ export const LoginPage = () => (
       initialValues={{ email: "", password: "" }}
       onSubmit={(values) => {
         setTimeout(() => {
-          Login(values.email, values.password);
+          TestAuthService.login(values.email, values.password);
         }, 1000);
       }}
     >
