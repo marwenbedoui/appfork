@@ -8,8 +8,20 @@ const register = async (req, res) => {
   try {
     const { lastname, firstname, email, password, passwordVerify, role } =
       req.body;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{}[\]\\|;:'",.<>\/?])[A-Za-z\d!@#$%^&*()\-_=+{}[\]\\|;:'",.<>\/?]{8,}$/;
 
-    //validation
+    //finding if existing user with the same email
+    const existingUser = await User.findOne({
+      $or: [
+        { email },
+      ],
+    });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ error: "An account with those informations already exists" });
+    }
+
     if (
       !email ||
       !password ||
@@ -21,27 +33,12 @@ const register = async (req, res) => {
       return res
         .status(400)
         .json({ error: "Please enter all required fields" });
-    } else if (password.length < 8) {
-      return res.status(400).json({ error: "Password must be 8" });
+    } else if (!passwordRegex.test(password)) {
+      return res.status(400).json({ error: "Invalid password : Password must contain ..." });
     } else if (password !== passwordVerify) {
       return res.status(400).json({ error: "Please enter the same password" });
     }
 
-    //finding if existing user with the same email
-    const lcemail = email.toLowerCase();
-    const lclastname = lastname.toLowerCase();
-    const lcfirstname = firstname.toLowerCase();
-    const existingUser = await User.findOne({
-      $or: [
-        { email: lcemail },
-        { $and: [{ lastname: lclastname }, { firstname: lcfirstname }] },
-      ],
-    });
-    if (existingUser) {
-      return res
-        .status(400)
-        .json({ error: "An account with those informations already exists" });
-    }
 
     //hash the password
 
@@ -49,36 +46,19 @@ const register = async (req, res) => {
     const passwordHash = await bcrypt.hash(password, salt);
 
     //save a new user account to database
-
-    const newUser = new User({
-      email: lcemail,
-      lastname: lclastname,
-      firstname: lcfirstname,
+    await new User({
+      email,
+      lastname,
+      firstname,
       passwordHash,
       role,
-    });
-    const savedUser = await newUser.save();
+    }).save();
 
-    //Creating the token
-    const token = jwt.sign(
-      {
-        user: savedUser._id,
-        userRole: savedUser.role,
-      },
-      process.env.TOKEN_KEY
-    );
 
-    //send the token in a http-only cookie
-    res
-      .cookie("token", token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-      })
-      .send({ message: "Registred successfully!" });
+    res.status(200).send({ message: "Registred successfully!" });
   } catch (error) {
-    res.json(error);
-    res.status(500).send({ error: "error in registring" });
+    // res.json({ message: error });
+    res.status(500).send({ message: error.message });
   }
 };
 
@@ -92,39 +72,37 @@ const login = async (req, res) => {
         .status(400)
         .json({ error: "Please enter all required fields" });
     }
-    const lcemail = email.toLowerCase();
-    const existingUser = await User.findOne({ email: lcemail });
-    if (!existingUser) {
-      return res.status(401).json({
-        error: "Wrong email or password",
-      });
-    }
-    const passwordCorrect = await bcrypt.compare(
-      password,
-      existingUser.passwordHash
-    );
-    if (!passwordCorrect) {
-      return res.status(401).json({
-        error: "Wrong email or password",
-      });
-    }
-    //Creating the token
 
-    const token = jwt.sign(
-      {
-        user: existingUser._id,
-        userRole: existingUser.role,
-      },
-      process.env.TOKEN_KEY
-    );
-    //send the token in a http-only cookie
-    res
-      .cookie("token", token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-      })
-      .send({ message: "Logged in successfully!" });
+    const existingUser = await User.findOne({ email });
+    if (!existingUser) {
+      res.status(400).send({ message: 'Invalid email or password' });
+    } else {
+      // Compare passwords
+      const isMatch = await bcrypt.compare(password, existingUser.passwordHash);
+      if (isMatch) {
+        // Generate a JSON Web Token (JWT)
+        const token = jwt.sign({
+          userId: existingUser._id,
+          userRole: existingUser.role
+        },
+          process.env.TOKEN_KEY);
+        res.header('Authorization', `${token}`);
+        res.cookie('token',
+          token,
+          {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none"
+          })
+        res.send({
+          message: "Logged in successfully!",
+          token: token
+        });
+
+      } else {
+        res.status(400).send({ message: 'Invalid email or password' });
+      }
+    }
   } catch (error) {
     res.status(500).send(error);
   }
@@ -146,22 +124,23 @@ const logout = (req, res) => {
 const verifyLoggedIn = (req, res) => {
   try {
     const token = req.cookies.token;
+
     if (!token) {
       res.send({
         loggedIn: false,
-        role: "null",
-        userid: "null",
+        userId: "null",
+        role: "null"
       });
     } else {
       const verified = jwt.verify(token, process.env.TOKEN_KEY);
       res.send({
         loggedIn: true,
-        userid: verified.user,
+        userId: verified.userId,
         role: verified.userRole,
       });
     }
   } catch (error) {
-    res.json({ message: false });
+    res.json({ "message": "some error happened" });
   }
 };
 
