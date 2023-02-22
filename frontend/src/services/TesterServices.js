@@ -11,7 +11,7 @@ const login = (email, password) =>
     })
     .then((response) => {
       if (typeof response.data.token !== "undefined") {
-        const role = JwtDecode(response.data.token);
+        const role = JwtDecode(response.data.token).userRole;
         localStorage.setItem("user", role);
       }
       return response.data;
