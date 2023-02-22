@@ -11,13 +11,9 @@ const register = async (req, res) => {
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{}[\]\\|;:'",.<>\/?])[A-Za-z\d!@#$%^&*()\-_=+{}[\]\\|;:'",.<>\/?]{8,}$/;
 
     //finding if existing user with the same email
-    const lcemail = email.toLowerCase();
-    const lclastname = lastname.toLowerCase();
-    const lcfirstname = firstname.toLowerCase();
     const existingUser = await User.findOne({
       $or: [
-        { email: lcemail },
-        { $and: [{ lastname: lclastname }, { firstname: lcfirstname }] },
+        { email },
       ],
     });
     if (existingUser) {
@@ -52,9 +48,9 @@ const register = async (req, res) => {
     //save a new user account to database
 
     const newUser = new User({
-      email: lcemail,
-      lastname: lclastname,
-      firstname: lcfirstname,
+      email,
+      lastname,
+      firstname,
       passwordHash,
       role,
     });
@@ -93,8 +89,7 @@ const login = async (req, res) => {
         .status(400)
         .json({ error: "Please enter all required fields" });
     }
-    const lcemail = email.toLowerCase();
-    const existingUser = await User.findOne({ email: lcemail });
+    const existingUser = await User.findOne({ email });
     if (!existingUser) {
       return res.status(401).json({
         error: "Wrong email or password",
