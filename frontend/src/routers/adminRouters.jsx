@@ -1,4 +1,4 @@
-import { Redirect, Route, Router, Switch } from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 import AdminPage from "../pages/adminPage";
 
 export const AdminRouters = () => {

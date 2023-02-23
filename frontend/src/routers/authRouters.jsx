@@ -1,4 +1,4 @@
-import { Redirect, Route, Router, Switch } from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 import { LoginPage } from "../pages/loginPage/loginPage";
 
 export const AuthRouters = () => {
