@@ -8,13 +8,12 @@ const register = async (req, res) => {
   try {
     const { lastname, firstname, email, password, passwordVerify, role } =
       req.body;
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{}[\]\\|;:'",.<>\/?])[A-Za-z\d!@#$%^&*()\-_=+{}[\]\\|;:'",.<>\/?]{8,}$/;
+    const passwordRegex =
+      /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{}[\]\\|;:'",.<>\/?])[A-Za-z\d!@#$%^&*()\-_=+{}[\]\\|;:'",.<>\/?]{8,}$/;
 
     //finding if existing user with the same email
     const existingUser = await User.findOne({
-      $or: [
-        { email },
-      ],
+      $or: [{ email }],
     });
     if (existingUser) {
       return res
@@ -34,11 +33,12 @@ const register = async (req, res) => {
         .status(400)
         .json({ error: "Please enter all required fields" });
     } else if (!passwordRegex.test(password)) {
-      return res.status(400).json({ error: "Invalid password : Password must contain ..." });
+      return res
+        .status(400)
+        .json({ error: "Invalid password : Password must contain ..." });
     } else if (password !== passwordVerify) {
       return res.status(400).json({ error: "Please enter the same password" });
     }
-
 
     //hash the password
 
@@ -53,7 +53,6 @@ const register = async (req, res) => {
       passwordHash,
       role,
     }).save();
-
 
     res.status(200).send({ message: "Registred successfully!" });
   } catch (error) {
@@ -75,32 +74,31 @@ const login = async (req, res) => {
 
     const existingUser = await User.findOne({ email });
     if (!existingUser) {
-      res.status(400).send({ message: 'Invalid email or password' });
+      res.status(400).send({ message: "Invalid email or password" });
     } else {
       // Compare passwords
       const isMatch = await bcrypt.compare(password, existingUser.passwordHash);
       if (isMatch) {
         // Generate a JSON Web Token (JWT)
-        const token = jwt.sign({
-          userId: existingUser._id,
-          userRole: existingUser.role
-        },
-          process.env.TOKEN_KEY);
-        res.header('Authorization', `${token}`);
-        res.cookie('token',
-          token,
+        const token = jwt.sign(
           {
-            httpOnly: true,
-            secure: true,
-            sameSite: "none"
-          })
+            userId: existingUser._id,
+            userRole: existingUser.role,
+          },
+          process.env.TOKEN_KEY
+        );
+        res.header("Authorization", `${token}`);
+        res.cookie("token", token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+        });
         res.send({
           message: "Logged in successfully!",
-          token: token
+          token: token,
         });
-
       } else {
-        res.status(400).send({ message: 'Invalid email or password' });
+        res.status(400).send({ message: "Invalid email or password" });
       }
     }
   } catch (error) {
@@ -129,7 +127,7 @@ const verifyLoggedIn = (req, res) => {
       res.send({
         loggedIn: false,
         userId: "null",
-        role: "null"
+        role: "null",
       });
     } else {
       const verified = jwt.verify(token, process.env.TOKEN_KEY);
@@ -140,7 +138,7 @@ const verifyLoggedIn = (req, res) => {
       });
     }
   } catch (error) {
-    res.json({ "message": "some error happened" });
+    res.json({ message: "some error happened" });
   }
 };
 
