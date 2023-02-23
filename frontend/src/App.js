@@ -1,78 +1,37 @@
-import { LoginPage } from "./pages/loginPage";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-} from "react-router-dom";
-import TesteurPage from "./pages/testeurPage";
+import { BrowserRouter as Router } from "react-router-dom";
 import AdminPage from "./pages/adminPage";
-import UserSimplePage from "./pages/userSimplePage";
 import AuthVerifyService from "./services/AuthVerifyService";
+import { AuthRouters } from "./routers/authRouters";
+import { TesterRouters } from "./routers/testerRouters";
+import { SimpleUserRouters } from "./routers/simpleUserRouters";
 
 function App() {
   if (AuthVerifyService.authVerify() === 1) {
     return (
-      <div>
-        <Router>
-          <Switch>
-            <Route exact path="/user">
-              <UserSimplePage />
-            </Route>
-            <Route exact path="*">
-              <Redirect to="/user" />
-            </Route>
-          </Switch>
-        </Router>
-      </div>
+      <Router>
+        <SimpleUserRouters />
+      </Router>
     );
   }
   if (AuthVerifyService.authVerify() === 2) {
     return (
-      <div>
-        <Router>
-          <Switch>
-            <Route exact path="/tester">
-              <TesteurPage />
-            </Route>
-            <Route exact path="*">
-              <Redirect to="/tester" />
-            </Route>
-          </Switch>
-        </Router>
-      </div>
+      <Router>
+        <TesterRouters />
+      </Router>
     );
   }
   if (AuthVerifyService.authVerify() === 3) {
     return (
-      <div>
-        <Router>
-          <Switch>
-            <Route exact path="/admin">
-              <AdminPage />
-            </Route>
-            <Route exact path="*">
-              <Redirect to="/admin" />
-            </Route>
-          </Switch>
-        </Router>
-      </div>
+      <Router>
+        <AdminPage />
+      </Router>
     );
   }
   if (AuthVerifyService.authVerify() === 0) {
     return (
-      <div>
-        <Router>
-          <Switch>
-            <Route exact path="/login">
-              <LoginPage />
-            </Route>
-            <Route exact path="*">
-              <Redirect to="/login" />
-            </Route>
-          </Switch>
-        </Router>
-      </div>
+      <Router>
+        <AuthRouters />
+      </Router>
     );
   }
 }
