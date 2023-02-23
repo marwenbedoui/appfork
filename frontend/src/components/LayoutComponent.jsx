@@ -97,7 +97,7 @@ const layoutComponent = ({ headerLogo, mainContent }) => {
             bottom: 0,
             left: 0,
             width: "100%",
-            height: "100px" /* Set the height of the footer */,
+            height: "100px",
           }}
         >
           Copyrights Talan Tunisie Consulting
