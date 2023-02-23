@@ -18,7 +18,7 @@ const items = [
   icon: React.createElement(sideBarItem.icon),
   label: String(sideBarItem.label),
 }));
-const layoutComponent = ({ headerText, mainContent }) => {
+const layoutComponent = ({ headerLogo, mainContent }) => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -66,7 +66,14 @@ const layoutComponent = ({ headerText, mainContent }) => {
         }}
       >
         <Header style={{ padding: 0, background: colorBgContainer }}>
-          {headerText}
+          <div
+            style={{
+              height: "50px",
+              margin: "7px",
+            }}
+          >
+            <img style={{ height: "50px" }} src={headerLogo} alt="logo talan" />
+          </div>
         </Header>
         <Content
           style={{
