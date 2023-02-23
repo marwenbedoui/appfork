@@ -9,8 +9,12 @@ import { Header } from "antd/es/layout/layout";
 import React from "react";
 const { Content, Footer, Sider } = Layout;
 const items = [
-  { icon: DashboardOutlined, label: "Tableau de bord" },
-  { icon: DatabaseOutlined, label: "Historique" },
+  {
+    icon: DashboardOutlined,
+    label: "Tableau de bord",
+    path: "/testeur/accueil",
+  },
+  { icon: DatabaseOutlined, label: "Historique", path: "/testeur/historiques" },
   { icon: UserOutlined, label: "Profile" },
   { icon: LogoutOutlined, label: "Déconnexion" },
 ].map((sideBarItem, index) => ({
@@ -18,7 +22,7 @@ const items = [
   icon: React.createElement(sideBarItem.icon),
   label: String(sideBarItem.label),
 }));
-const layoutComponent = ({ headerLogo, mainContent }) => {
+const layoutComponent = ({ headerLogo, mainContent, currentPage }) => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -54,7 +58,7 @@ const layoutComponent = ({ headerLogo, mainContent }) => {
         <Menu
           theme="dark"
           mode="inline"
-          defaultSelectedKeys={["1"]}
+          defaultSelectedKeys={[currentPage]}
           items={items}
         />
       </Sider>

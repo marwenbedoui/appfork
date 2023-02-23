@@ -1,14 +1,13 @@
 import React from "react";
 import LayoutComponent from "../../../components/LayoutComponent";
-import TableComponent from "../../../components/TableComponent";
 import TalanLogo from "../../../assets/talan-logo.png";
 
-export default function HistoriquePage() {
+export default function DashbaordPage() {
   return (
     <LayoutComponent
       headerLogo={TalanLogo}
-      currentPage={"2"}
-      mainContent={<TableComponent />}
+      currentPage={"1"}
+      mainContent={<div>Dashboard</div>}
     ></LayoutComponent>
   );
 }
