@@ -12,15 +12,37 @@ const items = [
   {
     icon: DashboardOutlined,
     label: "Tableau de bord",
-    path: "/testeur/accueil",
+    clickEvent: (onauxclick = () => {
+      window.location.href = "/testeur/accueil";
+    }),
   },
-  { icon: DatabaseOutlined, label: "Historique", path: "/testeur/historiques" },
-  { icon: UserOutlined, label: "Profile" },
-  { icon: LogoutOutlined, label: "Déconnexion" },
+  {
+    icon: DatabaseOutlined,
+    label: "Historique",
+    clickEvent: (onauxclick = () => {
+      window.location.href = "/testeur/historiques";
+    }),
+  },
+  {
+    icon: UserOutlined,
+    label: "Profile",
+    clickEvent: (onauxclick = () => {
+      window.location.reload("/testeur/profile");
+    }),
+  },
+  {
+    icon: LogoutOutlined,
+    label: "Déconnexion",
+    clickEvent: (onauxclick = () => {
+      localStorage.clear();
+      window.location.href = "/login";
+    }),
+  },
 ].map((sideBarItem, index) => ({
   key: String(index + 1),
   icon: React.createElement(sideBarItem.icon),
   label: String(sideBarItem.label),
+  onClick: sideBarItem.clickEvent,
 }));
 const layoutComponent = ({ headerLogo, mainContent, currentPage }) => {
   const {
