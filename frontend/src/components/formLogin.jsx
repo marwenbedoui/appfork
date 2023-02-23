@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Formik } from "formik";
 import { Alert, Button, Form, Input } from "antd";
-import TestAuthService from "../services/TesterServices";
+import TestAuthService from "../services/TesterAuthServices";
 
 export const FormLogin = () => {
   const [error, setError] = useState(false);
