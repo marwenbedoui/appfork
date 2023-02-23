@@ -1,8 +1,7 @@
-/* eslint-disable no-lone-blocks */
 import React from "react";
 import LayoutComponent from "../components/LayoutComponent";
 import TableComponent from "../components/TableComponent";
-//import TableComponent from "../components/TableComponent";
+import TalanLogo from "../assets/talan-logo.png"
 
 export default function TesteurPage() {
   return (
@@ -20,7 +19,7 @@ export default function TesteurPage() {
     //   </button>
     // </div>
     <>
-      <LayoutComponent headerText={"Welcome Mr Tester"} mainContent={<TableComponent />}>
+      <LayoutComponent headerLogo={TalanLogo} mainContent={<TableComponent />}>
 
       </LayoutComponent>
 
