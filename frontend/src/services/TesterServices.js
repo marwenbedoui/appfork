@@ -1,5 +1,4 @@
 import axios from "axios";
-import JwtDecode from "jwt-decode";
 
 const API_URL = "http://localhost:5000/api/v1/";
 
@@ -11,8 +10,7 @@ const login = (email, password) =>
     })
     .then((response) => {
       if (typeof response.data.token !== "undefined") {
-        const role = JwtDecode(response.data.token).userRole;
-        localStorage.setItem("user", role);
+        localStorage.setItem("token", response.data.token);
       }
       return response.data;
     });
