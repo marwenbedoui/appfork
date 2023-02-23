@@ -1,27 +1,68 @@
-import axios from "axios";
-
-const API_URL = "http://localhost:5000/api/v1/";
-
-const login = (email, password) =>
-  axios
-    .post(`${API_URL}login`, {
-      email,
-      password,
-    })
-    .then((response) => {
-      if (typeof response.data.token !== "undefined") {
-        localStorage.setItem("token", response.data.token);
-      }
-      return response.data;
-    });
-
-const logout = () => {
-  localStorage.removeItem("user");
-};
-
-const TestAuthService = {
-  login,
-  logout,
-};
-
-export default TestAuthService;
+export const data = [
+  {
+    key: "1",
+    nom: "John Brown",
+    proprietaire: 32,
+    status: ["nice"],
+  },
+  {
+    key: "2",
+    nom: "John Brown",
+    proprietaire: 32,
+    tags: ["nice"],
+  },
+  {
+    key: "3",
+    nom: "John Brown",
+    proprietaire: 32,
+    tags: ["nice"],
+  },
+  {
+    key: "4",
+    nom: "Jim Green",
+    proprietaire: 42,
+    tags: ["loser"],
+  },
+  {
+    key: "5",
+    nom: "Joe Black",
+    proprietaire: 32,
+    tags: ["loser"],
+  },
+  {
+    key: "6",
+    nom: "John Brown",
+    proprietaire: 32,
+    tags: ["nice"],
+  },
+  {
+    key: "7",
+    nom: "John Brown",
+    proprietaire: 32,
+    tags: ["nice"],
+  },
+  {
+    key: "8",
+    nom: "John Brown",
+    proprietaire: 32,
+    tags: ["nice"],
+  },
+  {
+    key: "9",
+    nom: "John Brown",
+    proprietaire: 32,
+    tags: ["nice"],
+  },
+  {
+    key: "10",
+    nom: "John Brown",
+    proprietaire: 32,
+    tags: ["nice"],
+  },
+  {
+    key: "11",
+    nom: "John Brown",
+    proprietaire: 32,
+    tags: ["nice"],
+  },
+];
