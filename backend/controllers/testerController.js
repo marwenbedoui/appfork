@@ -2,6 +2,7 @@ const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 //model
 const jwt = require("jsonwebtoken");
+const Test = require("../models/testModel");
 
 //function : adding user
 const register = async (req, res) => {
@@ -142,8 +143,47 @@ const verifyLoggedIn = (req, res) => {
   }
 };
 
+const executeTest = (req, res) => {
+  const test = new Test({
+    protocol: req.body.protocol,
+    url: req.body.url,
+    port: req.body.port,
+    path: req.body.path,
+    method: req.body.method,
+  });
+
+  test
+    .save()
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Error",
+      });
+    });
+};
+
+const getAllTests = (req, res) => {
+  Test.find();
+  var total = Test.count();
+  Test.find()
+    .then((data) => {
+      res.set("Access-Control-Expose-Headers", "X-Total-Count");
+      res.set("X-Total-Count", total);
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Error",
+      });
+    });
+};
+
 //exports
 exports.register = register;
 exports.login = login;
 exports.logout = logout;
 exports.verifyLoggedIn = verifyLoggedIn;
+exports.executeTest = executeTest;
+exports.getAllTests = getAllTests;

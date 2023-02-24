@@ -4,7 +4,6 @@ import TableComponent from "../../../components/TableComponent";
 import TalanLogo from "../../../assets/talan-logo.png";
 import { Button, Modal } from "antd";
 import "../historiquePage/historiquePage.css";
-import { FormLogin } from "../../../components/formLogin";
 import { FormTest } from "../../../components/formTest";
 
 const Page = () => {
