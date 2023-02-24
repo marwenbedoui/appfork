@@ -91,7 +91,7 @@ const login = async (req, res) => {
         );
         res.header("Authorization", `${token}`);
         res.cookie("token", token, {
-          httpOnly: true,
+          httpOnly: false,
           secure: true,
           sameSite: "none",
         });
