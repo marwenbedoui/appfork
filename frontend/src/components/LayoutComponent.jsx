@@ -27,7 +27,7 @@ const items = [
     icon: UserOutlined,
     label: "Profile",
     clickEvent: (onauxclick = () => {
-      window.location.reload("/testeur/profile");
+      window.location.href = "/testeur/profile";
     }),
   },
   {
@@ -75,6 +75,7 @@ const layoutComponent = ({ headerLogo, mainContent, currentPage }) => {
               borderRadius: "50%",
               backgroundColor: "#000",
             }}
+            //TODO : ADD Profile Picture
           />
         </div>
         <Menu
