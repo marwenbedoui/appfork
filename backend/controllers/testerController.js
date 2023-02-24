@@ -146,6 +146,8 @@ const executeTest = (req, res) => {
     port: req.body.port,
     path: req.body.path,
     method: req.body.method,
+    createdBy: req.body.createdBy,
+    status: "Passed",
   });
 
   test
@@ -287,7 +289,7 @@ const getInfo = async (req, res) => {
   } catch (error) {
     return res.json({ message: "error in getting informations" });
   }
-}
+};
 
 //exports
 exports.register = register;

@@ -1,116 +1,36 @@
 import { Space, Table, Tag } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import TesterService from "../services/TesterService";
 const columns = [
   {
     title: "Nom du test",
-    dataIndex: "name",
-    key: "name",
-    render: (text) => <div>{text}</div>,
+    dataIndex: "protocol",
+    key: "protocol",
   },
   {
     title: "Propriétaire",
-    dataIndex: "age",
-    key: "age",
+    dataIndex: "createdBy",
+    key: "createdBy",
   },
   {
     title: "Status",
-    key: "tags",
-    dataIndex: "tags",
-    render: (_, { tags }) => (
-      <>
-        {tags.map((tag) => {
-          let color = tag.length > 5 ? "geekblue" : "green";
-          if (tag === "loser") {
-            color = "volcano";
-          }
-          return (
-            <Tag color={color} key={tag}>
-              {tag.toUpperCase()}
-            </Tag>
-          );
-        })}
-      </>
-    ),
+    key: "status",
+    dataIndex: "status",
+    render: (_, { status }) => {
+      let color = "volcano";
+      if (status === "Passed") {
+        color = "green";
+      }
+      return <Tag color={color}>{status.toUpperCase()}</Tag>;
+    },
   },
   {
     title: "Date d'execution",
-    key: "action",
-    render: (_, record) => (
-      <Space size="middle">
-        <div>Invite {record.name}</div>
-        <div>Delete</div>
-      </Space>
-    ),
+    dataIndex: "createdAt",
+    key: "createdAt",
   },
 ];
-const data = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "2",
-    name: "John Brown",
-    age: 32,
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "3",
-    name: "John Brown",
-    age: 32,
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "4",
-    name: "Jim Green",
-    age: 42,
-    tags: ["loser"],
-  },
-  {
-    key: "5",
-    name: "Joe Black",
-    age: 32,
-    tags: ["cool", "teacher"],
-  },
-  {
-    key: "6",
-    name: "John Brown",
-    age: 32,
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "7",
-    name: "John Brown",
-    age: 32,
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "8",
-    name: "John Brown",
-    age: 32,
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "9",
-    name: "John Brown",
-    age: 32,
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "10",
-    name: "John Brown",
-    age: 32,
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "11",
-    name: "John Brown",
-    age: 32,
-    tags: ["nice", "developer"],
-  },
-];
+
 const TableComponent = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const onSelectChange = (newSelectedRowKeys) => {
@@ -154,6 +74,10 @@ const TableComponent = () => {
       },
     ],
   };
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    TesterService.fetchAllTests().then((res) => setData(res));
+  }, [data]);
   return (
     <Table
       rowSelection={rowSelection}
