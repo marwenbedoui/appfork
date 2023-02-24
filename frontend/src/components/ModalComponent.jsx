@@ -3,6 +3,7 @@ import { useState } from "react";
 import FormModalComponent from "./FormModalComponent";
 
 const ModalComponent = ({
+  formComp,
   pass,
   changed,
   oldContent,
@@ -66,7 +67,7 @@ const ModalComponent = ({
           </Button>,
         ]}
       >
-        <FormModalComponent changed={changed} pass={pass} />
+        {formComp}
       </Modal>
     </>
   );

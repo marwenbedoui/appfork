@@ -41,6 +41,15 @@ export default function FormModalComponent({ changed, pass }) {
           <Input placeholder="Retype new password" type="password" />
         )}
       </Form.Item>
+      {!pass && (
+        <Form.Item
+          label={"Type password"}
+          tooltip="This is a required field"
+          required
+        >
+          <Input placeholder="password" type="password" />
+        </Form.Item>
+      )}
     </Form>
   );
 }
