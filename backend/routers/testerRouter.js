@@ -16,6 +16,8 @@ router.put("/update-password", auth, testerController.updatePassword)
 router.put("/update-names", auth, testerController.updateInfo)
 //update mail
 router.put("/update-mail", auth, testerController.updateMail)
+//get user info
+router.get("/get-info", auth, testerController.getInfo);
 //execute test
 router.post("/tester/test", auth, testerController.executeTest);
 //get test

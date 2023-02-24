@@ -278,6 +278,15 @@ const updateMail = async (req, res) => {
   }
 };
 
+const getInfo = async (req, res) => {
+  try {
+    const user = await User.findById({ _id: req.userId });
+    res.send(user);
+  } catch (error) {
+    return res.json({ message: "error in getting informations" });
+  }
+}
+
 //exports
 exports.register = register;
 exports.login = login;
@@ -288,3 +297,4 @@ exports.getAllTests = getAllTests;
 exports.updatePassword = updatePassword;
 exports.updateInfo = updateInfo;
 exports.updateMail = updateMail;
+exports.getInfo = getInfo;
