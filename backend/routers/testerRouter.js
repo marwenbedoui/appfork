@@ -17,7 +17,7 @@ router.put("/update-names", auth, testerController.updateInfo)
 //update mail
 router.put("/update-mail", auth, testerController.updateMail)
 //execute test
-router.post("/tester/test", testerController.executeTest);
+router.post("/tester/test", auth, testerController.executeTest);
 //get test
-router.get("/tester/test/", testerController.getAllTests);
+router.get("/tester/test/", auth, testerController.getAllTests);
 module.exports = router;

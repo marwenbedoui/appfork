@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 //model
 const Test = require("../models/testModel");
 const User = require("../models/userModel");
@@ -90,11 +90,6 @@ const login = async (req, res) => {
           process.env.TOKEN_KEY
         );
         res.header("Authorization", `${token}`);
-        res.cookie("token", token, {
-          httpOnly: true,
-          secure: true,
-          sameSite: "none",
-        });
         res.send({
           message: "Logged in successfully!",
           token: token,
@@ -123,7 +118,8 @@ const logout = (req, res) => {
 //function : verify if the user is logged in or not
 const verifyLoggedIn = (req, res) => {
   try {
-    const token = req.cookies.token;
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
 
     if (!token) {
       res.send({
@@ -188,7 +184,9 @@ const updatePassword = async (req, res) => {
     const passwordRegex =
       /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{}[\]\\|;:'",.<>\/?])[A-Za-z\d!@#$%^&*()\-_=+{}[\]\\|;:'",.<>\/?]{8,}$/;
     if (!oldPassword || !newPassword || !newPasswordConfirm) {
-      return res.status(400).json({ error: "Please enter all required fields" });
+      return res
+        .status(400)
+        .json({ error: "Please enter all required fields" });
     }
     if (!passwordRegex.test(newPassword)) {
       return res
@@ -199,8 +197,11 @@ const updatePassword = async (req, res) => {
       return res.status(400).json({ error: "Please enter the same password" });
     }
 
-    const user = await User.findById({ _id: (req.userId) });
-    const passwordCorrect = await bcrypt.compare(oldPassword, user.passwordHash);
+    const user = await User.findById({ _id: req.userId });
+    const passwordCorrect = await bcrypt.compare(
+      oldPassword,
+      user.passwordHash
+    );
 
     if (!passwordCorrect) {
       return res.status(401).json({
@@ -210,29 +211,34 @@ const updatePassword = async (req, res) => {
       const salt = await bcrypt.genSalt();
       const newPasswordHash = await bcrypt.hash(newPassword, salt);
       user.passwordHash = newPasswordHash;
-      await user.save()
+      await user.save();
       return res.json({ message: "Password updated successfully" });
     }
   } catch (error) {
-    return res.json({ message: "error in updating password" })
+    return res.json({ message: "error in updating password" });
   }
-}
+};
 //function : updating lastname and firstname
 const updateInfo = async (req, res) => {
   try {
     const { firstname, lastname } = req.body;
 
-    User.findByIdAndUpdate(req.userId, { firstname, lastname }, { new: true }, (err, user) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).send('Server error');
+    User.findByIdAndUpdate(
+      req.userId,
+      { firstname, lastname },
+      { new: true },
+      (err, user) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).send("Server error");
+        }
+        res.send({ message: "names updated successfully" });
       }
-      res.send({ message: "names updated successfully" });
-    });
+    );
   } catch (error) {
-    return res.json({ message: "error in updating name" })
+    return res.json({ message: "error in updating name" });
   }
-}
+};
 
 const updateMail = async (req, res) => {
   try {
@@ -241,7 +247,9 @@ const updateMail = async (req, res) => {
     const user = await User.findById({ _id: req.userId });
 
     if (!newMail || !password) {
-      return res.status(400).json({ error: "Please enter all required fields" });
+      return res
+        .status(400)
+        .json({ error: "Please enter all required fields" });
     }
 
     const passwordCorrect = await bcrypt.compare(password, user.passwordHash);
@@ -266,9 +274,9 @@ const updateMail = async (req, res) => {
 
     res.status(200).send({ message: "Email updated successfully" });
   } catch (error) {
-    return res.json({ message: "error in updating mail" })
+    return res.json({ message: "error in updating mail" });
   }
-}
+};
 
 //exports
 exports.register = register;
