@@ -1,8 +1,9 @@
-const User = require("../models/userModel");
-const bcrypt = require("bcrypt");
-//model
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+const mongoose = require('mongoose');
+//model
 const Test = require("../models/testModel");
+const User = require("../models/userModel");
 
 //function : adding user
 const register = async (req, res) => {
@@ -180,6 +181,95 @@ const getAllTests = (req, res) => {
     });
 };
 
+//function : updating password
+const updatePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword, newPasswordConfirm } = req.body;
+    const passwordRegex =
+      /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{}[\]\\|;:'",.<>\/?])[A-Za-z\d!@#$%^&*()\-_=+{}[\]\\|;:'",.<>\/?]{8,}$/;
+    if (!oldPassword || !newPassword || !newPasswordConfirm) {
+      return res.status(400).json({ error: "Please enter all required fields" });
+    }
+    if (!passwordRegex.test(newPassword)) {
+      return res
+        .status(400)
+        .json({ error: "Invalid password : Password must contain ..." });
+    }
+    if (newPassword !== newPasswordConfirm) {
+      return res.status(400).json({ error: "Please enter the same password" });
+    }
+
+    const user = await User.findById({ _id: (req.userId) });
+    const passwordCorrect = await bcrypt.compare(oldPassword, user.passwordHash);
+
+    if (!passwordCorrect) {
+      return res.status(401).json({
+        error: "Wrong password entered",
+      });
+    } else {
+      const salt = await bcrypt.genSalt();
+      const newPasswordHash = await bcrypt.hash(newPassword, salt);
+      user.passwordHash = newPasswordHash;
+      await user.save()
+      return res.json({ message: "Password updated successfully" });
+    }
+  } catch (error) {
+    return res.json({ message: "error in updating password" })
+  }
+}
+//function : updating lastname and firstname
+const updateInfo = async (req, res) => {
+  try {
+    const { firstname, lastname } = req.body;
+
+    User.findByIdAndUpdate(req.userId, { firstname, lastname }, { new: true }, (err, user) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).send('Server error');
+      }
+      res.send({ message: "names updated successfully" });
+    });
+  } catch (error) {
+    return res.json({ message: "error in updating name" })
+  }
+}
+
+const updateMail = async (req, res) => {
+  try {
+    const { newMail, password } = req.body;
+
+    const user = await User.findById({ _id: req.userId });
+
+    if (!newMail || !password) {
+      return res.status(400).json({ error: "Please enter all required fields" });
+    }
+
+    const passwordCorrect = await bcrypt.compare(password, user.passwordHash);
+
+    if (!passwordCorrect) {
+      return res.status(401).json({
+        error: "Wrong Password entered",
+      });
+    }
+
+    //existing user with same new username
+    const emailTaken = await User.findOne({ email: newMail });
+    if (emailTaken) {
+      return res
+        .status(400)
+        .json({ error: "An account with this email already exists" });
+    }
+
+    // Update email
+    user.email = newMail;
+    await user.save();
+
+    res.status(200).send({ message: "Email updated successfully" });
+  } catch (error) {
+    return res.json({ message: "error in updating mail" })
+  }
+}
+
 //exports
 exports.register = register;
 exports.login = login;
@@ -187,3 +277,6 @@ exports.logout = logout;
 exports.verifyLoggedIn = verifyLoggedIn;
 exports.executeTest = executeTest;
 exports.getAllTests = getAllTests;
+exports.updatePassword = updatePassword;
+exports.updateInfo = updateInfo;
+exports.updateMail = updateMail;
