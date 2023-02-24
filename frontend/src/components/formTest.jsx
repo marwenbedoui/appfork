@@ -1,13 +1,14 @@
 import React from "react";
 import { Formik } from "formik";
 import { Alert, Button, Form, Input } from "antd";
+import TesterService from "../services/TesterService";
 
 export const FormTest = () => {
   return (
     <Formik
       initialValues={{ protocol: "", url: "", port: "", path: "", method: "" }}
       onSubmit={(values) => {
-        console.log(values);
+        TesterService.executerTest(values).then((data) => console.log(data));
       }}
     >
       {(props) => (
