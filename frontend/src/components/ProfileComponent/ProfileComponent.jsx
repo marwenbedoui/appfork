@@ -1,25 +1,45 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, Row, Col, Space } from "antd";
 import "./ProfileComponent.css";
 import ModalComponent from "../ModalComponent";
+import EmailForm from "../ProfileModals/EmailForm";
+import PasswordForm from "./../ProfileModals/PasswordForm";
+import InfoForm from "../ProfileModals/InfoForm";
+import axios from "axios";
 
 function ProfileComponent() {
-  const [email, setEmail] = useState("jane.doe@example.com");
-  const [location, setLocation] = useState("New York City");
-  const [emailModalVisible, setEmailModalVisible] = useState(false);
-  const [locationModalVisible, setLocationModalVisible] = useState(false);
-  const [newEmail, setNewEmail] = useState("");
-  const [newLocation, setNewLocation] = useState("");
+  const [userInfo, setUserInfo] = useState({});
+  // const [email, setEmail] = useState("jane.doe@example.com");
+  // const [location, setLocation] = useState("New York City");
+  // const [emailModalVisible, setEmailModalVisible] = useState(false);
+  // const [locationModalVisible, setLocationModalVisible] = useState(false);
+  // const [newEmail, setNewEmail] = useState("");
+  // const [newLocation, setNewLocation] = useState("");
 
-  const handleEmailModalOk = () => {
-    setEmail(newEmail);
-    setEmailModalVisible(false);
-  };
+  // const handleEmailModalOk = () => {
+  //   setEmail(newEmail);
+  //   setEmailModalVisible(false);
+  // };
 
-  const handleLocationModalOk = () => {
-    setLocation(newLocation);
-    setLocationModalVisible(false);
-  };
+  // const handleLocationModalOk = () => {
+  //   setLocation(newLocation);
+  //   setLocationModalVisible(false);
+  // };
+  const token = localStorage.getItem("token");
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/v1/get-info", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        setUserInfo(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  });
   return (
     <div className="profile-page">
       <div className="site-page-header-ghost-wrapper">
@@ -37,11 +57,11 @@ function ProfileComponent() {
                   </Col>
                   <Col span={12}>
                     <div className="profile-info">
-                      <h2 className="profile-name">Jane Doe</h2>
-                      <p className="profile-email">
-                        Email: jane.doe@example.com
-                      </p>
-                      <p className="profile-location">Role : Tester</p>
+                      <h2 className="profile-name">
+                        {userInfo.lastname} {userInfo.firstname}
+                      </h2>
+                      <p className="profile-email">Email: {userInfo.email}</p>
+                      <p className="profile-location">Role : {userInfo.role}</p>
                     </div>
                   </Col>
                 </Row>
@@ -49,12 +69,16 @@ function ProfileComponent() {
                 <div className="profile-bio">
                   <Space>
                     <ModalComponent
-                      changed={"email"}
-                      pass={false}
+                      formComp={<EmailForm />}
+                      changed="email"
                     ></ModalComponent>
                     <ModalComponent
-                      changed={"password"}
-                      pass={true}
+                      formComp={<PasswordForm />}
+                      changed="password"
+                    ></ModalComponent>
+                    <ModalComponent
+                      formComp={<InfoForm />}
+                      changed="info"
                     ></ModalComponent>
                   </Space>
 

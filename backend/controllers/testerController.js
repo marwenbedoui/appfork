@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const mongoose = require("mongoose");
 //model
 const Test = require("../models/testModel");
 const User = require("../models/userModel");
@@ -242,14 +241,17 @@ const updateInfo = async (req, res) => {
 
 const updateMail = async (req, res) => {
   try {
-    const { newMail, password } = req.body;
+    const { newMail, password, newMailRetype } = req.body;
 
     const user = await User.findById({ _id: req.userId });
 
-    if (!newMail || !password) {
+    if (!newMail || !password || !newMailRetype) {
       return res
         .status(400)
         .json({ error: "Please enter all required fields" });
+    }
+    if (newMail !== newMailRetype) {
+      return res.status(400).json({ error: "Please enter the same mail" });
     }
 
     const passwordCorrect = await bcrypt.compare(password, user.passwordHash);
