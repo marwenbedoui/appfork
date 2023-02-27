@@ -4,8 +4,8 @@ import TesterService from "../services/TesterService";
 const columns = [
   {
     title: "Nom du test",
-    dataIndex: "protocol",
-    key: "protocol",
+    dataIndex: "testName",
+    key: "testName",
   },
   {
     title: "Propriétaire",

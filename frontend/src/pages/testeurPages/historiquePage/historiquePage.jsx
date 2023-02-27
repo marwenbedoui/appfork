@@ -1,28 +1,29 @@
-import React, { useState } from "react";
 import LayoutComponent from "../../../components/LayoutComponent";
 import TableComponent from "../../../components/TableComponent";
 import TalanLogo from "../../../assets/talan-logo.png";
-import { Button, Modal } from "antd";
-import "../historiquePage/historiquePage.css";
+import { Button } from "antd";
+import { useState } from "react";
 import { FormTest } from "../../../components/formTest";
+import "./historiquePage.css";
 
 const Page = () => {
-  const [open, setOpen] = useState(false);
+  const [modalTest, setModalTest] = useState(false);
+
   return (
     <>
-      <Button type="primary" className="bouton" onClick={() => setOpen(true)}>
+      <Button
+        type="primary"
+        className="bouton"
+        onClick={() => setModalTest(true)}
+      >
         Exécuter un test
       </Button>
-      <Modal
-        title="Remplir le formulaire pour exécuter un test"
-        centered
-        open={open}
-        onOk={() => setOpen(false)}
-        onCancel={() => setOpen(false)}
-        width={1000}
-      >
-        <FormTest />
-      </Modal>
+      <FormTest
+        visible={modalTest}
+        onCancel={() => {
+          setModalTest(false);
+        }}
+      />
       <TableComponent />
     </>
   );

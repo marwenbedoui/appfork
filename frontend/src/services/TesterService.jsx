@@ -8,6 +8,7 @@ const executerTest = async (data) => {
   const result = await axios.post(
     API_URL,
     {
+      testName: data.testName,
       protocol: data.protocol,
       url: data.url,
       port: data.port,
