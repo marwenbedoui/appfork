@@ -166,6 +166,8 @@ const getAllTests = (req, res) => {
   Test.find();
   var total = Test.count();
   Test.find()
+    .populate("createdBy")
+    .exec()
     .then((data) => {
       res.set("Access-Control-Expose-Headers", "X-Total-Count");
       res.set("X-Total-Count", total);
