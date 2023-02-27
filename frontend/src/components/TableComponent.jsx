@@ -1,4 +1,4 @@
-import { Space, Table, Tag } from "antd";
+import { Table, Tag } from "antd";
 import { useEffect, useState } from "react";
 import TesterService from "../services/TesterService";
 const columns = [

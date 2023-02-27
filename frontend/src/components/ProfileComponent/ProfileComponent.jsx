@@ -1,45 +1,33 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Row, Col, Space } from "antd";
+import { Avatar, Row, Col, Space, Button } from "antd";
 import "./ProfileComponent.css";
-import ModalComponent from "../ModalComponent";
-import EmailForm from "../ProfileModals/EmailForm";
-import PasswordForm from "./../ProfileModals/PasswordForm";
-import InfoForm from "../ProfileModals/InfoForm";
-import axios from "axios";
+import ProfileServices from "../../services/ProfileServices";
+import InfoModal from "../ProfileForms/InfoModal";
+import EmailModal from "../ProfileForms/EmailModal";
+import PasswordModal from "../ProfileForms/PasswordModal";
 
 function ProfileComponent() {
+  const [modalMailVisible, setModalMailVisible] = useState(false);
+  const [modalInfoVisible, setModalInfoVisible] = useState(false);
+  const [modalPasswordVisible, setModalPasswordVisible] = useState(false);
+
   const [userInfo, setUserInfo] = useState({});
-  // const [email, setEmail] = useState("jane.doe@example.com");
-  // const [location, setLocation] = useState("New York City");
-  // const [emailModalVisible, setEmailModalVisible] = useState(false);
-  // const [locationModalVisible, setLocationModalVisible] = useState(false);
-  // const [newEmail, setNewEmail] = useState("");
-  // const [newLocation, setNewLocation] = useState("");
 
-  // const handleEmailModalOk = () => {
-  //   setEmail(newEmail);
-  //   setEmailModalVisible(false);
-  // };
+  const handleCancelMail = () => {
+    setModalMailVisible(false);
+  };
 
-  // const handleLocationModalOk = () => {
-  //   setLocation(newLocation);
-  //   setLocationModalVisible(false);
-  // };
-  const token = localStorage.getItem("token");
+  const handleCancelInfo = () => {
+    setModalInfoVisible(false);
+  };
+
+  const handleCancelPassword = () => {
+    setModalPasswordVisible(false);
+  };
+
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/v1/get-info", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        setUserInfo(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  });
+    ProfileServices.getInfos().then((res) => setUserInfo(res));
+  }, [userInfo]);
   return (
     <div className="profile-page">
       <div className="site-page-header-ghost-wrapper">
@@ -68,45 +56,40 @@ function ProfileComponent() {
 
                 <div className="profile-bio">
                   <Space>
-                    <ModalComponent
-                      formComp={<EmailForm />}
-                      changed="email"
-                    ></ModalComponent>
-                    <ModalComponent
-                      formComp={<PasswordForm />}
-                      changed="password"
-                    ></ModalComponent>
-                    <ModalComponent
-                      formComp={<InfoForm />}
-                      changed="info"
-                    ></ModalComponent>
+                    <Button
+                      type="primary"
+                      onClick={() => setModalMailVisible(true)}
+                    >
+                      Update mail
+                    </Button>
+                    <Button
+                      type="primary"
+                      onClick={() => setModalPasswordVisible(true)}
+                    >
+                      Update password
+                    </Button>
+                    <Button
+                      type="primary"
+                      onClick={() => setModalInfoVisible(true)}
+                    >
+                      Update info
+                    </Button>
+
+                    <EmailModal
+                      info={userInfo}
+                      onCancel={handleCancelMail}
+                      visible={modalMailVisible}
+                    />
+                    <PasswordModal
+                      onCancel={handleCancelPassword}
+                      visible={modalPasswordVisible}
+                    />
+                    <InfoModal
+                      info={userInfo}
+                      onCancel={handleCancelInfo}
+                      visible={modalInfoVisible}
+                    />
                   </Space>
-
-                  {/* <Modal
-                    title="Edit Email"
-                    visible={emailModalVisible}
-                    onOk={handleEmailModalOk}
-                    onCancel={() => setEmailModalVisible(false)}
-                  >
-                    <Input
-                      placeholder="Enter new email"
-                      value={newEmail}
-                      onChange={(e) => setNewEmail(e.target.value)}
-                    />
-                  </Modal>
-
-                  <Modal
-                    title="Edit Location"
-                    visible={locationModalVisible}
-                    onOk={handleLocationModalOk}
-                    onCancel={() => setLocationModalVisible(false)}
-                  >
-                    <Input
-                      placeholder="Enter new location"
-                      value={newLocation}
-                      onChange={(e) => setNewLocation(e.target.value)}
-                    />
-                  </Modal> */}
                 </div>
               </div>
             </div>
