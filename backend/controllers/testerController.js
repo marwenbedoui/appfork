@@ -139,7 +139,8 @@ const verifyLoggedIn = (req, res) => {
   }
 };
 
-const executeTest = (req, res) => {
+const executeTest = async (req, res) => {
+  const status = Math.random() < 0.5 ? "Passed" : "Failed"
   const test = new Test({
     protocol: req.body.protocol,
     url: req.body.url,
@@ -147,10 +148,11 @@ const executeTest = (req, res) => {
     path: req.body.path,
     method: req.body.method,
     createdBy: req.body.createdBy,
-    status: "Passed",
+    status,
+    testName: req.body.testName,
   });
 
-  test
+  await test
     .save()
     .then((data) => {
       res.send(data);

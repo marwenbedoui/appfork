@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const testSchema = new mongoose.Schema(
   {
+    testName: {
+      type: String,
+      required: true,
+    },
     protocol: {
       type: String,
       required: true,
