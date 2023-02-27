@@ -25,13 +25,21 @@ const executerTest = async (data) => {
   return result.data;
 };
 
-const fetchAllTests = async () => {
+const fetchAllTests = async (name, owner, status) => {
   const result = await axios.get(API_URL, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  return result.data;
+  return result.data.filter(
+    (seance) =>
+      seance.testName.toUpperCase().includes(name.toUpperCase()) &&
+      (seance.createdBy.firstname.toUpperCase().includes(owner.toUpperCase()) ||
+        seance.createdBy.lastname
+          .toUpperCase()
+          .includes(owner.toUpperCase())) &&
+      seance.status.includes(status)
+  );
 };
 
 const TesterService = {
