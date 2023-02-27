@@ -8,35 +8,36 @@ import { Layout, Menu, theme } from "antd";
 import { Header } from "antd/es/layout/layout";
 import React from "react";
 const { Content, Footer, Sider } = Layout;
+
 const items = [
   {
     icon: DashboardOutlined,
     label: "Tableau de bord",
-    clickEvent: (onauxclick = () => {
+    clickEvent: () => {
       window.location.href = "/testeur/accueil";
-    }),
+    },
   },
   {
     icon: DatabaseOutlined,
     label: "Historique",
-    clickEvent: (onauxclick = () => {
+    clickEvent: () => {
       window.location.href = "/testeur/historiques";
-    }),
+    },
   },
   {
     icon: UserOutlined,
     label: "Profile",
-    clickEvent: (onauxclick = () => {
+    clickEvent: () => {
       window.location.href = "/testeur/profile";
-    }),
+    },
   },
   {
     icon: LogoutOutlined,
     label: "Déconnexion",
-    clickEvent: (onauxclick = () => {
+    clickEvent: () => {
       localStorage.clear();
       window.location.href = "/login";
-    }),
+    },
   },
 ].map((sideBarItem, index) => ({
   key: String(index + 1),
@@ -44,6 +45,7 @@ const items = [
   label: String(sideBarItem.label),
   onClick: sideBarItem.clickEvent,
 }));
+
 const layoutComponent = ({ headerLogo, mainContent, currentPage }) => {
   const {
     token: { colorBgContainer },

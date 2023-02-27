@@ -276,9 +276,9 @@ const updateMail = async (req, res) => {
     user.email = newMail;
     await user.save();
 
-    res.status(200).send({ message: "Email updated successfully" });
+    return res.status(200).send({ message: "Email updated successfully" });
   } catch (error) {
-    return res.json({ message: "error in updating mail" });
+    return res.send({ message: "error in updating mail" });
   }
 };
 

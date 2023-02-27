@@ -1,6 +1,6 @@
 import React from "react";
 import { Formik } from "formik";
-import { Alert, Button, Form, Input } from "antd";
+import { Button, Form, Input } from "antd";
 import TesterService from "../services/TesterService";
 
 export const FormTest = () => {
