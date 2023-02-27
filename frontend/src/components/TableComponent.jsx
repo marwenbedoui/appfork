@@ -1,6 +1,5 @@
 import { Table, Tag } from "antd";
-import { useEffect, useState } from "react";
-import TesterService from "../services/TesterService";
+import { useState } from "react";
 const columns = [
   {
     title: "Nom du test",
@@ -38,7 +37,7 @@ const columns = [
   },
 ];
 
-const TableComponent = () => {
+const TableComponent = ({ data }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const onSelectChange = (newSelectedRowKeys) => {
     console.log("selectedRowKeys changed: ", newSelectedRowKeys);
@@ -81,10 +80,6 @@ const TableComponent = () => {
       },
     ],
   };
-  const [data, setData] = useState([]);
-  useEffect(() => {
-    TesterService.fetchAllTests().then((res) => setData(res));
-  }, [data]);
   return (
     <Table
       rowSelection={rowSelection}
