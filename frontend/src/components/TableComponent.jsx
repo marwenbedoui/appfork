@@ -11,6 +11,13 @@ const columns = [
     title: "Propriétaire",
     dataIndex: "createdBy",
     key: "createdBy",
+    render: (_, { createdBy }) => {
+      return (
+        <div>
+          {createdBy.firstname} {createdBy.lastname}
+        </div>
+      );
+    },
   },
   {
     title: "Status",
