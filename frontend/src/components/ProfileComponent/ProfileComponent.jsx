@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Row, Col, Space, Button } from "antd";
+import { Avatar, Row, Col, Space, Button, Upload, message } from "antd";
 import "./ProfileComponent.css";
 import ProfileServices from "../../services/ProfileServices";
 import InfoModal from "../ProfileForms/InfoModal";
 import EmailModal from "../ProfileForms/EmailModal";
 import PasswordModal from "../ProfileForms/PasswordModal";
+import { UploadOutlined } from "@ant-design/icons";
 
 function ProfileComponent() {
   const [modalMailVisible, setModalMailVisible] = useState(false);
@@ -25,6 +26,20 @@ function ProfileComponent() {
     setModalPasswordVisible(false);
   };
 
+  const [showButton, setShowButton] = useState(false);
+
+  const handleMouseEnter = () => {
+    setShowButton(true);
+  };
+
+  const handleMouseLeave = () => {
+    setShowButton(false);
+  };
+
+  const handleUpload = (file) => {
+    message.success(`${file.name} file uploaded successfully!`);
+  };
+
   useEffect(() => {
     ProfileServices.getInfos().then((res) => setUserInfo(res));
   }, [userInfo]);
@@ -37,11 +52,48 @@ function ProfileComponent() {
               <div className="profile-container">
                 <Row gutter={16} justify="center">
                   <Col span={6}>
-                    <Avatar
-                      className="profile-picture"
-                      size={128}
-                      src="https://xsgames.co/randomusers/avatar.php?g=pixel"
-                    />
+                    <div
+                      style={{
+                        position: "relative",
+                        display: "inline-block",
+                        borderRadius: "10px",
+                        overflow: "hidden",
+                        marginTop: "30px",
+                      }}
+                      onMouseEnter={handleMouseEnter}
+                      onMouseLeave={handleMouseLeave}
+                    >
+                      <Avatar
+                        className="profile-picture"
+                        size={128}
+                        src="https://xsgames.co/randomusers/avatar.php?g=pixel"
+                      />
+                      {showButton && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                            backgroundColor: "rgba(0, 0, 0, 0.5)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <Upload
+                            accept=".jpg,.jpeg,.png"
+                            showUploadList={false}
+                            onChange={(info) => handleUpload(info.file)}
+                          >
+                            <UploadOutlined
+                              style={{ fontSize: "3rem", color: "white" }}
+                            />
+                          </Upload>
+                        </div>
+                      )}
+                    </div>
                   </Col>
                   <Col span={12}>
                     <div className="profile-info">
