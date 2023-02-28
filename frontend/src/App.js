@@ -1,11 +1,11 @@
 import { BrowserRouter as Router } from "react-router-dom";
 import AdminPage from "./pages/adminPage";
-import AuthVerifyService from "./services/AuthVerifyService";
+import AuthVerifyService from "./services/AuthServices/AuthVerifyService";
 import { AuthRouters } from "./routers/authRouters";
 import { TesterRouters } from "./routers/testerRouters";
 import { SimpleUserRouters } from "./routers/simpleUserRouters";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   if (AuthVerifyService.authVerify() === 1) {
