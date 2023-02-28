@@ -3,9 +3,10 @@ import LayoutComponent from "../../components/LayoutComponent";
 import TalanLogo from "../../assets/talan-logo.png";
 import ProfileComponent from "../../components/ProfileComponent/ProfileComponent";
 
-export default function ProfilePage() {
+export default function ProfilePage({ role }) {
   return (
     <LayoutComponent
+      role={role}
       headerLogo={TalanLogo}
       currentPage={"3"}
       mainContent={<ProfileComponent />}
