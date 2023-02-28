@@ -31,7 +31,7 @@ const fetchAllTests = async (name, owner, status) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  return result.data.filter(
+  const filteredData = result.data.filter(
     (seance) =>
       seance.testName.toUpperCase().includes(name.toUpperCase()) &&
       (seance.createdBy.firstname.toUpperCase().includes(owner.toUpperCase()) ||
@@ -40,6 +40,9 @@ const fetchAllTests = async (name, owner, status) => {
           .includes(owner.toUpperCase())) &&
       seance.status.includes(status)
   );
+
+  filteredData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  return filteredData;
 };
 
 const TesterService = {
