@@ -4,9 +4,12 @@ import {
   LogoutOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Layout, Menu, theme } from "antd";
+import { Avatar, Col, Layout, Menu, Row, theme, Typography } from "antd";
 import { Header } from "antd/es/layout/layout";
-import React from "react";
+import React, { useEffect } from "react";
+import { useState } from "react";
+import ProfileServices from "../services/ProfileServices";
+
 const { Content, Footer, Sider } = Layout;
 
 const items = [
@@ -46,10 +49,16 @@ const items = [
   onClick: sideBarItem.clickEvent,
 }));
 
-const layoutComponent = ({ headerLogo, mainContent, currentPage }) => {
+const LayoutComponent = ({ headerLogo, mainContent, currentPage }) => {
+  const [userInfo, setUserInfo] = useState({});
+
+  useEffect(() => {
+    ProfileServices.getInfos().then((res) => setUserInfo(res));
+  }, [userInfo]);
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+
   return (
     <Layout hasSider>
       <Sider
@@ -70,15 +79,33 @@ const layoutComponent = ({ headerLogo, mainContent, currentPage }) => {
             height: "30vh",
           }}
         >
-          <div
+          <Row
             style={{
-              width: "100px",
-              height: "100px",
-              borderRadius: "50%",
-              backgroundColor: "#000",
+              marginTop: "200px",
+              marginBottom: "180px",
             }}
-            //TODO : ADD Profile Picture
-          />
+          >
+            <Col span={24}>
+              <Avatar
+                className="profile-picture"
+                size={128}
+                src="https://xsgames.co/randomusers/avatar.php?g=pixel"
+              />
+            </Col>
+            <Col span={24}>
+              <Typography.Title
+                level={4}
+                italic
+                style={{
+                  textAlign: "center",
+                  color: "#ffffffa6",
+                  textTransform: "capitalize",
+                }}
+              >
+                {userInfo.firstname} {userInfo.lastname}
+              </Typography.Title>
+            </Col>
+          </Row>
         </div>
         <Menu
           theme="dark"
@@ -122,11 +149,9 @@ const layoutComponent = ({ headerLogo, mainContent, currentPage }) => {
         </Content>
         <Footer
           style={{
-            position: "relative",
+            position: "fixed",
             bottom: 0,
-            left: 0,
             width: "100%",
-            height: "100px",
           }}
         >
           Copyrights Talan Tunisie Consulting
@@ -135,4 +160,4 @@ const layoutComponent = ({ headerLogo, mainContent, currentPage }) => {
     </Layout>
   );
 };
-export default layoutComponent;
+export default LayoutComponent;

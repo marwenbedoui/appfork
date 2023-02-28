@@ -30,8 +30,13 @@
   font-weight: bold;
 }
 
-.profile-email, .profile-location {
+.profile-email,
+.profile-location {
   font-size: 18px;
+}
+
+.profile-location {
+  text-transform: capitalize;
 }
 
 .profile-bio {

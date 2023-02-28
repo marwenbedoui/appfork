@@ -19,9 +19,9 @@ const logout = () => {
   localStorage.removeItem("user");
 };
 
-const TestAuthService = {
+const AuthService = {
   login,
   logout,
 };
 
-export default TestAuthService;
+export default AuthService;

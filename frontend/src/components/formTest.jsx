@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Form, Input, Modal, Spin } from "antd";
-import TesterService from "../services/TesterService";
+import TesterService from "../services/TesterServices/TesterService";
 import { toast } from "react-toastify";
 
 export const FormTest = ({ visible, onCancel }) => {

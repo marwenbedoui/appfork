@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Formik } from "formik";
 import { Alert, Button, Form, Input } from "antd";
-import TestAuthService from "../services/TesterAuthServices";
+import AuthService from "../services/AuthServices/AuthServices";
 
 export const FormLogin = () => {
   const [error, setError] = useState(false);
@@ -12,7 +12,7 @@ export const FormLogin = () => {
       initialValues={{ email: "", password: "" }}
       onSubmit={(values) => {
         setTimeout(() => {
-          TestAuthService.login(values.email, values.password).then(
+          AuthService.login(values.email, values.password).then(
             () => {
               setError(false);
               setSuccess(true);

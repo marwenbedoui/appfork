@@ -3,6 +3,8 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 //routers path
 const testerRouter = require("./routers/testerRouter");
+const usersRouter = require("./routers/usersRouter");
+const adminRouter = require("./routers/adminRouter");
 
 //server express
 const app = express();
@@ -31,3 +33,5 @@ app.listen(PORT, () => {
 
 //routers
 app.use("/api/v1", testerRouter);
+app.use("/api/v1", usersRouter);
+app.use("/api/v1", adminRouter);

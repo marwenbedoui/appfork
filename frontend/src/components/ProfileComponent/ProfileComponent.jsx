@@ -45,7 +45,10 @@ function ProfileComponent() {
                   </Col>
                   <Col span={12}>
                     <div className="profile-info">
-                      <h2 className="profile-name">
+                      <h2
+                        className="profile-name"
+                        style={{ textTransform: "capitalize" }}
+                      >
                         {userInfo.lastname} {userInfo.firstname}
                       </h2>
                       <p className="profile-email">Email: {userInfo.email}</p>

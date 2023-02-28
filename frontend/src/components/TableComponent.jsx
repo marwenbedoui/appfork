@@ -12,7 +12,7 @@ const columns = [
     key: "createdBy",
     render: (_, { createdBy }) => {
       return (
-        <div>
+        <div style={{ textTransform: "capitalize" }}>
           {createdBy.firstname} {createdBy.lastname}
         </div>
       );
@@ -34,6 +34,11 @@ const columns = [
     title: "Date d'execution",
     dataIndex: "createdAt",
     key: "createdAt",
+    render: (_, { createdAt }) => {
+      const date = new Date(createdAt);
+      const formattedDate = date.toLocaleString().replace(",", "");
+      return <div>{formattedDate}</div>;
+    },
   },
 ];
 
