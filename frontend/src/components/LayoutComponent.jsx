@@ -12,44 +12,44 @@ import ProfileServices from "../services/ProfileServices";
 
 const { Content, Footer, Sider } = Layout;
 
-const items = [
-  {
-    icon: DashboardOutlined,
-    label: "Tableau de bord",
-    clickEvent: () => {
-      window.location.href = "/testeur/accueil";
+const LayoutComponent = ({ headerLogo, mainContent, currentPage, role }) => {
+  const items = [
+    {
+      icon: DashboardOutlined,
+      label: "Tableau de bord",
+      clickEvent: () => {
+        window.location.href = `/${role}/accueil`;
+      },
     },
-  },
-  {
-    icon: DatabaseOutlined,
-    label: "Historique",
-    clickEvent: () => {
-      window.location.href = "/testeur/historiques";
+    {
+      icon: DatabaseOutlined,
+      label: "Historique",
+      clickEvent: () => {
+        window.location.href = `/${role}/historiques`;
+      },
     },
-  },
-  {
-    icon: UserOutlined,
-    label: "Profile",
-    clickEvent: () => {
-      window.location.href = "/testeur/profile";
+    {
+      icon: UserOutlined,
+      label: "Profile",
+      clickEvent: () => {
+        window.location.href = `/${role}/profile`;
+      },
     },
-  },
-  {
-    icon: LogoutOutlined,
-    label: "Déconnexion",
-    clickEvent: () => {
-      localStorage.clear();
-      window.location.href = "/login";
+    {
+      icon: LogoutOutlined,
+      label: "Déconnexion",
+      clickEvent: () => {
+        localStorage.clear();
+        window.location.href = "/login";
+      },
     },
-  },
-].map((sideBarItem, index) => ({
-  key: String(index + 1),
-  icon: React.createElement(sideBarItem.icon),
-  label: String(sideBarItem.label),
-  onClick: sideBarItem.clickEvent,
-}));
+  ].map((sideBarItem, index) => ({
+    key: String(index + 1),
+    icon: React.createElement(sideBarItem.icon),
+    label: String(sideBarItem.label),
+    onClick: sideBarItem.clickEvent,
+  }));
 
-const LayoutComponent = ({ headerLogo, mainContent, currentPage }) => {
   const [userInfo, setUserInfo] = useState({});
 
   useEffect(() => {

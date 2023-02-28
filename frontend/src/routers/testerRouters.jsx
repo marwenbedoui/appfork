@@ -7,13 +7,13 @@ export const TesterRouters = () => {
   return (
     <Switch>
       <Route exact path="/testeur/accueil">
-        <DashbaordPage />
+        <DashbaordPage role="testeur" />
       </Route>
       <Route exact path="/testeur/historiques">
-        <HistoriquePage />
+        <HistoriquePage role="testeur" />
       </Route>
       <Route exact path="/testeur/profile">
-        <ProfilePage />
+        <ProfilePage role="testeur" />
       </Route>
       <Route exact path="*">
         <Redirect to="/testeur/accueil" />

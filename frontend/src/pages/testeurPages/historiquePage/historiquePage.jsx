@@ -68,10 +68,11 @@ const Page = () => {
   );
 };
 
-export default function HistoriquePage() {
+export default function HistoriquePage({ role }) {
   return (
     <>
       <LayoutComponent
+        role={role}
         headerLogo={TalanLogo}
         currentPage={"2"}
         mainContent={<Page />}
