@@ -1,14 +1,22 @@
 import { Redirect, Route, Switch } from "react-router-dom";
-import AdminPage from "../pages/adminPage";
+import DashbaordPage from "../pages/dashboardPage/dashboardPage";
+import HistoriquePage from "../pages/historiquePage/historiquePage";
+import ProfilePage from "../pages/profilePage/profilePage";
 
 export const AdminRouters = () => {
   return (
     <Switch>
-      <Route exact path="/admin">
-        <AdminPage />
+      <Route exact path="/admin/accueil">
+        <DashbaordPage role="admin" />
+      </Route>
+      <Route exact path="/admin/historiques">
+        <HistoriquePage role="admin" />
+      </Route>
+      <Route exact path="/admin/profile">
+        <ProfilePage role="admin" />
       </Route>
       <Route exact path="*">
-        <Redirect to="/admin" />
+        <Redirect to="/admin/accueil" />
       </Route>
     </Switch>
   );

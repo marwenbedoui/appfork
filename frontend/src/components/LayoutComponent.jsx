@@ -94,7 +94,7 @@ const LayoutComponent = ({ headerLogo, mainContent, currentPage, role }) => {
             </Col>
             <Col span={24}>
               <Typography.Title
-                level={4}
+                level={5}
                 italic
                 style={{
                   textAlign: "center",
@@ -105,9 +105,24 @@ const LayoutComponent = ({ headerLogo, mainContent, currentPage, role }) => {
                 {userInfo.firstname} {userInfo.lastname}
               </Typography.Title>
             </Col>
+            <Col span={24}>
+              <div
+                style={{
+                  textAlign: "center",
+                  color: "#ffffffa6",
+                  textTransform: "capitalize",
+                  marginBottom: "10px",
+                }}
+              >
+                {userInfo.role}
+              </div>
+            </Col>
           </Row>
         </div>
         <Menu
+          style={{
+            marginTop: "10px",
+          }}
           theme="dark"
           mode="inline"
           defaultSelectedKeys={[currentPage]}
