@@ -1,7 +1,7 @@
 import { Redirect, Route, Switch } from "react-router-dom";
 import ProfilePage from "../pages/profilePage/profilePage";
-import DashbaordPage from "../pages/testeurPages/dashboardPage/dashboardPage";
-import HistoriquePage from "../pages/testeurPages/historiquePage/historiquePage";
+import DashbaordPage from "../pages/dashboardPage/dashboardPage";
+import HistoriquePage from "../pages/historiquePage/historiquePage";
 
 export const TesterRouters = () => {
   return (

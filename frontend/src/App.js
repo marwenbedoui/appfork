@@ -1,11 +1,11 @@
 import { BrowserRouter as Router } from "react-router-dom";
-import AdminPage from "./pages/adminPage";
 import AuthVerifyService from "./services/AuthServices/AuthVerifyService";
 import { AuthRouters } from "./routers/authRouters";
 import { TesterRouters } from "./routers/testerRouters";
 import { SimpleUserRouters } from "./routers/simpleUserRouters";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { AdminRouters } from "./routers/adminRouters";
 
 function App() {
   if (AuthVerifyService.authVerify() === 1) {
@@ -28,7 +28,7 @@ function App() {
     return (
       <Router>
         <ToastContainer />
-        <AdminPage />
+        <AdminRouters />
       </Router>
     );
   }

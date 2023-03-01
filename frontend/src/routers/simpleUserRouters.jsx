@@ -1,22 +1,22 @@
 import { Redirect, Route, Switch } from "react-router-dom";
 import ProfilePage from "../pages/profilePage/profilePage";
-import DashbaordPage from "../pages/testeurPages/dashboardPage/dashboardPage";
-import HistoriquePage from "../pages/testeurPages/historiquePage/historiquePage";
+import DashbaordPage from "../pages/dashboardPage/dashboardPage";
+import HistoriquePage from "../pages/historiquePage/historiquePage";
 
 export const SimpleUserRouters = () => {
   return (
     <Switch>
-      <Route exact path="/user/accueil">
-        <DashbaordPage role="user" />
+      <Route exact path="/simpleUser/accueil">
+        <DashbaordPage role="simpleUser" />
       </Route>
-      <Route exact path="/user/historiques">
-        <HistoriquePage role="user" />
+      <Route exact path="/simpleUser/historiques">
+        <HistoriquePage role="simpleUser" />
       </Route>
-      <Route exact path="/user/profile">
-        <ProfilePage role="user" />
+      <Route exact path="/simpleUser/profile">
+        <ProfilePage role="simpleUser" />
       </Route>
       <Route exact path="*">
-        <Redirect to="/user/accueil" />
+        <Redirect to="/simpleUser/accueil" />
       </Route>
     </Switch>
   );

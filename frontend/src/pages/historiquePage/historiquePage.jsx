@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import LayoutComponent from "../../../components/LayoutComponent";
-import TableComponent from "../../../components/TableComponent";
-import TalanLogo from "../../../assets/talan-logo.png";
+import LayoutComponent from "../../components/LayoutComponent";
+import TableComponent from "../../components/TableComponent";
+import TalanLogo from "../../assets/talan-logo.png";
 import { Button, Col, Input, Row, Select } from "antd";
 import "./historiquePage.css";
-import { FormTest } from "../../../components/formTest";
-import TesterService from "../../../services/TesterServices/TesterService";
+import { FormTest } from "../../components/formTest";
+import TesterService from "../../services/TesterServices/TesterService";
 
-const Page = () => {
+const Page = ({ role }) => {
   const [modalTest, setModalTest] = useState(false);
   const [statut, setStatut] = useState("");
   const [name, setName] = useState("");
@@ -21,13 +21,17 @@ const Page = () => {
 
   return (
     <>
-      <Button
-        type="primary"
-        className="bouton"
-        onClick={() => setModalTest(true)}
-      >
-        Exécuter un test
-      </Button>
+      {role === "simpleUser" ? (
+        ""
+      ) : (
+        <Button
+          type="primary"
+          className="bouton"
+          onClick={() => setModalTest(true)}
+        >
+          Exécuter un test
+        </Button>
+      )}
       <Row>
         <Col span={5}>
           <Input
@@ -75,7 +79,7 @@ export default function HistoriquePage({ role }) {
         role={role}
         headerLogo={TalanLogo}
         currentPage={"2"}
-        mainContent={<Page />}
+        mainContent={<Page role={role} />}
       ></LayoutComponent>
     </>
   );

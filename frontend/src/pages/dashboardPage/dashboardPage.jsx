@@ -1,6 +1,6 @@
 import React from "react";
-import LayoutComponent from "../../../components/LayoutComponent";
-import TalanLogo from "../../../assets/talan-logo.png";
+import LayoutComponent from "../../components/LayoutComponent";
+import TalanLogo from "../../assets/talan-logo.png";
 
 export default function DashbaordPage({ role }) {
   return (
