@@ -2,7 +2,6 @@
 
 # dependencies
 /node_modules
-
-backend\jmeter.log
+jmeter.log
 /controllers/reports
 /controllers/tests
