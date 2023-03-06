@@ -3,6 +3,6 @@
 # dependencies
 /node_modules
 
-./jmeter.log
+jmeter.log
 /controllers/reports
 /controllers/tests
