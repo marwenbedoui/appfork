@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import LayoutComponent from "../../components/LayoutComponent";
+import AdminLayoutComponent from "../../components/AdminLayoutComponent";
 import TableComponent from "../../components/TableComponent";
 import TalanLogo from "../../assets/talan-logo.png";
 import { Button, Col, Input, Row, Select } from "antd";
@@ -75,12 +75,12 @@ const Page = ({ role }) => {
 export default function HistoriquePage({ role }) {
   return (
     <>
-      <LayoutComponent
+      <AdminLayoutComponent
         role={role}
         headerLogo={TalanLogo}
         currentPage={"2"}
         mainContent={<Page role={role} />}
-      ></LayoutComponent>
+      ></AdminLayoutComponent>
     </>
   );
 }
