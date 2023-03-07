@@ -3,8 +3,9 @@ const { exec } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const csv = require('csv-parser')
-
-// const jm_tem = ("../tests/jmeter_template.jmx")
+const osUtils = require("os-utils");
+const { performance } = require("perf_hooks");
+const FastSpeedtest = require("fast-speedtest-api");
 
 const executeTest = async (req, res) => {
   //initialzing a void status
@@ -233,6 +234,38 @@ const getAllTests = (req, res) => {
     });
 };
 
+const getResults = (req, res) => {
+  osUtils.cpuUsage(function (cpuUsage) {
+    const start = performance.now();
+
+    const speedtest = new FastSpeedtest({
+      token: "YXNkZmFzZGxmbnNkYWZoYXNkZmhrYWxm",
+      verbose: false,
+      timeout: 10000,
+      https: true,
+      urlCount: 5,
+      bufferSize: 8,
+      unit: FastSpeedtest.UNITS.Mbps,
+    });
+
+    speedtest.getSpeed().then((networkSpeed) => {
+      const end = performance.now();
+
+      const memoryUsage = process.memoryUsage().heapUsed / 1024 / 1024;
+
+      const performanceData = {
+        cpuUsage: cpuUsage * 100,
+        diskIoTime: end - start,
+        networkSpeed,
+        memoryUsage,
+      };
+
+      res.json(performanceData);
+    });
+  });
+};
+
 //exports
 exports.executeTest = executeTest;
 exports.getAllTests = getAllTests;
+exports.getResults = getResults;
