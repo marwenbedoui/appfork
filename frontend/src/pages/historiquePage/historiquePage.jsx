@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import AdminLayoutComponent from "../../components/AdminLayoutComponent";
+// import AdminLayoutComponent from "../../components/AdminLayoutComponent";
 import TableComponent from "../../components/TableComponent";
 import TalanLogo from "../../assets/talan-logo.png";
 import { Button, Col, Input, Row, Select } from "antd";
 import "./historiquePage.css";
 import { FormTest } from "../../components/formTest";
 import TesterService from "../../services/TesterServices/TesterService";
+import LayoutComponent from "../../components/LayoutComponent";
 
 const Page = ({ role }) => {
   const [modalTest, setModalTest] = useState(false);
@@ -75,12 +76,12 @@ const Page = ({ role }) => {
 export default function HistoriquePage({ role }) {
   return (
     <>
-      <AdminLayoutComponent
+      <LayoutComponent
         role={role}
         headerLogo={TalanLogo}
         currentPage={"2"}
         mainContent={<Page role={role} />}
-      ></AdminLayoutComponent>
+      ></LayoutComponent>
     </>
   );
 }
