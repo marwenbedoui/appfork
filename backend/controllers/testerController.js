@@ -1,10 +1,11 @@
 const Test = require("../models/testModel");
-const { exec } = require('child_process');
-const path = require('path');
-const fs = require('fs');
-const csv = require('csv-parser')
-
-// const jm_tem = ("../tests/jmeter_template.jmx")
+const { exec } = require("child_process");
+const path = require("path");
+const fs = require("fs");
+const csv = require("csv-parser");
+const osUtils = require("os-utils");
+const { performance } = require("perf_hooks");
+const FastSpeedtest = require("fast-speedtest-api");
 
 const executeTest = async (req, res) => {
   //initialzing a void status
@@ -21,8 +22,21 @@ const executeTest = async (req, res) => {
     testName: req.body.testName,
   });
 
+  const savedTest = await test.save();
+  // .then((data) => {
+  //   res.send(data);
+  // })
+  // .catch((err) => {
+  //   res.status(500).send({
+  //     message: err.message || "Error",
+  //   });
+  // });
+
+  const testId = savedTest._id;
+  const testFileName = `test_${testId}.jmx`;
+
   //the path to the jmx file
-  const jmxOutputPath = path.join(__dirname + "/tests", 'test.jmx');
+  const jmxOutputPath = path.join(__dirname + "/tests", testFileName);
   // the jmx template
   const jmxContent = `<?xml version="1.0" encoding="UTF-8"?>
   <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.5">
@@ -58,7 +72,9 @@ const executeTest = async (req, res) => {
             </elementProp>
             <stringProp name="HTTPSampler.domain">${test.url}</stringProp>
             <stringProp name="HTTPSampler.port">${test.port}</stringProp>
-            <stringProp name="HTTPSampler.protocol">${test.protocol}</stringProp>
+            <stringProp name="HTTPSampler.protocol">${
+              test.protocol
+            }</stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
             <stringProp name="HTTPSampler.path">${test.path}</stringProp>
             <stringProp name="HTTPSampler.method">${test.method.toUpperCase()}</stringProp>
@@ -149,18 +165,18 @@ const executeTest = async (req, res) => {
       </hashTree>
     </hashTree>
   </jmeterTestPlan>  
-  `
+  `;
 
-  fs.writeFileSync(jmxOutputPath, jmxContent, 'utf-8');
+  fs.writeFileSync(jmxOutputPath, jmxContent, "utf-8");
+  const reportFileName = `reports_${testId}.csv`;
+  const reportPath = path.join(__dirname + "/reports", reportFileName);
 
-  const reportPath = path.join(__dirname + "/reports", 'report.csv');
-  //Check if report.csv exists : if exists delete it
+  // Check if reportPath exists : if exists delete it
   fs.access(reportPath, fs.constants.F_OK, (err) => {
     if (err) {
-      console.error('File does not exist');
-
-    }
-    else {
+      // File doesn't exist
+      console.error("File does not exist");
+    } else {
       // Delete file
       fs.unlink(reportPath, (err) => {
         if (err) {
@@ -172,19 +188,19 @@ const executeTest = async (req, res) => {
   });
 
   //jmeter command the path should be updated
-  const jmeterCommand = `D:/programs/apache-jmeter-5.5/bin/jmeter.bat -n -t ${jmxOutputPath} -l ${reportPath}`;
+  const jmeterCommand = `${process.env.JMETERPATH} -n -t ${jmxOutputPath} -l ${reportPath}`;
 
   //executing the jmeter command and writing in the reports.csv
   exec(jmeterCommand, (err, stdout, stderr) => {
     if (err) {
       console.error(`JMeter test failed: ${stderr}`);
-      res.status(500).send({ message: 'JMeter test failed' });
+      res.status(500).send({ message: "JMeter test failed" });
     } else {
       console.log(`JMeter test started: ${stdout}`);
-      fs.readFile(reportPath, 'utf-8', (err) => {
+      fs.readFile(reportPath, "utf-8", (err) => {
         if (err) {
           console.log(`Error reading report file: ${err}`);
-          res.status(500).send({ message: 'Error reading report file' });
+          res.status(500).send({ message: "Error reading report file" });
         } else {
           console.log(`Report file saved successfully: ${reportPath}`);
           //res.send({ message: 'JMeter test succeeded' });
@@ -197,9 +213,11 @@ const executeTest = async (req, res) => {
     const results = [];
     fs.createReadStream(reportPath)
       .pipe(csv())
-      .on('data', (data) => results.push(data["success"]))
-      .on('end', async () => {
-        results[2] === 'true' ? test.status = "Passed" : test.status = "failed"
+      .on("data", (data) => results.push(data["success"]))
+      .on("end", async () => {
+        results[2] === "true"
+          ? (test.status = "Passed")
+          : (test.status = "failed");
         await test
           .save()
           .then((data) => {
@@ -211,8 +229,7 @@ const executeTest = async (req, res) => {
             });
           });
       });
-
-  }, 5000)
+  }, 5000);
 };
 
 const getAllTests = (req, res) => {
@@ -233,6 +250,38 @@ const getAllTests = (req, res) => {
     });
 };
 
+const getResults = (req, res) => {
+  osUtils.cpuUsage(function (cpuUsage) {
+    const start = performance.now();
+
+    const speedtest = new FastSpeedtest({
+      token: "YXNkZmFzZGxmbnNkYWZoYXNkZmhrYWxm",
+      verbose: false,
+      timeout: 10000,
+      https: true,
+      urlCount: 5,
+      bufferSize: 8,
+      unit: FastSpeedtest.UNITS.Mbps,
+    });
+
+    speedtest.getSpeed().then((networkSpeed) => {
+      const end = performance.now();
+
+      const memoryUsage = process.memoryUsage().heapUsed / 1024 / 1024;
+
+      const performanceData = {
+        cpuUsage: cpuUsage * 100,
+        diskIoTime: end - start,
+        networkSpeed,
+        memoryUsage,
+      };
+
+      res.json(performanceData);
+    });
+  });
+};
+
 //exports
 exports.executeTest = executeTest;
 exports.getAllTests = getAllTests;
+exports.getResults = getResults;

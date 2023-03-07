@@ -34,6 +34,7 @@ const fetchAllTests = async (name, owner, status) => {
   const filteredData = result.data.filter(
     (seance) =>
       seance.testName.toUpperCase().includes(name.toUpperCase()) &&
+      seance.createdBy &&
       (seance.createdBy.firstname.toUpperCase().includes(owner.toUpperCase()) ||
         seance.createdBy.lastname
           .toUpperCase()
@@ -45,9 +46,19 @@ const fetchAllTests = async (name, owner, status) => {
   return filteredData;
 };
 
+const fetchDataTest = async () => {
+  const result = await axios.get(`${API_URL}/result`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return result.data;
+};
+
 const TesterService = {
   executerTest,
   fetchAllTests,
+  fetchDataTest,
 };
 
 export default TesterService;
