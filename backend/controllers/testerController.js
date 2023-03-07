@@ -154,18 +154,21 @@ const executeTest = async (req, res) => {
   fs.writeFileSync(jmxOutputPath, jmxContent, 'utf-8');
 
   const reportPath = path.join(__dirname + "/reports", 'report.csv');
-  // Check if reportPath exists : if exists delete it
+  //Check if report.csv exists : if exists delete it
   fs.access(reportPath, fs.constants.F_OK, (err) => {
     if (err) {
-      // File doesn't exist
       console.error('File does not exist');
+
     }
-    // Delete file
-    fs.unlink(reportPath, (err) => {
-      if (err) {
-        console.error(err);
-      }
-    });
+    else {
+      // Delete file
+      fs.unlink(reportPath, (err) => {
+        if (err) {
+          console.error(err);
+        }
+        console.log(`File deleted successfully`);
+      });
+    }
   });
 
   //jmeter command the path should be updated
