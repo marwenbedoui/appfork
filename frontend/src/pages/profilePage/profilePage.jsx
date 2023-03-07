@@ -1,15 +1,15 @@
 import React from "react";
-import LayoutComponent from "../../components/LayoutComponent";
+import AdminLayoutComponent from "../../components/AdminLayoutComponent";
 import TalanLogo from "../../assets/talan-logo.png";
 import ProfileComponent from "../../components/ProfileComponent/ProfileComponent";
 
 export default function ProfilePage({ role }) {
   return (
-    <LayoutComponent
+    <AdminLayoutComponent
       role={role}
       headerLogo={TalanLogo}
-      currentPage={"3"}
+      currentPage={"4"}
       mainContent={<ProfileComponent />}
-    ></LayoutComponent>
+    ></AdminLayoutComponent>
   );
 }

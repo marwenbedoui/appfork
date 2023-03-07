@@ -72,7 +72,7 @@ const LineCharts = ({ attribute, name, color }) => {
           datasets: [{ ...prevState.datasets[0], data: newData }],
         };
       });
-    }, 10000);
+    }, 1500);
     return () => clearInterval(intervalId);
   }, [attribute, result]);
 

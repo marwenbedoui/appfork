@@ -1,8 +1,8 @@
 import React from "react";
-import LayoutComponent from "../../components/LayoutComponent";
 import TalanLogo from "../../assets/talan-logo.png";
 import LineCharts from "../../components/lineCharts";
 import { Col, Row } from "antd";
+import AdminLayoutComponent from "../../components/AdminLayoutComponent";
 
 export default function DashbaordPage({ role }) {
   const Page = () => {
@@ -40,11 +40,11 @@ export default function DashbaordPage({ role }) {
     );
   };
   return (
-    <LayoutComponent
+    <AdminLayoutComponent
       role={role}
       headerLogo={TalanLogo}
       currentPage={"1"}
       mainContent={<Page />}
-    ></LayoutComponent>
+    ></AdminLayoutComponent>
   );
 }

@@ -39,7 +39,7 @@ const fetchAllTests = async (name, owner, status) => {
         seance.createdBy.lastname
           .toUpperCase()
           .includes(owner.toUpperCase())) &&
-      seance.status.includes(status)
+      seance.status.toUpperCase().includes(status.toUpperCase())
   );
 
   filteredData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
