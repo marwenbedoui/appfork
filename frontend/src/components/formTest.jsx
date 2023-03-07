@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Form, Input, Modal, Spin } from "antd";
+import { Button, Form, Input, Modal, Select, Spin } from "antd";
 import TesterService from "../services/TesterServices/TesterService";
 import { toast } from "react-toastify";
 
@@ -53,7 +53,16 @@ export const FormTest = ({ visible, onCancel }) => {
           name="protocol"
           rules={[{ required: true, message: "Please input the protocol !!" }]}
         >
-          <Input placeholder="http-https..." type="text" name="protocol" />
+          <Select
+            defaultValue={""}
+            placeholder="http / https / .."
+            style={{ width: "100%" }}
+            name="protocol"
+            options={[
+              { value: "http", label: "HTTP" },
+              { value: "https", label: "HTTPS" },
+            ]}
+          />
         </Form.Item>
         <Form.Item
           label="URL"
@@ -97,7 +106,16 @@ export const FormTest = ({ visible, onCancel }) => {
             },
           ]}
         >
-          <Input type="text" name="method" placeholder="POST GET ..." />
+          <Select
+            defaultValue={""}
+            placeholder="POST GET ..."
+            style={{ width: "100%" }}
+            name="method"
+            options={[
+              { value: "get", label: "GET" },
+              { value: "post", label: "POST" },
+            ]}
+          />
         </Form.Item>
         <Form.Item>
           <Button htmlType="submit">

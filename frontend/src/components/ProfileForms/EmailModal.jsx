@@ -16,7 +16,6 @@ export default function EmailModal({ visible, onCancel }) {
       onCancel();
       toast.success(response.message);
     } catch (error) {
-      //console.error(error.response.data);
       toast.error(error.response.data.error);
     } finally {
       setLoading(false);

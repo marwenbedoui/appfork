@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const path = require("path");
+
 //routers path
 const testerRouter = require("./routers/testerRouter");
 const usersRouter = require("./routers/usersRouter");
@@ -12,8 +14,6 @@ app.use(cookieParser());
 
 // connexion avec la base de données
 require("dotenv").config();
-require("./config/database").connect();
-
 const PORT = process.env.PORT || 5000;
 
 // donner une exception à la partie react de consommer le backend
@@ -30,6 +30,11 @@ app.use(express.urlencoded({ extended: true }));
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
+
+require("./config/database").connect();
+
+var dir = path.join(__dirname, "/test/reports");
+app.use(express.static(dir));
 
 //routers
 app.use("/api/v1", testerRouter);

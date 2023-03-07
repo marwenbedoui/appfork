@@ -13,7 +13,7 @@ import ProfileServices from "../services/ProfileServices";
 const { Content, Footer, Sider } = Layout;
 
 const LayoutComponent = ({ headerLogo, mainContent, currentPage, role }) => {
-  const items = [
+  const data = [
     {
       icon: DashboardOutlined,
       label: "Tableau de bord",
@@ -43,7 +43,17 @@ const LayoutComponent = ({ headerLogo, mainContent, currentPage, role }) => {
         window.location.href = "/login";
       },
     },
-  ].map((sideBarItem, index) => ({
+  ];
+  if (role === "admin") {
+    data.splice(2, 0, {
+      icon: UserOutlined,
+      label: "Add user",
+      clickEvent: () => {
+        window.location.href = `/${role}/add-user`;
+      },
+    });
+  }
+  const items = data.map((sideBarItem, index) => ({
     key: String(index + 1),
     icon: React.createElement(sideBarItem.icon),
     label: String(sideBarItem.label),

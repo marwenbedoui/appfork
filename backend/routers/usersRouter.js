@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const usersController = require("../controllers/usersController");
-const auth = require("../middlewares/Auth");
+const { isUser } = require("../middlewares/Auth");
 
 //login
 router.post("/login", usersController.login);
@@ -9,12 +9,12 @@ router.get("/logout", usersController.logout);
 //verify login
 router.get("/loggedIn", usersController.verifyLoggedIn);
 //update password
-router.put("/update-password", auth, usersController.updatePassword);
+router.put("/update-password", isUser, usersController.updatePassword);
 //update lastname and firstname
-router.put("/update-names", auth, usersController.updateInfo);
+router.put("/update-names", isUser, usersController.updateInfo);
 //update mail
-router.put("/update-mail", auth, usersController.updateMail);
+router.put("/update-mail", isUser, usersController.updateMail);
 //get user info
-router.get("/get-info", auth, usersController.getInfo);
+router.get("/get-info", isUser, usersController.getInfo);
 
 module.exports = router;
