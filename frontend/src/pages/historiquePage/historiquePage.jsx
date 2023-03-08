@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-// import AdminLayoutComponent from "../../components/AdminLayoutComponent";
 import TableComponent from "../../components/TableComponent";
 import TalanLogo from "../../assets/talan-logo.png";
 import { Button, Col, Input, Row, Select } from "antd";
@@ -68,7 +67,7 @@ const Page = ({ role }) => {
           setModalTest(false);
         }}
       />
-      <TableComponent data={data} />
+      <TableComponent data={data} isAdminPage={false} />
     </>
   );
 };

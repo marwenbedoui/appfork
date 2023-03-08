@@ -58,5 +58,32 @@ const register = async (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({}, { passwordHash: 0 });
+    return res.status(200).json(users);
+  } catch (error) {
+    return res.status(500).json({ message: "error in getting users" })
+  }
+}
+
+const deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.id
+    User.findByIdAndDelete({ _id: userId }, (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send({ error: 'An error occurred while deleting the user.' });
+      } else {
+        res.status(200).send({ message: 'User deleted successfully.' });
+      }
+    })
+  } catch (error) {
+    res.status(500).send({ error: " Ooops! error in deleting the user" });
+  }
+}
+
 //exports
 exports.register = register;
+exports.getAllUsers = getAllUsers;
+exports.deleteUser = deleteUser;
