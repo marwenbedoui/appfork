@@ -76,7 +76,7 @@ const Page = ({ role }) => {
           setModalTest(false);
         }}
       />
-      <TableComponent data={data} isAdminPage={false} />
+      <TableComponent data={data} isAdminPage={false} role={role} />
     </>
   );
 };
