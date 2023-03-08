@@ -3,6 +3,7 @@ import {
   DatabaseOutlined,
   LogoutOutlined,
   UserOutlined,
+  UsergroupAddOutlined,
 } from "@ant-design/icons";
 import { Avatar, Col, Layout, Menu, Row, theme, Typography } from "antd";
 import { Header } from "antd/es/layout/layout";
@@ -46,10 +47,10 @@ const LayoutComponent = ({ headerLogo, mainContent, currentPage, role }) => {
   ];
   if (role === "admin") {
     data.splice(2, 0, {
-      icon: UserOutlined,
-      label: "Add user",
+      icon: UsergroupAddOutlined,
+      label: "All users",
       clickEvent: () => {
-        window.location.href = `/${role}/add-user`;
+        window.location.href = `/${role}/all-users`;
       },
     });
   }

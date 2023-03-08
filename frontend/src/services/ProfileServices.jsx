@@ -66,36 +66,11 @@ const updateMail = async (data) => {
   }
 };
 
-const addUser = async (data) => {
-  try {
-    const result = await axios.post(
-      `${API_URL}register`,
-      {
-        firstname: data.firstname,
-        lastname: data.lastname,
-        email: data.email,
-        password: data.password,
-        passwordVerify: data.passwordVerify,
-        role: data.role,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    return result.data;
-  } catch (error) {
-    return error.response.data;
-  }
-};
-
 const ProfileServices = {
   getInfos,
   updateInfo,
   updateMail,
   updatePassword,
-  addUser,
 };
 
 export default ProfileServices;

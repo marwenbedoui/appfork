@@ -1,5 +1,5 @@
 import { Redirect, Route, Switch } from "react-router-dom";
-import AddUserPage from "../pages/addUserPage/addUserPage";
+import AllUsers from "../pages/AllUsersPage/AllUsers";
 import DashbaordPage from "../pages/dashboardPage/dashboardPage";
 import HistoriquePage from "../pages/historiquePage/historiquePage";
 import ProfilePage from "../pages/profilePage/profilePage";
@@ -16,8 +16,8 @@ export const AdminRouters = () => {
       <Route exact path="/admin/profile">
         <ProfilePage role="admin" />
       </Route>
-      <Route exact path="/admin/add-user">
-        <AddUserPage role="admin" />
+      <Route exact path="/admin/all-users">
+        <AllUsers role="admin" />
       </Route>
       <Route exact path="*">
         <Redirect to="/admin/accueil" />
