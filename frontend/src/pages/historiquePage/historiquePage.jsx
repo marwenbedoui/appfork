@@ -30,7 +30,10 @@ const Page = ({ role }) => {
             size="large"
             type="primary"
             onClick={() => setModalTest(true)}
-            style={{ float: "right", marginBottom: "30px" }}
+            style={{
+              float: "right",
+              marginBottom: "30px",
+            }}
             shape="round"
             icon={<FileAddOutlined spin={true} />}
           >

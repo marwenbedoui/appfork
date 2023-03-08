@@ -450,7 +450,10 @@ export const AddTestModal = ({ visible, onCancel }) => {
           />
         </Form.Item>
         <Form.Item>
-          <Button htmlType="submit">
+          <Button
+            htmlType="submit"
+            style={{ backgroundColor: "green", color: "white" }}
+          >
             {loading ? <Spin /> : "Executer test"}
           </Button>
         </Form.Item>
