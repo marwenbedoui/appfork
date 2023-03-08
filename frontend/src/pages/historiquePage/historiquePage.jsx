@@ -3,7 +3,7 @@ import TableComponent from "../../components/TableComponent";
 import TalanLogo from "../../assets/talan-logo.png";
 import { Button, Col, Input, Row, Select } from "antd";
 import "./historiquePage.css";
-import { FormTest } from "../../components/formTest";
+import { AddTestModal } from "../../components/Modals";
 import TesterService from "../../services/TesterServices/TesterService";
 import LayoutComponent from "../../components/LayoutComponent";
 
@@ -61,7 +61,7 @@ const Page = ({ role }) => {
           />
         </Col>
       </Row>
-      <FormTest
+      <AddTestModal
         visible={modalTest}
         onCancel={() => {
           setModalTest(false);
