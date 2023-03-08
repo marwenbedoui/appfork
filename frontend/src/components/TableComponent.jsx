@@ -2,7 +2,7 @@ import { Button, Popconfirm, Table, Tag } from "antd";
 import { useState, useEffect } from "react";
 import AdminServices from "../services/AdminServices/AdminServices";
 
-const TableComponent = ({ data, isAdminPage }) => {
+const TableComponent = ({ data, isAdminPage, role }) => {
   const [columns, setColumns] = useState([]);
 
   useEffect(() => {
@@ -13,7 +13,7 @@ const TableComponent = ({ data, isAdminPage }) => {
           dataIndex: "testName",
           key: "testName",
           render: (_, { _id, testName }) => {
-            const route = `/testeur/test/${_id}`;
+            const route = `/${role}/test/${_id}`;
             return (
               <div style={{ textTransform: "capitalize" }}>
                 <a href={route}>{testName}</a>

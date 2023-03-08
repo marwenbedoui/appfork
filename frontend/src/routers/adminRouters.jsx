@@ -3,6 +3,7 @@ import AllUsers from "../pages/AllUsersPage/AllUsers";
 import DashbaordPage from "../pages/dashboardPage/dashboardPage";
 import HistoriquePage from "../pages/historiquePage/historiquePage";
 import ProfilePage from "../pages/profilePage/profilePage";
+import ResultTestPage from "../pages/resultTestPage/resultTestPage";
 
 export const AdminRouters = () => {
   return (
@@ -18,6 +19,9 @@ export const AdminRouters = () => {
       </Route>
       <Route exact path="/admin/all-users">
         <AllUsers role="admin" />
+      </Route>
+      <Route exact path="/admin/test/:id">
+        <ResultTestPage role="admin" />
       </Route>
       <Route exact path="*">
         <Redirect to="/admin/accueil" />
