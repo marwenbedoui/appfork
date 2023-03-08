@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import TableComponent from "../../components/TableComponent";
 import TalanLogo from "../../assets/talan-logo.png";
-import { Button, Col, Input, Row, Select } from "antd";
+import { Button, Col, Input, Row, Select, Tooltip } from "antd";
 import "./historiquePage.css";
-import { FormTest } from "../../components/formTest";
+import { AddTestModal } from "../../components/Modals";
 import TesterService from "../../services/TesterServices/TesterService";
 import LayoutComponent from "../../components/LayoutComponent";
+import { FileAddOutlined } from "@ant-design/icons";
 
 const Page = ({ role }) => {
   const [modalTest, setModalTest] = useState(false);
@@ -24,13 +25,21 @@ const Page = ({ role }) => {
       {role === "simpleUser" ? (
         ""
       ) : (
-        <Button
-          type="primary"
-          className="bouton"
-          onClick={() => setModalTest(true)}
-        >
-          Exécuter un test
-        </Button>
+        <Tooltip title="Add new user">
+          <Button
+            size="large"
+            type="primary"
+            onClick={() => setModalTest(true)}
+            style={{
+              float: "right",
+              marginBottom: "30px",
+            }}
+            shape="round"
+            icon={<FileAddOutlined spin={true} />}
+          >
+            Executer test
+          </Button>
+        </Tooltip>
       )}
       <Row>
         <Col span={5}>
@@ -61,7 +70,7 @@ const Page = ({ role }) => {
           />
         </Col>
       </Row>
-      <FormTest
+      <AddTestModal
         visible={modalTest}
         onCancel={() => {
           setModalTest(false);

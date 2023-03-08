@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Avatar, Row, Col, Space, Button, Upload, message } from "antd";
 import "./ProfileComponent.css";
 import ProfileServices from "../../services/ProfileServices";
-import InfoModal from "../ProfileForms/InfoModal";
-import EmailModal from "../ProfileForms/EmailModal";
-import PasswordModal from "../ProfileForms/PasswordModal";
+import { PasswordModal, EmailModal, InfoModal } from "../Modals";
 import { UploadOutlined } from "@ant-design/icons";
 
 function ProfileComponent() {

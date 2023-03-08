@@ -1,7 +1,7 @@
 import { Button, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import TalanLogo from "../../assets/talan-logo.png";
-import AddUserForm from "../../components/addUserForm";
+import { AddUserModal } from "../../components/Modals";
 import LayoutComponent from "../../components/LayoutComponent";
 import TableComponent from "../../components/TableComponent";
 import AdminServices from "../../services/AdminServices/AdminServices";
@@ -33,7 +33,7 @@ const Page = () => {
         </Button>
       </Tooltip>
 
-      <AddUserForm onCancel={handleCancelAddUser} visible={modalAddUserForm} />
+      <AddUserModal onCancel={handleCancelAddUser} visible={modalAddUserForm} />
       <TableComponent data={data} isAdminPage={true} />
     </>
   );
