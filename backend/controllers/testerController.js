@@ -77,6 +77,7 @@ const executeTest = async (req, res) => {
         results[2] === "true"
           ? (test.status = "Passed")
           : (test.status = "failed");
+        console.log(results);
         await test
           .save()
           .then((data) => {
@@ -88,7 +89,7 @@ const executeTest = async (req, res) => {
             });
           });
       });
-  }, 5000);
+  }, 10000);
 };
 
 const getAllTests = (req, res) => {
