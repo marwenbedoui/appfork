@@ -1,42 +1,26 @@
 import React from "react";
 import TalanLogo from "../../assets/talan-logo.png";
-import LineCharts from "../../components/lineCharts";
 import { Col, Row } from "antd";
 // import AdminLayoutComponent from "../../components/AdminLayoutComponent";
 import LayoutComponent from "../../components/LayoutComponent";
+import LineChart from "../../components/dynamicChart";
 
 export default function DashbaordPage({ role }) {
   const Page = () => {
     return (
       <Row>
-        <Col span={11} offset={1}>
-          <LineCharts
-            attribute={"cpuUsage"}
-            name={"CPU"}
-            color={"rgb(75, 192, 192)"}
-          />
+        <Col span={24}>
+          <LineChart attribute={"cpuUsage"} name={"CPU"} />
         </Col>
-        <Col span={11} offset={1}>
-          <LineCharts
-            attribute={"diskIoTime"}
-            name={"Disque"}
-            color={"rgb(75, 192, 192)"}
-          />
+        {/* <Col span={12}>
+          <LineChart attribute={"diskIoTime"} name={"Disque"} />
         </Col>
-        <Col span={11} offset={1}>
-          <LineCharts
-            attribute={"networkSpeed"}
-            name={"Réseau"}
-            color={"rgb(0, 21, 41)"}
-          />
+        <Col span={12}>
+          <LineChart attribute={"networkSpeed"} name={"Réseau"} />
         </Col>
-        <Col span={11} offset={1}>
-          <LineCharts
-            attribute={"memoryUsage"}
-            name={"Mémoire"}
-            color={"#001529"}
-          />
-        </Col>
+        <Col span={12}>
+          <LineChart attribute={"memoryUsage"} name={"Mémoire"} />
+        </Col> */}
       </Row>
     );
   };
