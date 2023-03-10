@@ -1,5 +1,7 @@
 const Test = require("../models/testModel");
+const util = require("util");
 const { exec } = require("child_process");
+const execPromise = util.promisify(require("child_process").exec);
 const path = require("path");
 const fs = require("fs");
 const csv = require("csv-parser");
@@ -7,8 +9,11 @@ const osUtils = require("os-utils");
 const { performance } = require("perf_hooks");
 const FastSpeedtest = require("fast-speedtest-api");
 const { getTemplate } = require("../test/template/getTemplate");
+const bytes = require("bytes");
+const pidusage = require("pidusage");
 
 const executeTest = async (req, res) => {
+  const statsArray = [];
   //initialzing a void status
   const status = "";
 
@@ -50,20 +55,64 @@ const executeTest = async (req, res) => {
   const jmeterCommand = `${process.env.JMETERPATH} -n -t ${jmxOutputPath} -l ${reportPath}`;
 
   //executing the jmeter command and writing in the reports.csv
-  exec(jmeterCommand, (err, stdout, stderr) => {
+  exec(jmeterCommand, async (err, stdout, stderr) => {
     if (err) {
       console.error(`JMeter test failed: ${stderr}`);
       res.status(500).send({ message: "JMeter test failed" });
-    } else {
-      console.log(`JMeter test started: ${stdout}`);
-      fs.readFile(reportPath, "utf-8", (err) => {
-        if (err) {
-          console.log(`Error reading report file: ${err}`);
-          res.status(500).send({ message: "Error reading report file" });
-        } else {
-          console.log(`Report file saved successfully: ${reportPath}`);
+    }
+    console.log(`JMeter test started: ${stdout}`);
+    try {
+      // Execute the jps command to list all Java processes
+      const { stdout: jpsStdout, stderr: jpsStderr } = await execPromise("jps");
+      if (jpsStderr) {
+        console.error(`exec error: ${jpsStderr}`);
+        return res.status(500).send("Error getting JVM metrics");
+      }
+      // Parse the output of the jps command to find the process ID of the JVM
+      const lines = jpsStdout.split("\n");
+      let processId = null;
+      lines.forEach((line) => {
+        if (line.includes("TestApplication")) {
+          const parts = line.split(" ");
+          processId = parts[0];
         }
       });
+      if (!processId) {
+        console.error("Could not find JVM process");
+        return res.status(200).json({
+          memUsed: `0 MB`,
+          cpuUsed: `0 %`,
+        });
+      }
+
+      const intervalId = () => {
+        //const statsArray = [];
+        const interval = setInterval(async () => {
+          const stats = await pidusage(processId);
+          statsArray.push({ cpu: stats.cpu.toFixed(2) + '%', memory: bytes(stats.memory) });
+          if (statsArray.length >= 16) {
+            console.log(statsArray);
+            clearInterval(interval); // Clear the interval when statsArray has 5 elements
+          }
+        }, 1000);
+        return interval; // Return the interval ID
+      };
+
+      const output = intervalId();
+
+      setTimeout(() => {
+        clearInterval(output);
+        res.json({
+          jvm: statsArray,
+        });
+      }, 15000);
+
+      
+    } catch (err) {
+      console.error(err);
+      return res
+        .status(500)
+        .send({ error: "errrrrrrrrrrrrrrrrrrrrrrrrreeeeru" });
     }
   });
 
@@ -77,19 +126,13 @@ const executeTest = async (req, res) => {
         results[2] === "true"
           ? (test.status = "Passed")
           : (test.status = "failed");
-        console.log(results);
-        await test
-          .save()
-          .then((data) => {
-            res.send(data);
-          })
-          .catch((err) => {
-            res.status(500).send({
-              message: err.message || "Error",
-            });
+        await test.save().catch((err) => {
+          res.status(500).send({
+            message: err.message || "Error",
           });
+        });
       });
-  }, 10000);
+  }, 5900);
 };
 
 const getAllTests = (req, res) => {
@@ -141,7 +184,56 @@ const getResults = (req, res) => {
   });
 };
 
+// const getJvmProcess = (req, res) => {
+
+//   // Execute the jps command to list all Java processes
+//   exec('jps', (error, stdout, stderr) => {
+//     if (error) {
+//       console.error(`exec error: ${error}`);
+//       res.status(500).send('Error getting JVM metrics');
+//       return;
+//     }
+
+//     // Parse the output of the jps command to find the process ID of the JVM
+//     const lines = stdout.split('\n');
+//     let processId = null;
+//     lines.forEach(line => {
+//       if (line.includes('TestApplication')) {
+//         const parts = line.split(' ');
+//         processId = parts[0];
+//       }
+//     });
+
+//     if (!processId) {
+//       console.error('Could not find JVM process');
+//       res.status(500).json({
+
+//         memUsed: `0 MB`,
+//         cpuUsed: `0 %`
+//       });
+//       return;
+//     }
+//     pidusage(processId, (err, stats) => {
+//       if (err) {
+//         console.error(err);
+//         return res.sendStatus(500);
+//       }
+//       res.json({
+//         jvm: {
+//           memory: bytes(stats.memory),
+//           cpu: stats.cpu.toFixed(2) + '%',
+//           ctime: ms(stats.ctime),
+//           elapsed: ms(stats.elapsed),
+//           timestamp: moment(stats.timestamp).format('MMMM Do YYYY, h:mm:ss a')
+//         }
+//       });
+//     });
+//   });
+
+// };
+
 //exports
 exports.executeTest = executeTest;
 exports.getAllTests = getAllTests;
 exports.getResults = getResults;
+//exports.getJvmProcess = getJvmProcess
