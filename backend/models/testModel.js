@@ -35,6 +35,11 @@ const testSchema = new mongoose.Schema(
       ref: "user",
       // required: true,
     },
+    detail: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "testDetail",
+      // required: true,
+    }],
   },
   {
     timestamps: true,

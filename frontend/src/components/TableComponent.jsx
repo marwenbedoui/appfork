@@ -112,7 +112,7 @@ const TableComponent = ({ data, isAdminPage, role }) => {
         },
       ]);
     }
-  }, [isAdminPage]);
+  }, [isAdminPage, role]);
 
   return (
     <Table
