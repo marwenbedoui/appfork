@@ -79,10 +79,13 @@ const executeTest = async (req, res) => {
       });
       if (!processId) {
         console.error("Could not find JVM process");
-        return res.status(200).json({
-          memUsed: `0 MB`,
-          cpuUsed: `0 %`,
+        statsArray.push({
+          memory: `0 MB`,
+          cpu: `0 %`,
         });
+        test.detail = statsArray;
+        test.save();
+        return res.status(200).json(statsArray);
       }
 
       const intervalId = () => {
@@ -105,7 +108,6 @@ const executeTest = async (req, res) => {
 
       setTimeout(() => {
         clearInterval(output);
-        console.log(statsArray);
         test.detail = statsArray;
         test.save();
         res.json({
