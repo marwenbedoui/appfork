@@ -193,56 +193,16 @@ const getResults = (req, res) => {
   });
 };
 
-// const getJvmProcess = (req, res) => {
+const getTestById = async (req, res) => {
+  const id = req.params.id;
+  const test = await Test.findById({ _id: id });
 
-//   // Execute the jps command to list all Java processes
-//   exec('jps', (error, stdout, stderr) => {
-//     if (error) {
-//       console.error(`exec error: ${error}`);
-//       res.status(500).send('Error getting JVM metrics');
-//       return;
-//     }
+  res.status(200).send(test)
+}
 
-//     // Parse the output of the jps command to find the process ID of the JVM
-//     const lines = stdout.split('\n');
-//     let processId = null;
-//     lines.forEach(line => {
-//       if (line.includes('TestApplication')) {
-//         const parts = line.split(' ');
-//         processId = parts[0];
-//       }
-//     });
-
-//     if (!processId) {
-//       console.error('Could not find JVM process');
-//       res.status(500).json({
-
-//         memUsed: `0 MB`,
-//         cpuUsed: `0 %`
-//       });
-//       return;
-//     }
-//     pidusage(processId, (err, stats) => {
-//       if (err) {
-//         console.error(err);
-//         return res.sendStatus(500);
-//       }
-//       res.json({
-//         jvm: {
-//           memory: bytes(stats.memory),
-//           cpu: stats.cpu.toFixed(2) + '%',
-//           ctime: ms(stats.ctime),
-//           elapsed: ms(stats.elapsed),
-//           timestamp: moment(stats.timestamp).format('MMMM Do YYYY, h:mm:ss a')
-//         }
-//       });
-//     });
-//   });
-
-// };
 
 //exports
 exports.executeTest = executeTest;
 exports.getAllTests = getAllTests;
 exports.getResults = getResults;
-//exports.getJvmProcess = getJvmProcess
+exports.getTestById= getTestById
