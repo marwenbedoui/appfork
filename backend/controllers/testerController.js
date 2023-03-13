@@ -89,7 +89,10 @@ const executeTest = async (req, res) => {
         //const statsArray = [];
         const interval = setInterval(async () => {
           const stats = await pidusage(processId);
-          statsArray.push({ cpu: stats.cpu.toFixed(2) + '%', memory: bytes(stats.memory) });
+          statsArray.push({
+            cpu: stats.cpu.toFixed(2) + "%",
+            memory: bytes(stats.memory),
+          });
           if (statsArray.length >= 16) {
             console.log(statsArray);
             clearInterval(interval); // Clear the interval when statsArray has 5 elements
@@ -102,12 +105,13 @@ const executeTest = async (req, res) => {
 
       setTimeout(() => {
         clearInterval(output);
+        console.log(statsArray);
+        test.detail = statsArray;
+        test.save();
         res.json({
           jvm: statsArray,
         });
       }, 15000);
-
-      
     } catch (err) {
       console.error(err);
       return res
@@ -126,13 +130,16 @@ const executeTest = async (req, res) => {
         results[2] === "true"
           ? (test.status = "Passed")
           : (test.status = "failed");
-        await test.save().catch((err) => {
-          res.status(500).send({
-            message: err.message || "Error",
+        await test
+          .save()
+          // .then((data) => res.send(data))
+          .catch((err) => {
+            res.status(500).send({
+              message: err.message || "Error",
+            });
           });
-        });
       });
-  }, 5900);
+  }, 10000);
 };
 
 const getAllTests = (req, res) => {

@@ -30,16 +30,21 @@ const testSchema = new mongoose.Schema(
       type: String,
       // required: true,
     },
+    detail: [
+      {
+        cpu: {
+          type: String,
+        },
+        memory: {
+          type: String,
+        },
+      },
+    ],
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
       // required: true,
     },
-    detail: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "testDetail",
-      // required: true,
-    }],
   },
   {
     timestamps: true,
