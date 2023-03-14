@@ -1,6 +1,7 @@
 const Test = require("../models/testModel");
 const util = require("util");
 const { exec } = require("child_process");
+const jwt = require("jsonwebtoken");
 const execPromise = util.promisify(require("child_process").exec);
 const path = require("path");
 const fs = require("fs");
@@ -90,7 +91,6 @@ const executeTest = async (req, res) => {
       }
 
       const intervalId = () => {
-        //const statsArray = [];
         const interval = setInterval(async () => {
           const stats = await pidusage(processId);
           statsArray.push({
@@ -164,6 +164,64 @@ const getAllTests = (req, res) => {
     });
 };
 
+const TestStatePerUser = (req, res) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  const currentUser = jwt.verify(token, process.env.TOKEN_KEY);
+  Test.find({ createdBy: currentUser.userId }).then((total) => {
+    Test.find({ createdBy: currentUser.userId, status: "Passed" })
+      .then((passed) => {
+        res.set("Access-Control-Expose-Headers", "X-Total-Count");
+        Test.find({
+          createdBy: currentUser.userId,
+          status: "failed",
+        }).then((failed) => {
+          res.status(200).json({
+            runPerUser: total.length,
+            passedTests: passed.length,
+            failedTests: failed.length,
+          });
+        });
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message: err.message || "Error",
+        });
+      });
+  });
+};
+
+const TestsPerUser = (req, res) => {
+  Test.aggregate([
+    {
+      $group: {
+        _id: {
+          $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+        },
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        date: "$_id",
+        count: 1,
+      },
+    },
+    {
+      $sort: {
+        date: 1,
+      },
+    },
+  ])
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+};
+
 const getResults = (req, res) => {
   osUtils.cpuUsage(function (cpuUsage) {
     const start = performance.now();
@@ -210,4 +268,6 @@ const getTestById = async (req, res) => {
 exports.executeTest = executeTest;
 exports.getAllTests = getAllTests;
 exports.getResults = getResults;
+exports.TestStatePerUser = TestStatePerUser;
+exports.TestsPerUser = TestsPerUser;
 exports.getTestById = getTestById;
