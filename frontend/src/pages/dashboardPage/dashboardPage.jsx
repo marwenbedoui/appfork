@@ -1,10 +1,8 @@
 import React from "react";
 import TalanLogo from "../../assets/talan-logo.png";
 import { Col, Row } from "antd";
-// import AdminLayoutComponent from "../../components/AdminLayoutComponent";
 import LayoutComponent from "../../components/LayoutComponent";
-import CircularChart from "../../components/circularChart";
-import LineCharts from "../../components/lineCharts";
+import {CircularChart,LineCharts} from "../../components/ChartsComponent";
 
 export default function DashbaordPage({ role }) {
   const Page = () => {

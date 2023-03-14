@@ -4,7 +4,7 @@ import TalanLogo from "../../assets/talan-logo.png";
 import { useParams } from "react-router-dom";
 import { Button, Col, Row, Spin } from "antd";
 import TesterService from "../../services/TesterServices/TesterService";
-import TestChart from "../../components/TestChart";
+import {TestChart } from "../../components/ChartsComponent";
 import { RollbackOutlined } from "@ant-design/icons";
 
 const Page = ({ role }) => {
