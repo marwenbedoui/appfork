@@ -11,6 +11,7 @@ const FastSpeedtest = require("fast-speedtest-api");
 const { getTemplate } = require("../test/template/getTemplate");
 const bytes = require("bytes");
 const pidusage = require("pidusage");
+const moment = require("moment")
 
 const executeTest = async (req, res) => {
   const statsArray = [];
@@ -95,6 +96,7 @@ const executeTest = async (req, res) => {
           statsArray.push({
             cpu: stats.cpu.toFixed(2) + "%",
             memory: bytes(stats.memory),
+            timestamp: moment(stats.timestamp).format("YYYY-MM-DD HH:mm:ss"),
           });
           if (statsArray.length >= 16) {
             console.log(statsArray);
@@ -195,14 +197,17 @@ const getResults = (req, res) => {
 
 const getTestById = async (req, res) => {
   const id = req.params.id;
-  const test = await Test.findById({ _id: id });
-
-  res.status(200).json(test.detail)
-}
-
+  await Test.findById(id)
+    .then((response) => {
+      res.status(200).send(response.detail);
+    })
+    .catch((e) => {
+      res.status(500).json(e);
+    });
+};
 
 //exports
 exports.executeTest = executeTest;
 exports.getAllTests = getAllTests;
 exports.getResults = getResults;
-exports.getTestById= getTestById
+exports.getTestById = getTestById;
