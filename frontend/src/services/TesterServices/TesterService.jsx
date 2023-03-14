@@ -55,10 +55,30 @@ const fetchDataTest = async () => {
   return result.data;
 };
 
+const fetchTestStatePerUser = async () => {
+  const result = await axios.get(`${API_URL}/number`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return result.data;
+};
+
+const fetchTestsPerUser = async () => {
+  const result = await axios.get(`${API_URL}/all`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return result.data;
+};
+
 const TesterService = {
   executerTest,
   fetchAllTests,
   fetchDataTest,
+  fetchTestStatePerUser,
+  fetchTestsPerUser,
 };
 
 export default TesterService;

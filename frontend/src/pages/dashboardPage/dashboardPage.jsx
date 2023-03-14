@@ -3,24 +3,19 @@ import TalanLogo from "../../assets/talan-logo.png";
 import { Col, Row } from "antd";
 // import AdminLayoutComponent from "../../components/AdminLayoutComponent";
 import LayoutComponent from "../../components/LayoutComponent";
-import LineChart from "../../components/dynamicChart";
+import CircularChart from "../../components/circularChart";
+import LineCharts from "../../components/lineCharts";
 
 export default function DashbaordPage({ role }) {
   const Page = () => {
     return (
       <Row>
-        <Col span={24}>
-          <LineChart attribute={"cpuUsage"} name={"CPU"} />
-        </Col>
-        {/* <Col span={12}>
-          <LineChart attribute={"diskIoTime"} name={"Disque"} />
+        <Col span={12}>
+          <CircularChart />
         </Col>
         <Col span={12}>
-          <LineChart attribute={"networkSpeed"} name={"Réseau"} />
+          <LineCharts />
         </Col>
-        <Col span={12}>
-          <LineChart attribute={"memoryUsage"} name={"Mémoire"} />
-        </Col> */}
       </Row>
     );
   };

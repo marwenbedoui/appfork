@@ -1,6 +1,7 @@
 const Test = require("../models/testModel");
 const util = require("util");
 const { exec } = require("child_process");
+const jwt = require("jsonwebtoken");
 const execPromise = util.promisify(require("child_process").exec);
 const path = require("path");
 const fs = require("fs");
@@ -89,7 +90,6 @@ const executeTest = async (req, res) => {
       }
 
       const intervalId = () => {
-        //const statsArray = [];
         const interval = setInterval(async () => {
           const stats = await pidusage(processId);
           statsArray.push({
@@ -162,6 +162,64 @@ const getAllTests = (req, res) => {
     });
 };
 
+const TestStatePerUser = (req, res) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  const currentUser = jwt.verify(token, process.env.TOKEN_KEY);
+  Test.find({ createdBy: currentUser.userId }).then((total) => {
+    Test.find({ createdBy: currentUser.userId, status: "Passed" })
+      .then((passed) => {
+        res.set("Access-Control-Expose-Headers", "X-Total-Count");
+        Test.find({
+          createdBy: currentUser.userId,
+          status: "failed",
+        }).then((failed) => {
+          res.status(200).json({
+            runPerUser: total.length,
+            passedTests: passed.length,
+            failedTests: failed.length,
+          });
+        });
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message: err.message || "Error",
+        });
+      });
+  });
+};
+
+const TestsPerUser = (req, res) => {
+  Test.aggregate([
+    {
+      $group: {
+        _id: {
+          $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+        },
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        date: "$_id",
+        count: 1,
+      },
+    },
+    {
+      $sort: {
+        date: 1,
+      },
+    },
+  ])
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+};
+
 const getResults = (req, res) => {
   osUtils.cpuUsage(function (cpuUsage) {
     const start = performance.now();
@@ -193,56 +251,9 @@ const getResults = (req, res) => {
   });
 };
 
-// const getJvmProcess = (req, res) => {
-
-//   // Execute the jps command to list all Java processes
-//   exec('jps', (error, stdout, stderr) => {
-//     if (error) {
-//       console.error(`exec error: ${error}`);
-//       res.status(500).send('Error getting JVM metrics');
-//       return;
-//     }
-
-//     // Parse the output of the jps command to find the process ID of the JVM
-//     const lines = stdout.split('\n');
-//     let processId = null;
-//     lines.forEach(line => {
-//       if (line.includes('TestApplication')) {
-//         const parts = line.split(' ');
-//         processId = parts[0];
-//       }
-//     });
-
-//     if (!processId) {
-//       console.error('Could not find JVM process');
-//       res.status(500).json({
-
-//         memUsed: `0 MB`,
-//         cpuUsed: `0 %`
-//       });
-//       return;
-//     }
-//     pidusage(processId, (err, stats) => {
-//       if (err) {
-//         console.error(err);
-//         return res.sendStatus(500);
-//       }
-//       res.json({
-//         jvm: {
-//           memory: bytes(stats.memory),
-//           cpu: stats.cpu.toFixed(2) + '%',
-//           ctime: ms(stats.ctime),
-//           elapsed: ms(stats.elapsed),
-//           timestamp: moment(stats.timestamp).format('MMMM Do YYYY, h:mm:ss a')
-//         }
-//       });
-//     });
-//   });
-
-// };
-
 //exports
 exports.executeTest = executeTest;
 exports.getAllTests = getAllTests;
 exports.getResults = getResults;
-//exports.getJvmProcess = getJvmProcess
+exports.TestStatePerUser = TestStatePerUser;
+exports.TestsPerUser = TestsPerUser;
