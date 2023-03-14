@@ -34,6 +34,8 @@ const Page = ({ role }) => {
             style={{
               float: "right",
               marginBottom: "30px",
+              backgroundColor: "#2596be",
+              color: "white",
             }}
             shape="round"
             icon={<FileAddOutlined spin={true} />}
@@ -47,7 +49,7 @@ const Page = ({ role }) => {
           <Input
             placeholder="Nom du test"
             value={name}
-            //TODO : fix the index 
+            //TODO : fix the index
             //key={data.indexOf(name)}
             onChange={(e) => setName(e.target.value)}
           />

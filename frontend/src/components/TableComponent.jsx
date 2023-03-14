@@ -1,9 +1,15 @@
-import { Button, Popconfirm, Table, Tag } from "antd";
+import { Button, Popconfirm, Space, Table, Tag } from "antd";
 import { useState, useEffect } from "react";
 import AdminServices from "../services/AdminServices/AdminServices";
+import { TestStatusModel } from "./Modals";
 
 const TableComponent = ({ data, isAdminPage, role }) => {
   const [columns, setColumns] = useState([]);
+  const [modalStatusTest, setModalStatusTest] = useState(false);
+
+  const handleCancelTestsStatus = () => {
+    setModalStatusTest(false);
+  };
 
   useEffect(() => {
     if (!isAdminPage) {
@@ -94,25 +100,54 @@ const TableComponent = ({ data, isAdminPage, role }) => {
           render: (_, { _id, role }) => {
             if (role === "admin") {
               return null;
+            } else if (role === "tester") {
+              return (
+                <Space>
+                  <Button
+                    type="primary"
+                    style={{ backgroundColor: "#2596be", color: "white" }}
+                    onClick={() => setModalStatusTest(true)}
+                  >
+                    Show status
+                  </Button>
+                  <TestStatusModel
+                    id={_id}
+                    onCancel={handleCancelTestsStatus}
+                    visible={modalStatusTest}
+                  />
+                  <Popconfirm
+                    title="Delete user"
+                    description="Are you sure you want to delete this user?"
+                    onConfirm={() => AdminServices.deleteUserById(_id)}
+                    okText="Yes"
+                    cancelText="No"
+                  >
+                    <Button type="primary" danger>
+                      Delete
+                    </Button>
+                  </Popconfirm>
+                </Space>
+              );
+            } else {
+              return (
+                <Popconfirm
+                  title="Delete user"
+                  description="Are you sure you want to delete this user?"
+                  onConfirm={() => AdminServices.deleteUserById(_id)}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button type="primary" danger>
+                    Delete
+                  </Button>
+                </Popconfirm>
+              );
             }
-            return (
-              <Popconfirm
-                title="Delete user"
-                description="Are you sure you want to delete this user?"
-                onConfirm={() => AdminServices.deleteUserById(_id)}
-                okText="Yes"
-                cancelText="No"
-              >
-                <Button type="primary" danger>
-                  Delete
-                </Button>
-              </Popconfirm>
-            );
           },
         },
       ]);
     }
-  }, [isAdminPage, role]);
+  }, [isAdminPage, role, modalStatusTest]);
 
   return (
     <Table

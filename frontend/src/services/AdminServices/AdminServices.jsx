@@ -45,10 +45,21 @@ const deleteUserById = async (id) => {
 
   return result.data;
 };
+
+const getTestsStatusPerUserId = async (id) => {
+  const result = await axios.get(`${API_URL}/get-status/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return result.data;
+}
+
 const AdminServices = {
   getAllUsers,
   addUser,
   deleteUserById,
+  getTestsStatusPerUserId
 };
 
 export default AdminServices;
