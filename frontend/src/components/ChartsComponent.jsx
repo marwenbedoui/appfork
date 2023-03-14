@@ -1,7 +1,6 @@
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as echarts from "echarts";
 import TesterService from "../services/TesterServices/TesterService";
-
 
 export const TestChart = ({ values }) => {
   const xAxisData = values.map((data) => data.timestamp);
@@ -199,7 +198,7 @@ export const CircularChart = () => {
               },
             },
             {
-              value: data.runPerUser,
+              value: data.runPerUser === 0 ? 1 : data.runPerUser,
               itemStyle: {
                 color: "none",
                 decal: {
