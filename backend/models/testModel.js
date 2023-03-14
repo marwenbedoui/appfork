@@ -38,6 +38,9 @@ const testSchema = new mongoose.Schema(
         memory: {
           type: String,
         },
+        timestamp: {
+          type : String
+        }
       },
     ],
     createdBy: {
