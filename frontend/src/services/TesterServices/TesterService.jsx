@@ -25,22 +25,35 @@ const executerTest = async (data) => {
   return result.data;
 };
 
-const fetchAllTests = async (name, owner, status) => {
+const fetchAllTests = async (name, owner, status, role, auth) => {
   const result = await axios.get(API_URL, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  const filteredData = result.data.filter(
-    (seance) =>
-      seance.testName.toUpperCase().includes(name.toUpperCase()) &&
-      seance.createdBy &&
-      (seance.createdBy.firstname.toUpperCase().includes(owner.toUpperCase()) ||
-        seance.createdBy.lastname
+  let filteredData;
+  if (role === "testeur") {
+    filteredData = result.data.filter(
+      (seance) =>
+        seance.testName.toUpperCase().includes(name.toUpperCase()) &&
+        seance.createdBy &&
+        seance.createdBy._id.includes(auth) &&
+        seance.status.toUpperCase().includes(status.toUpperCase())
+    );
+  } else {
+    filteredData = result.data.filter(
+      (seance) =>
+        seance.testName.toUpperCase().includes(name.toUpperCase()) &&
+        seance.createdBy &&
+        (seance.createdBy.firstname
           .toUpperCase()
-          .includes(owner.toUpperCase())) &&
-      seance.status.toUpperCase().includes(status.toUpperCase())
-  );
+          .includes(owner.toUpperCase()) ||
+          seance.createdBy.lastname
+            .toUpperCase()
+            .includes(owner.toUpperCase())) &&
+        seance.status.toUpperCase().includes(status.toUpperCase())
+    );
+  }
 
   filteredData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   return filteredData;
@@ -92,7 +105,7 @@ const TesterService = {
   fetchDataTest,
   fetchTestStatePerUser,
   fetchTestsPerUser,
-  getTestById
+  getTestById,
 };
 
 export default TesterService;
