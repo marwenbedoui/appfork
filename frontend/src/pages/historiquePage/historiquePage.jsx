@@ -7,18 +7,24 @@ import { AddTestModal } from "../../components/Modals";
 import TesterService from "../../services/TesterServices/TesterService";
 import LayoutComponent from "../../components/LayoutComponent";
 import { FileAddOutlined } from "@ant-design/icons";
+import ProfileServices from "../../services/ProfileServices";
 
 const Page = ({ role }) => {
   const [modalTest, setModalTest] = useState(false);
   const [statut, setStatut] = useState("");
   const [name, setName] = useState("");
   const [owner, setOwner] = useState("");
+  const [auth, setAuth] = useState([]);
   const [data, setData] = useState([]);
   useEffect(() => {
-    TesterService.fetchAllTests(name, owner, statut).then((res) =>
+    ProfileServices.getInfos().then((a) => {
+      setAuth(a._id);
+    });
+    console.log(auth);
+    TesterService.fetchAllTests(name, owner, statut, role, auth).then((res) =>
       setData(res)
     );
-  }, [data, name, statut, owner]);
+  }, [data, name, statut, owner, role, auth]);
 
   return (
     <>
@@ -54,13 +60,17 @@ const Page = ({ role }) => {
             onChange={(e) => setName(e.target.value)}
           />
         </Col>
-        <Col span={5} offset={1}>
-          <Input
-            placeholder="Nom du propriétaire"
-            value={owner}
-            onChange={(e) => setOwner(e.target.value)}
-          />
-        </Col>
+        {role === "testeur" ? (
+          ""
+        ) : (
+          <Col span={5} offset={1}>
+            <Input
+              placeholder="Nom du propriétaire"
+              value={owner}
+              onChange={(e) => setOwner(e.target.value)}
+            />
+          </Col>
+        )}
         <Col span={4} offset={1}>
           <Select
             defaultValue={statut}
