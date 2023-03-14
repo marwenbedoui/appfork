@@ -55,10 +55,25 @@ const fetchDataTest = async () => {
   return result.data;
 };
 
+const getTestById = async (id) => {
+  try {
+    const response = await axios.get(`${API_URL}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+
 const TesterService = {
   executerTest,
   fetchAllTests,
   fetchDataTest,
+  getTestById
 };
 
 export default TesterService;

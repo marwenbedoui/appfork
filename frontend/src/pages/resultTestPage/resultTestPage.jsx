@@ -2,38 +2,47 @@ import React, { useEffect, useState } from "react";
 import LayoutComponent from "../../components/LayoutComponent";
 import TalanLogo from "../../assets/talan-logo.png";
 import { useParams } from "react-router-dom";
-import { CsvToHtmlTable } from "react-csv-to-table";
-import { Button } from "antd";
+import { Button, Col, Row, Spin } from "antd";
+import TesterService from "../../services/TesterServices/TesterService";
+import TestChart from "../../components/TestChart";
+import { RollbackOutlined } from "@ant-design/icons";
 
 const Page = ({ role }) => {
+  const [data, setData] = useState([]);
   const { id } = useParams();
-  const route = `http://localhost:5000/reports_${id}.csv`;
-  const [csvData, setCsvData] = useState(null);
 
   useEffect(() => {
-    const fetchCsv = async () => {
-      const response = await fetch(route);
-      const csvText = await response.text();
-      setCsvData(csvText);
-    };
-    fetchCsv();
-  }, [route]);
+    TesterService.getTestById(id)
+      .then((response) => {
+        setData(response);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [id]);
 
-  if (!csvData) {
-    return <div>Loading...</div>;
+  if (!data || data.length === 0) {
+    return <Spin tip="Loading" size="large" />;
   }
   const path = `/${role}/historiques`;
   return (
-    <div>
-      <CsvToHtmlTable
-        data={csvData}
-        csvDelimiter=","
-        tableClassName="table table-striped table-hover"
-      />
-      <Button href={path} style={{ float: "left", marginTop: "50px" }}>
-        Retour
-      </Button>
-    </div>
+    <Row gutter={[16, 16]}>
+      <Col span={24}>
+        <Button
+          size="large"
+          type="primary"
+          href={path}
+          style={{ float: "right" }}
+          shape="round"
+          icon={<RollbackOutlined />}
+        >
+          Retour
+        </Button>
+      </Col>
+      <Col span={24}>
+        <TestChart values={data} />
+      </Col>
+    </Row>
   );
 };
 
