@@ -5,4 +5,4 @@
 jmeter.log
 /test/reports
 /test/tests
-.env
+/.env
