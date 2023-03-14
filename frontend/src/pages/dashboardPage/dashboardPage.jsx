@@ -9,7 +9,7 @@ export default function DashbaordPage({ role }) {
     return (
       <Row>
         <Col span={12}>
-          <CircularChart />
+          <CircularChart isAdmin={false} id={null} />
         </Col>
         <Col span={12}>
           <LineCharts />

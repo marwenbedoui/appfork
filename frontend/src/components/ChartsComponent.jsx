@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import * as echarts from "echarts";
 import TesterService from "../services/TesterServices/TesterService";
+import AdminServices from "../services/AdminServices/AdminServices";
 
 export const TestChart = ({ values }) => {
   const xAxisData = values.map((data) => data.timestamp);
@@ -129,27 +130,36 @@ export const LineCharts = () => {
   return <div id="main" style={{ width: "100%", height: 500 }} />;
 };
 
-export const CircularChart = () => {
+export const CircularChart = ({isAdmin, id}) => {
   const [myChart, setMyChart] = useState(null);
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    const chartDom = document.getElementById("circular");
+    const chartDom = document.getElementById(id);
     const newChart = echarts.init(chartDom);
     setMyChart(newChart);
     return () => {
       newChart.dispose();
     };
-  }, []);
+  }, [id]);
 
   useEffect(() => {
-    TesterService.fetchTestStatePerUser().then(
-      (a) => {
-        setData(a);
-      },
-      [data]
-    );
-    console.log(data);
+    
+    if (isAdmin) {
+      AdminServices.getTestsStatusPerUserId(id).then(
+        (a) => {
+          setData(a);
+        }
+      );
+    }
+    else {
+      TesterService.fetchTestStatePerUser().then(
+        (a) => {
+          setData(a);
+        }
+      );
+    }
+    
     const option = {
       title: {
         text: "Pourcentage des status du test",
@@ -214,7 +224,7 @@ export const CircularChart = () => {
       ],
     };
     myChart && myChart.setOption(option);
-  }, [myChart, data]);
+  }, [myChart, data,id,isAdmin]);
 
-  return <div id="circular" style={{ width: "100%", height: 500 }} />;
+  return <div id={id} style={{ width: "100%", height: 500 }} />;
 };

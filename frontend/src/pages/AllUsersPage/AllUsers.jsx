@@ -25,7 +25,12 @@ const Page = () => {
           size="large"
           type="primary"
           onClick={() => setModalAddUserForm(true)}
-          style={{ float: "right", marginBottom: "30px" }}
+          style={{
+            float: "right",
+            marginBottom: "30px",
+            backgroundColor: "#2596be",
+            color: "white",
+          }}
           shape="round"
           icon={<UserAddOutlined spin={true} />}
         >

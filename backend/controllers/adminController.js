@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/userModel");
+const Test = require("../models/testModel");
 
 //function : adding user
 const register = async (req, res) => {
@@ -85,7 +86,36 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const getTestStatePerUserId = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    Test.find({ createdBy: userId }).then((total) => {
+      Test.find({ createdBy: userId, status: "Passed" })
+        .then((passed) => {
+          Test.find({
+            createdBy: userId,
+            status: "failed",
+          }).then((failed) => {
+            res.status(200).json({
+              runPerUser: total.length,
+              passedTests: passed.length,
+              failedTests: failed.length,
+            });
+          });
+        })
+        .catch((err) => {
+          res.status(500).send({
+            message: err.message || "Error",
+          });
+        });
+    });
+  } catch (error) {
+    
+  }
+}
+
 //exports
 exports.register = register;
 exports.getAllUsers = getAllUsers;
 exports.deleteUser = deleteUser;
+exports.getTestStatePerUserId = getTestStatePerUserId;

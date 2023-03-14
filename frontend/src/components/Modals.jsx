@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ProfileServices from "../services/ProfileServices";
 import AdminServices from "../services/AdminServices/AdminServices";
 import TesterService from "../services/TesterServices/TesterService";
+import { CircularChart } from "./ChartsComponent";
 
 export const EmailModal = ({ visible, onCancel }) => {
   const [form] = Form.useForm();
@@ -458,6 +459,22 @@ export const AddTestModal = ({ visible, onCancel }) => {
           </Button>
         </Form.Item>
       </Form>
+    </Modal>
+  );
+};
+
+export const TestStatusModel = ({ visible, onCancel , id }) => {
+
+  return (
+    <Modal open={visible} onCancel={onCancel} footer={null} width={1000}>
+      <CircularChart isAdmin={true} id={id} />
+      <Button
+        htmlType="submit"
+        style={{ backgroundColor: "#2596be", color: "white" }}
+        onClick={onCancel}
+      >
+        Close
+      </Button>
     </Modal>
   );
 };
