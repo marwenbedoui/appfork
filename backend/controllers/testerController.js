@@ -197,7 +197,7 @@ const getTestById = async (req, res) => {
   const id = req.params.id;
   const test = await Test.findById({ _id: id });
 
-  res.status(200).send(test)
+  res.status(200).json(test.detail)
 }
 
 
