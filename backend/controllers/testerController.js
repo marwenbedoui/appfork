@@ -11,6 +11,7 @@ const FastSpeedtest = require("fast-speedtest-api");
 const { getTemplate } = require("../test/template/getTemplate");
 const bytes = require("bytes");
 const pidusage = require("pidusage");
+const moment = require("moment")
 
 const executeTest = async (req, res) => {
   const statsArray = [];
@@ -95,6 +96,7 @@ const executeTest = async (req, res) => {
           statsArray.push({
             cpu: stats.cpu.toFixed(2) + "%",
             memory: bytes(stats.memory),
+            timestamp: moment(stats.timestamp).format("YYYY-MM-DD HH:mm:ss"),
           });
           if (statsArray.length >= 16) {
             console.log(statsArray);
@@ -193,56 +195,19 @@ const getResults = (req, res) => {
   });
 };
 
-// const getJvmProcess = (req, res) => {
-
-//   // Execute the jps command to list all Java processes
-//   exec('jps', (error, stdout, stderr) => {
-//     if (error) {
-//       console.error(`exec error: ${error}`);
-//       res.status(500).send('Error getting JVM metrics');
-//       return;
-//     }
-
-//     // Parse the output of the jps command to find the process ID of the JVM
-//     const lines = stdout.split('\n');
-//     let processId = null;
-//     lines.forEach(line => {
-//       if (line.includes('TestApplication')) {
-//         const parts = line.split(' ');
-//         processId = parts[0];
-//       }
-//     });
-
-//     if (!processId) {
-//       console.error('Could not find JVM process');
-//       res.status(500).json({
-
-//         memUsed: `0 MB`,
-//         cpuUsed: `0 %`
-//       });
-//       return;
-//     }
-//     pidusage(processId, (err, stats) => {
-//       if (err) {
-//         console.error(err);
-//         return res.sendStatus(500);
-//       }
-//       res.json({
-//         jvm: {
-//           memory: bytes(stats.memory),
-//           cpu: stats.cpu.toFixed(2) + '%',
-//           ctime: ms(stats.ctime),
-//           elapsed: ms(stats.elapsed),
-//           timestamp: moment(stats.timestamp).format('MMMM Do YYYY, h:mm:ss a')
-//         }
-//       });
-//     });
-//   });
-
-// };
+const getTestById = async (req, res) => {
+  const id = req.params.id;
+  await Test.findById(id)
+    .then((response) => {
+      res.status(200).send(response.detail);
+    })
+    .catch((e) => {
+      res.status(500).json(e);
+    });
+};
 
 //exports
 exports.executeTest = executeTest;
 exports.getAllTests = getAllTests;
 exports.getResults = getResults;
-//exports.getJvmProcess = getJvmProcess
+exports.getTestById = getTestById;
