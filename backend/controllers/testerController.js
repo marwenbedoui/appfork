@@ -12,7 +12,7 @@ const FastSpeedtest = require("fast-speedtest-api");
 const { getTemplate } = require("../test/template/getTemplate");
 const bytes = require("bytes");
 const pidusage = require("pidusage");
-const moment = require("moment")
+const moment = require("moment");
 
 const executeTest = async (req, res) => {
   const statsArray = [];
@@ -81,10 +81,28 @@ const executeTest = async (req, res) => {
       });
       if (!processId) {
         console.error("Could not find JVM process");
-        statsArray.push({
-          memory: `0 MB`,
-          cpu: `0 %`,
-        });
+        for (i = 0; i < 11; i++) {
+          const now = new Date();
+
+          const day = String(now.getDate()).padStart(2, "0");
+          const month = String(now.getMonth() + 1).padStart(2, "0"); // +1 car les mois commencent à 0
+          const year = now.getFullYear();
+
+          const hour = String(now.getHours()).padStart(2, "0");
+          const minute = String(now.getMinutes()).padStart(2, "0");
+          const second = String(now.getSeconds()).padStart(2, "0");
+
+          const formattedDate = `${year}-${month}-${day} ${hour}:${minute}:${
+            parseInt(second) + i
+          }`;
+
+          statsArray.push({
+            memory: `0 MB`,
+            cpu: `0 %`,
+            timestamp: formattedDate,
+          });
+        }
+
         test.detail = statsArray;
         test.save();
         return res.status(200).json(statsArray);

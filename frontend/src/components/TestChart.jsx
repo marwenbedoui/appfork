@@ -46,18 +46,19 @@ const TestChart = ({ values }) => {
         type: "line",
         data: memoryData,
         yAxisIndex: 1,
+        lineStyle: {
+          type: "dashed",
+        },
       },
     ],
   };
- 
+
   useEffect(() => {
-      console.log(memoryData);
-       const chart = echarts.init(document.getElementById("my-chart"));
-       chart.setOption(chartOptions);
-     });
+    console.log(memoryData);
+    const chart = echarts.init(document.getElementById("my-chart"));
+    chart.setOption(chartOptions);
+  });
   return <div id="my-chart" style={{ width: "100%", height: 500 }}></div>;
-
-
 };
 
 export default TestChart;
