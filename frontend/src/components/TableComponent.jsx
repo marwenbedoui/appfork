@@ -6,6 +6,7 @@ import { TestStatusModel } from "./Modals";
 const TableComponent = ({ data, isAdminPage, role }) => {
   const [columns, setColumns] = useState([]);
   const [modalStatusTest, setModalStatusTest] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
 
   const handleCancelTestsStatus = () => {
     setModalStatusTest(false);
@@ -106,12 +107,16 @@ const TableComponent = ({ data, isAdminPage, role }) => {
                   <Button
                     type="primary"
                     style={{ backgroundColor: "#2596be", color: "white" }}
-                    onClick={() => setModalStatusTest(true)}
+                    onClick={() => {
+                      setSelectedId(_id);
+                      setModalStatusTest(true);
+                    }}
                   >
                     Show status
                   </Button>
                   <TestStatusModel
-                    id={_id}
+                    name={_id}
+                    id={selectedId}
                     onCancel={handleCancelTestsStatus}
                     visible={modalStatusTest}
                   />
@@ -147,7 +152,7 @@ const TableComponent = ({ data, isAdminPage, role }) => {
         },
       ]);
     }
-  }, [isAdminPage, role, modalStatusTest]);
+  }, [isAdminPage, role, modalStatusTest, selectedId]);
 
   return (
     <Table
