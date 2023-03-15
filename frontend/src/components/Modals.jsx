@@ -463,17 +463,16 @@ export const AddTestModal = ({ visible, onCancel }) => {
   );
 };
 
-export const TestStatusModel = ({ visible, onCancel , id }) => {
-
+export const TestStatusModel = ({ visible, onCancel, id, name }) => {
   return (
     <Modal open={visible} onCancel={onCancel} footer={null} width={1000}>
-      <CircularChart isAdmin={true} id={id} />
+      <CircularChart isAdmin={true} id={id} name={name} />
       <Button
         htmlType="submit"
         style={{ backgroundColor: "#2596be", color: "white" }}
         onClick={onCancel}
       >
-        Close
+        Fermer
       </Button>
     </Modal>
   );

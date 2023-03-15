@@ -2,14 +2,14 @@ import React from "react";
 import TalanLogo from "../../assets/talan-logo.png";
 import { Col, Row } from "antd";
 import LayoutComponent from "../../components/LayoutComponent";
-import {CircularChart,LineCharts} from "../../components/ChartsComponent";
+import { CircularChart, LineCharts } from "../../components/ChartsComponent";
 
 export default function DashbaordPage({ role }) {
   const Page = () => {
     return (
       <Row>
         <Col span={12}>
-          <CircularChart isAdmin={false} id={null} />
+          <CircularChart isAdmin={false} name={"circular"} />
         </Col>
         <Col span={12}>
           <LineCharts />

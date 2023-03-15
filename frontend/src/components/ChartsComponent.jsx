@@ -130,36 +130,30 @@ export const LineCharts = () => {
   return <div id="main" style={{ width: "100%", height: 500 }} />;
 };
 
-export const CircularChart = ({isAdmin, id}) => {
+export const CircularChart = ({ isAdmin, id, name }) => {
   const [myChart, setMyChart] = useState(null);
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    const chartDom = document.getElementById(id);
+    const chartDom = document.getElementById(name);
     const newChart = echarts.init(chartDom);
     setMyChart(newChart);
     return () => {
       newChart.dispose();
     };
-  }, [id]);
+  }, [name]);
 
   useEffect(() => {
-    
     if (isAdmin) {
-      AdminServices.getTestsStatusPerUserId(id).then(
-        (a) => {
-          setData(a);
-        }
-      );
+      AdminServices.getTestsStatusPerUserId(id).then((a) => {
+        setData(a);
+      });
+    } else {
+      TesterService.fetchTestStatePerUser().then((a) => {
+        setData(a);
+      });
     }
-    else {
-      TesterService.fetchTestStatePerUser().then(
-        (a) => {
-          setData(a);
-        }
-      );
-    }
-    
+
     const option = {
       title: {
         text: "Pourcentage des status du test",
@@ -224,7 +218,7 @@ export const CircularChart = ({isAdmin, id}) => {
       ],
     };
     myChart && myChart.setOption(option);
-  }, [myChart, data,id,isAdmin]);
+  }, [myChart, data, id, isAdmin]);
 
-  return <div id={id} style={{ width: "100%", height: 500 }} />;
+  return <div id={name} style={{ width: "100%", height: 500 }} />;
 };
