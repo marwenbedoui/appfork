@@ -30,8 +30,7 @@ const testSchema = new mongoose.Schema(
       type: String,
       // required: true,
     },
-    data:
-    {
+    data: {
       type: String,
     },
     detail: [
