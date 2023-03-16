@@ -109,10 +109,8 @@ const getTestStatePerUserId = async (req, res) => {
           });
         });
     });
-  } catch (error) {
-    
-  }
-}
+  } catch (error) {}
+};
 
 //exports
 exports.register = register;

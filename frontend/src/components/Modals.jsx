@@ -6,19 +6,32 @@ import ProfileServices from "../services/ProfileServices";
 import AdminServices from "../services/AdminServices/AdminServices";
 import TesterService from "../services/TesterServices/TesterService";
 import { CircularChart } from "./ChartsComponent";
-import TextArea from "antd/es/input/TextArea";
 
 export const EmailModal = ({ visible, onCancel }) => {
   const [form] = Form.useForm();
 
   const [loading, setLoading] = useState(false);
 
+  function isJsonString(str) {
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
+
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      const response = await ProfileServices.updateMail(values);
-      onCancel();
-      toast.success(response.message);
+      if (isJsonString(values.data)) {
+        const response = await ProfileServices.updateMail(values);
+        onCancel();
+        toast.success(response.message);
+      } else {
+        onCancel();
+        toast.error("Contenu du JSON est invalide");
+      }
     } catch (error) {
       toast.error(error.response.data.error);
     } finally {
@@ -349,19 +362,18 @@ export const AddTestModal = ({ visible, onCancel }) => {
 
   const onFinish = async (values) => {
     setLoading(true);
-    try {
-      const response = await TesterService.executerTest(values);
-      onCancel();
-      toast.success(response.message);
-    } catch (error) {
-      console.error(error.response.data);
-      toast.error(error.response.data.error);
-    } finally {
-      setLoading(false);
-    }
+    await TesterService.executerTest(values)
+      .then(() => {
+        if (values.data) onCancel();
+        toast.success("Test effectué avec succès");
+      })
+      .catch(() => {
+        toast.danger("Test echoué");
+      });
+    setLoading(false);
   };
   return (
-    <Modal open={visible} onCancel={onCancel} footer={null}>
+    <Modal width={1000} open={visible} onCancel={onCancel} footer={null}>
       <Form
         layout="vertical"
         form={form}
@@ -373,113 +385,125 @@ export const AddTestModal = ({ visible, onCancel }) => {
           span: 16,
         }}
         style={{
-          maxWidth: 600,
+          maxWidth: 1200,
         }}
         initialValues={{
           remember: true,
         }}
         autoComplete="off"
       >
-        <Form.Item
-          label="Test Name"
-          name="testName"
-          rules={[{ required: true, message: "Please input the test name !!" }]}
-        >
-          <Input placeholder="Java test" type="text" name="testName" />
-        </Form.Item>
-        <Form.Item
-          label="Protocol"
-          name="protocol"
-          rules={[{ required: true, message: "Please input the protocol !!" }]}
-        >
-          <Select
-            defaultValue={""}
-            placeholder="http / https / .."
-            style={{ width: "100%" }}
-            name="protocol"
-            options={[
-              { value: "http", label: "HTTP" },
-              { value: "https", label: "HTTPS" },
-            ]}
-          />
-        </Form.Item>
-        <Form.Item
-          label="URL"
-          name="url"
-          rules={[{ required: true, message: "Please input the URL !!" }]}
-        >
-          <Input placeholder="google.com" type="text" name="url" />
-        </Form.Item>
-        <Form.Item
-          label="Port"
-          name="port"
-          rules={[
-            {
-              required: true,
-              message: "Please input the port !!",
-            },
-          ]}
-        >
-          <Input placeholder="8888" type="text" name="port" />
-        </Form.Item>
-        <Form.Item
-          label="Path"
-          name="path"
-          rules={[
-            {
-              required: true,
-              message: "Please input the path !!",
-            },
-          ]}
-        >
-          <Input type="text" name="path" placeholder="/about" />
-        </Form.Item>
-
-        <Form.Item
-          label="Method"
-          name="method"
-          rules={[
-            {
-              required: true,
-              message: "Please input the method !!",
-            },
-          ]}
-        >
-          <Select
-            defaultValue={""}
-            placeholder="POST GET ..."
-            style={{ width: "100%" }}
-            name="method"
-            onChange={handleMethodChange}
-            options={[
-              { value: "get", label: "GET" },
-              { value: "post", label: "POST" },
-            ]}
-          />
-        </Form.Item>
-        {method === "POST" && (
-          <Form.Item
-            label="Request Body"
-            name="requestBody"
-            rules={[
-              { required: true, message: "Please input the request body !!" },
-            ]}
-          >
-            <Input.TextArea
-              placeholder="Request body in JSON format"
-              name="requestBody"
-              autoSize={{ minRows: 3, maxRows: 10 }}
-            />
-          </Form.Item>
-        )}
-        <Form.Item>
-          <Button
-            htmlType="submit"
-            style={{ backgroundColor: "green", color: "white" }}
-          >
-            {loading ? <Spin /> : "Executer test"}
-          </Button>
-        </Form.Item>
+        <Row>
+          <Col span={11} offset={1}>
+            <Form.Item
+              label="Test Name"
+              name="testName"
+              rules={[
+                { required: true, message: "Please input the test name !!" },
+              ]}
+            >
+              <Input placeholder="Java test" type="text" name="testName" />
+            </Form.Item>
+            <Form.Item
+              label="Protocol"
+              name="protocol"
+              rules={[
+                { required: true, message: "Please input the protocol !!" },
+              ]}
+            >
+              <Select
+                defaultValue={""}
+                placeholder="http / https / .."
+                style={{ width: "100%" }}
+                name="protocol"
+                options={[
+                  { value: "http", label: "HTTP" },
+                  { value: "https", label: "HTTPS" },
+                ]}
+              />
+            </Form.Item>
+            <Form.Item
+              label="URL"
+              name="url"
+              rules={[{ required: true, message: "Please input the URL !!" }]}
+            >
+              <Input placeholder="google.com" type="text" name="url" />
+            </Form.Item>
+            <Form.Item
+              label="Port"
+              name="port"
+              // rules={[
+              //   {
+              //     required: true,
+              //     message: "Please input the port !!",
+              //   },
+              // ]}
+            >
+              <Input placeholder="8888" type="text" name="port" />
+            </Form.Item>
+          </Col>
+          <Col span={10} offset={2}>
+            <Form.Item
+              label="Path"
+              name="path"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input the path !!",
+                },
+              ]}
+            >
+              <Input type="text" name="path" placeholder="/about" />
+            </Form.Item>
+            <Form.Item
+              label="Method"
+              name="method"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input the method !!",
+                },
+              ]}
+            >
+              <Select
+                defaultValue={""}
+                placeholder="POST GET ..."
+                style={{ width: "100%" }}
+                name="method"
+                onChange={handleMethodChange}
+                options={[
+                  { value: "get", label: "GET" },
+                  { value: "post", label: "POST" },
+                ]}
+              />
+            </Form.Item>
+            {method === "post" && (
+              <Form.Item
+                label="Request Body"
+                name="data"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the request body !!",
+                  },
+                ]}
+              >
+                <Input.TextArea
+                  placeholder="Request body in JSON format"
+                  name="data"
+                  autoSize={{ minRows: 3, maxRows: 12 }}
+                />
+              </Form.Item>
+            )}
+            <Form.Item>
+              <Button
+                htmlType="submit"
+                style={{ backgroundColor: "green", color: "white" }}
+              >
+                {loading ? <Spin /> : "Executer test"}
+              </Button>
+            </Form.Item>
+          </Col>
+        </Row>
       </Form>
     </Modal>
   );

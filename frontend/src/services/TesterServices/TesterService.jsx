@@ -4,6 +4,15 @@ import jwtDecode from "jwt-decode";
 const API_URL = "http://localhost:5000/api/v1/tester/test";
 const token = localStorage.getItem("token");
 
+function isJsonString(str) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
 const executerTest = async (data) => {
   const result = await axios.post(
     API_URL,
@@ -14,6 +23,7 @@ const executerTest = async (data) => {
       port: data.port,
       path: data.path,
       method: data.method,
+      data: data.data,
       createdBy: jwtDecode(token).userId,
     },
     {
