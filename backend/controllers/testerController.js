@@ -1,6 +1,6 @@
 const Test = require("../models/testModel");
 const util = require("util");
-const { exec } = require("child_process");
+const { exec, spawn } = require("child_process");
 const jwt = require("jsonwebtoken");
 const execPromise = util.promisify(require("child_process").exec);
 const path = require("path");
@@ -14,6 +14,28 @@ const { postTemplate } = require("../test/template/postTemplate");
 const bytes = require("bytes");
 const pidusage = require("pidusage");
 const moment = require("moment");
+
+const isJMeterRunning = () => {
+  return new Promise((resolve, reject) => {
+    exec("jps", (error, stdout, stderr) => {
+      if (error) {
+        console.error(`exec error: ${error}`);
+        reject(error);
+      }
+      const processList = stdout.split("\n");
+      const jmeterProcess = processList.find(
+        (process) => process.indexOf("ApacheJmeter.jar") !== -1
+      );
+      if (jmeterProcess) {
+        console.log("Apache JMeter is running");
+        resolve(true);
+      } else {
+        console.log("Apache JMeter is not running");
+        resolve(false);
+      }
+    });
+  });
+};
 
 const executeTest = async (req, res) => {
   const statsArray = [];
@@ -83,7 +105,6 @@ const executeTest = async (req, res) => {
       const { stdout: jpsStdout, stderr: jpsStderr } = await execPromise("jps");
       ////////
 
-
       ///////
       if (jpsStderr) {
         console.error(`exec error: ${jpsStderr}`);
@@ -94,12 +115,9 @@ const executeTest = async (req, res) => {
       console.log(lines);
       let processId = null;
       lines.forEach((line) => {
-        if (line.includes("ApacheJMeter.jar")) {
-          console.log(`1  JMeter process ID: ${processId}`);
+        if (line.includes("TestApplication")) {
           const parts = line.split(" ");
-          console.log(`2  JMeter process ID: ${processId}`);
           processId = parts[0];
-          console.log(`3  JMeter process ID: ${processId}`);
         }
       });
       if (!processId) {

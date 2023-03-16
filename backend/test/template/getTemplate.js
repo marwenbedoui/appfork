@@ -32,8 +32,9 @@ const getTemplate = (test) => `<?xml version="1.0" encoding="UTF-8"?>
             </elementProp>
             <stringProp name="HTTPSampler.domain">${test.url}</stringProp>
             <stringProp name="HTTPSampler.port">${test.port}</stringProp>
-            <stringProp name="HTTPSampler.protocol">${test.protocol
-    }</stringProp>
+            <stringProp name="HTTPSampler.protocol">${
+              test.protocol
+            }</stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
             <stringProp name="HTTPSampler.path">${test.path}</stringProp>
             <stringProp name="HTTPSampler.method">${test.method.toUpperCase()}</stringProp>

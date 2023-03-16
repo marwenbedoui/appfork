@@ -413,12 +413,12 @@ export const AddTestModal = ({ visible, onCancel }) => {
         <Form.Item
           label="Port"
           name="port"
-          rules={[
-            {
-              required: true,
-              message: "Please input the port !!",
-            },
-          ]}
+          // rules={[
+          //   {
+          //     required: true,
+          //     message: "Please input the port !!",
+          //   },
+          // ]}
         >
           <Input placeholder="8888" type="text" name="port" />
         </Form.Item>

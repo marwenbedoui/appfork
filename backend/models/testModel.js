@@ -16,7 +16,7 @@ const testSchema = new mongoose.Schema(
     },
     port: {
       type: Number,
-      required: true,
+      // required: true,
     },
     path: {
       type: String,
@@ -43,8 +43,8 @@ const testSchema = new mongoose.Schema(
           type: String,
         },
         timestamp: {
-          type : String
-        }
+          type: String,
+        },
       },
     ],
     createdBy: {
