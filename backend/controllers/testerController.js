@@ -10,6 +10,7 @@ const osUtils = require("os-utils");
 const { performance } = require("perf_hooks");
 const FastSpeedtest = require("fast-speedtest-api");
 const { getTemplate } = require("../test/template/getTemplate");
+const { postTemplate } = require("../test/template/postTemplate");
 const bytes = require("bytes");
 const pidusage = require("pidusage");
 const moment = require("moment");
@@ -18,6 +19,15 @@ const executeTest = async (req, res) => {
   const statsArray = [];
   //initialzing a void status
   const status = "";
+  let data = "";
+  if (req.body.method === "post") {
+    data = req.body.data || "";
+    data = JSON.stringify(data, null, 2)
+      .replace(/\\n/g, "&#xd;")
+      .replace(/"/g, "&quot;");
+    // data = data.replace(/"/g, "&quot;").replace(/\n/g, "&#xd;");
+    // test.data = data;
+  }
 
   //creating a new test
   const test = new Test({
@@ -28,13 +38,14 @@ const executeTest = async (req, res) => {
     method: req.body.method,
     createdBy: req.body.createdBy,
     status,
+    data,
     testName: req.body.testName,
   });
-
+  //
   const savedTest = await test.save();
   const testId = savedTest._id;
   const testFileName = `test_${testId}.jmx`;
-
+  //
   //the path to the jmx file
   const jmxOutputPath = path.join(
     __dirname,
@@ -43,8 +54,12 @@ const executeTest = async (req, res) => {
     testFileName
   );
   // the jmx template
+  if (test.method === "get") {
+    fs.writeFileSync(jmxOutputPath, getTemplate(test), "utf-8");
+  } else if (test.method === "post") {
+    fs.writeFileSync(jmxOutputPath, postTemplate(test), "utf-8");
+  }
 
-  fs.writeFileSync(jmxOutputPath, getTemplate(test), "utf-8");
   const reportFileName = `reports_${testId}.csv`;
   const reportPath = path.join(
     __dirname,
@@ -66,17 +81,25 @@ const executeTest = async (req, res) => {
     try {
       // Execute the jps command to list all Java processes
       const { stdout: jpsStdout, stderr: jpsStderr } = await execPromise("jps");
+      ////////
+
+
+      ///////
       if (jpsStderr) {
         console.error(`exec error: ${jpsStderr}`);
         return res.status(500).send("Error getting JVM metrics");
       }
       // Parse the output of the jps command to find the process ID of the JVM
       const lines = jpsStdout.split("\n");
+      console.log(lines);
       let processId = null;
       lines.forEach((line) => {
-        if (line.includes("TestApplication")) {
+        if (line.includes("ApacheJMeter.jar")) {
+          console.log(`1  JMeter process ID: ${processId}`);
           const parts = line.split(" ");
+          console.log(`2  JMeter process ID: ${processId}`);
           processId = parts[0];
+          console.log(`3  JMeter process ID: ${processId}`);
         }
       });
       if (!processId) {
@@ -136,9 +159,7 @@ const executeTest = async (req, res) => {
       }, 15000);
     } catch (err) {
       console.error(err);
-      return res
-        .status(500)
-        .send({ error: "errrrrrrrrrrrrrrrrrrrrrrrrreeeeru" });
+      return res.status(500).send({ error: "Internal server error" });
     }
   });
 
