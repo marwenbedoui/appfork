@@ -30,6 +30,10 @@ const testSchema = new mongoose.Schema(
       type: String,
       // required: true,
     },
+    data:
+    {
+      type: String,
+    },
     detail: [
       {
         cpu: {

@@ -6,6 +6,7 @@ import ProfileServices from "../services/ProfileServices";
 import AdminServices from "../services/AdminServices/AdminServices";
 import TesterService from "../services/TesterServices/TesterService";
 import { CircularChart } from "./ChartsComponent";
+import TextArea from "antd/es/input/TextArea";
 
 export const EmailModal = ({ visible, onCancel }) => {
   const [form] = Form.useForm();
@@ -340,6 +341,11 @@ export const AddTestModal = ({ visible, onCancel }) => {
   const [form] = Form.useForm();
 
   const [loading, setLoading] = useState(false);
+  const [method, setMethod] = useState("");
+
+  const handleMethodChange = (value) => {
+    setMethod(value);
+  };
 
   const onFinish = async (values) => {
     setLoading(true);
@@ -444,12 +450,28 @@ export const AddTestModal = ({ visible, onCancel }) => {
             placeholder="POST GET ..."
             style={{ width: "100%" }}
             name="method"
+            onChange={handleMethodChange}
             options={[
               { value: "get", label: "GET" },
               { value: "post", label: "POST" },
             ]}
           />
         </Form.Item>
+        {method === "POST" && (
+          <Form.Item
+            label="Request Body"
+            name="requestBody"
+            rules={[
+              { required: true, message: "Please input the request body !!" },
+            ]}
+          >
+            <Input.TextArea
+              placeholder="Request body in JSON format"
+              name="requestBody"
+              autoSize={{ minRows: 3, maxRows: 10 }}
+            />
+          </Form.Item>
+        )}
         <Form.Item>
           <Button
             htmlType="submit"
