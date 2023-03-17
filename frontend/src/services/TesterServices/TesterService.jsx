@@ -4,15 +4,6 @@ import jwtDecode from "jwt-decode";
 const API_URL = "http://localhost:5000/api/v1/tester/test";
 const token = localStorage.getItem("token");
 
-function isJsonString(str) {
-  try {
-    JSON.parse(str);
-  } catch (e) {
-    return false;
-  }
-  return true;
-}
-
 const executerTest = async (data) => {
   let dataParsed;
   if (data.method === "post") {
@@ -28,6 +19,7 @@ const executerTest = async (data) => {
       url: data.url,
       port: data.port,
       path: data.path,
+      usersNumber: data.usersNumber,
       method: data.method,
       data: dataParsed,
       createdBy: jwtDecode(token).userId,

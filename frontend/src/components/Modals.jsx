@@ -1,4 +1,14 @@
-import { Button, Form, Input, Modal, Spin, Row, Col, Select } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  Spin,
+  Row,
+  Col,
+  Select,
+  InputNumber,
+} from "antd";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -6,20 +16,12 @@ import ProfileServices from "../services/ProfileServices";
 import AdminServices from "../services/AdminServices/AdminServices";
 import TesterService from "../services/TesterServices/TesterService";
 import { CircularChart } from "./ChartsComponent";
+import { RedoOutlined } from "@ant-design/icons";
 
 export const EmailModal = ({ visible, onCancel }) => {
   const [form] = Form.useForm();
 
   const [loading, setLoading] = useState(false);
-
-  function isJsonString(str) {
-    try {
-      JSON.parse(str);
-    } catch (e) {
-      return false;
-    }
-    return true;
-  }
 
   const onFinish = async (values) => {
     setLoading(true);
@@ -350,6 +352,7 @@ export const AddTestModal = ({ visible, onCancel }) => {
 
   const [loading, setLoading] = useState(false);
   const [method, setMethod] = useState("");
+  const [value, setValue] = useState("10");
 
   const handleMethodChange = (value) => {
     setMethod(value);
@@ -448,6 +451,45 @@ export const AddTestModal = ({ visible, onCancel }) => {
               ]}
             >
               <Input type="text" name="path" placeholder="/about" />
+            </Form.Item>
+            <Form.Item
+              label="Number of users"
+              name="usersNumber"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input the number !!",
+                },
+              ]}
+            >
+              <Row>
+                <Col span={10}>
+                  <InputNumber
+                    min={10}
+                    max={1000}
+                    value={value}
+                    onChange={setValue}
+                    step={10}
+                  />
+                </Col>
+                <Col span={10}>
+                  <Button
+                    style={{
+                      backgroundColor: "yellowgreen",
+                      color: "white",
+                    }}
+                    type="default"
+                    onClick={() => {
+                      setValue(10);
+                    }}
+                  >
+                    <RedoOutlined spin style={{
+                      fontSize:"15px"
+                    }} />
+                    Reset
+                  </Button>
+                </Col>
+              </Row>
             </Form.Item>
             <Form.Item
               label="Method"
