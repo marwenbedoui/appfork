@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import TableComponent from "../../components/TableComponent";
 import TalanLogo from "../../assets/talan-logo.png";
-import { Button, Col, Input, Row, Select, Tooltip } from "antd";
+import { Button, Col, Input, Row, Select } from "antd";
 import "./historiquePage.css";
 import { AddTestModal } from "../../components/Modals";
 import TesterService from "../../services/TesterServices/TesterService";
@@ -31,24 +31,21 @@ const Page = ({ role }) => {
       {role === "simpleUser" ? (
         ""
       ) : (
-        // TODO : Tooltip must be fixed
-        <Tooltip title="Add new user">
-          <Button
-            size="large"
-            type="primary"
-            onClick={() => setModalTest(true)}
-            style={{
-              float: "right",
-              marginBottom: "30px",
-              backgroundColor: "#2596be",
-              color: "white",
-            }}
-            shape="round"
-            icon={<FileAddOutlined spin={true} />}
-          >
-            Executer test
-          </Button>
-        </Tooltip>
+        <Button
+          size="large"
+          type="primary"
+          onClick={() => setModalTest(true)}
+          style={{
+            float: "right",
+            marginBottom: "30px",
+            backgroundColor: "#2596be",
+            color: "white",
+          }}
+          shape="round"
+          icon={<FileAddOutlined spin={true} />}
+        >
+          Executer test
+        </Button>
       )}
       <Row>
         <Col span={5}>
@@ -91,7 +88,7 @@ const Page = ({ role }) => {
           setModalTest(false);
         }}
       />
-      <TableComponent  data={data} isAdminPage={false} role={role} />
+      <TableComponent data={data} isAdminPage={false} role={role} />
     </>
   );
 };

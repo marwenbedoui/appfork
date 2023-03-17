@@ -1,4 +1,14 @@
-import { Button, Form, Input, Modal, Spin, Row, Col, Select } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  Spin,
+  Row,
+  Col,
+  Select,
+  Checkbox,
+} from "antd";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -11,15 +21,6 @@ export const EmailModal = ({ visible, onCancel }) => {
   const [form] = Form.useForm();
 
   const [loading, setLoading] = useState(false);
-
-  function isJsonString(str) {
-    try {
-      JSON.parse(str);
-    } catch (e) {
-      return false;
-    }
-    return true;
-  }
 
   const onFinish = async (values) => {
     setLoading(true);
@@ -35,7 +36,16 @@ export const EmailModal = ({ visible, onCancel }) => {
   };
 
   return (
-    <Modal open={visible} onCancel={onCancel} footer={null}>
+    <Modal
+      open={visible}
+      onCancel={onCancel}
+      title={
+        <div style={{ textAlign: "center", fontSize: "24px" }}>
+          Update Email
+        </div>
+      }
+      footer={null}
+    >
       <Form layout="vertical" form={form} onFinish={onFinish}>
         <Form.Item
           label="Type new email"
@@ -104,7 +114,16 @@ export const InfoModal = ({ visible, onCancel, info }) => {
   };
 
   return (
-    <Modal open={visible} onCancel={onCancel} footer={null}>
+    <Modal
+      open={visible}
+      onCancel={onCancel}
+      title={
+        <div style={{ textAlign: "center", fontSize: "24px" }}>
+          Update your credentials
+        </div>
+      }
+      footer={null}
+    >
       <Form
         layout="vertical"
         form={form}
@@ -164,7 +183,17 @@ export const PasswordModal = ({ visible, onCancel }) => {
   };
 
   return (
-    <Modal open={visible} onCancel={onCancel} footer={null}>
+    <Modal
+      open={visible}
+      onCancel={onCancel}
+      
+      title={
+        <div style={{ textAlign: "center", fontSize: "24px" }}>
+          Update password
+        </div>
+      }
+      footer={null}
+    >
       <Form
         form={form}
         layout="vertical"
@@ -235,8 +264,18 @@ export const AddUserModal = ({ visible, onCancel }) => {
   };
 
   return (
-    <Modal open={visible} onCancel={onCancel} footer={null}>
+    <Modal
+      open={visible}
+      onCancel={onCancel}
+      title={
+        <div style={{ textAlign: "center", fontSize: "24px" }}>
+          Add user
+        </div>
+      }
+      footer={null}
+    >
       <Form
+        style={{marginTop:25}}
         layout="vertical"
         form={form}
         autoComplete="off"
@@ -368,7 +407,15 @@ export const AddTestModal = ({ visible, onCancel }) => {
     setLoading(false);
   };
   return (
-    <Modal width={1000} open={visible} onCancel={onCancel} footer={null}>
+    <Modal
+      width={1000}
+      open={visible}
+      onCancel={onCancel}
+      title={
+        <div style={{ textAlign: "center", fontSize: "24px" }}>New Test</div>
+      }
+      footer={null}
+    >
       <Form
         layout="vertical"
         form={form}
@@ -381,11 +428,17 @@ export const AddTestModal = ({ visible, onCancel }) => {
         }}
         style={{
           maxWidth: 1200,
+          marginTop: 50,
         }}
         initialValues={{
           remember: true,
         }}
         autoComplete="off"
+        onValuesChange={(changedValues) => {
+          if (changedValues.disablePort) {
+            form.setFieldsValue({ port: 0 });
+          }
+        }}
       >
         <Row>
           <Col span={11} offset={1}>
@@ -423,17 +476,23 @@ export const AddTestModal = ({ visible, onCancel }) => {
             >
               <Input placeholder="google.com" type="text" name="url" />
             </Form.Item>
-            <Form.Item
-              label="Port"
-              name="port"
-              // rules={[
-              //   {
-              //     required: true,
-              //     message: "Please input the port !!",
-              //   },
-              // ]}
-            >
-              <Input placeholder="8888" type="text" name="port" />
+            <Form.Item label="Port" name="port">
+              <Row>
+                <Col span={8}>
+                  <Form.Item name="disablePort" valuePropName="checked" noStyle>
+                    <Checkbox>No Port</Checkbox>
+                  </Form.Item>
+                </Col>
+                <Col span={16}>
+                  <Input
+                    placeholder="8888"
+                    defaultValue={"0"}
+                    type="text"
+                    name="port"
+                    disabled={form.getFieldValue("disablePort")}
+                  />
+                </Col>
+              </Row>
             </Form.Item>
           </Col>
           <Col span={10} offset={2}>

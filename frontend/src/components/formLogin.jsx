@@ -107,7 +107,7 @@ export const FormLogin = () => {
                 },
               ]}
             >
-              <Input
+              <Input.Password
                 type="password"
                 onChange={props.handleChange}
                 onBlur={props.handleBlur}
