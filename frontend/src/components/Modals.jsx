@@ -24,14 +24,9 @@ export const EmailModal = ({ visible, onCancel }) => {
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      if (isJsonString(values.data)) {
-        const response = await ProfileServices.updateMail(values);
-        onCancel();
-        toast.success(response.message);
-      } else {
-        onCancel();
-        toast.error("Contenu du JSON est invalide");
-      }
+      const response = await ProfileServices.updateMail(values);
+      onCancel();
+      toast.success(response.message);
     } catch (error) {
       toast.error(error.response.data.error);
     } finally {

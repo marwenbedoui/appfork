@@ -15,28 +15,6 @@ const bytes = require("bytes");
 const pidusage = require("pidusage");
 const moment = require("moment");
 
-const isJMeterRunning = () => {
-  return new Promise((resolve, reject) => {
-    exec("jps", (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        reject(error);
-      }
-      const processList = stdout.split("\n");
-      const jmeterProcess = processList.find(
-        (process) => process.indexOf("ApacheJmeter.jar") !== -1
-      );
-      if (jmeterProcess) {
-        console.log("Apache JMeter is running");
-        resolve(true);
-      } else {
-        console.log("Apache JMeter is not running");
-        resolve(false);
-      }
-    });
-  });
-};
-
 const executeTest = async (req, res) => {
   const statsArray = [];
   //initialzing a void status
