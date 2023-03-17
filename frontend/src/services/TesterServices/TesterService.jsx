@@ -14,6 +14,12 @@ function isJsonString(str) {
 }
 
 const executerTest = async (data) => {
+  let dataParsed;
+  if (data.method === "post") {
+    dataParsed = JSON.parse(data.data);
+  } else {
+    dataParsed = "";
+  }
   const result = await axios.post(
     API_URL,
     {
@@ -23,7 +29,7 @@ const executerTest = async (data) => {
       port: data.port,
       path: data.path,
       method: data.method,
-      data: data.data,
+      data: dataParsed,
       createdBy: jwtDecode(token).userId,
     },
     {
