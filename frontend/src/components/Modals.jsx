@@ -7,6 +7,7 @@ import {
   Row,
   Col,
   Select,
+  Checkbox,
   InputNumber,
 } from "antd";
 import React, { useState } from "react";
@@ -37,7 +38,16 @@ export const EmailModal = ({ visible, onCancel }) => {
   };
 
   return (
-    <Modal open={visible} onCancel={onCancel} footer={null}>
+    <Modal
+      open={visible}
+      onCancel={onCancel}
+      title={
+        <div style={{ textAlign: "center", fontSize: "24px" }}>
+          Update Email
+        </div>
+      }
+      footer={null}
+    >
       <Form layout="vertical" form={form} onFinish={onFinish}>
         <Form.Item
           label="Type new email"
@@ -106,7 +116,16 @@ export const InfoModal = ({ visible, onCancel, info }) => {
   };
 
   return (
-    <Modal open={visible} onCancel={onCancel} footer={null}>
+    <Modal
+      open={visible}
+      onCancel={onCancel}
+      title={
+        <div style={{ textAlign: "center", fontSize: "24px" }}>
+          Update your credentials
+        </div>
+      }
+      footer={null}
+    >
       <Form
         layout="vertical"
         form={form}
@@ -166,7 +185,16 @@ export const PasswordModal = ({ visible, onCancel }) => {
   };
 
   return (
-    <Modal open={visible} onCancel={onCancel} footer={null}>
+    <Modal
+      open={visible}
+      onCancel={onCancel}
+      title={
+        <div style={{ textAlign: "center", fontSize: "24px" }}>
+          Update password
+        </div>
+      }
+      footer={null}
+    >
       <Form
         form={form}
         layout="vertical"
@@ -237,8 +265,16 @@ export const AddUserModal = ({ visible, onCancel }) => {
   };
 
   return (
-    <Modal open={visible} onCancel={onCancel} footer={null}>
+    <Modal
+      open={visible}
+      onCancel={onCancel}
+      title={
+        <div style={{ textAlign: "center", fontSize: "24px" }}>Add user</div>
+      }
+      footer={null}
+    >
       <Form
+        style={{ marginTop: 25 }}
         layout="vertical"
         form={form}
         autoComplete="off"
@@ -352,7 +388,16 @@ export const AddTestModal = ({ visible, onCancel }) => {
 
   const [loading, setLoading] = useState(false);
   const [method, setMethod] = useState("");
-  const [value, setValue] = useState("10");
+  const [value, setValue] = useState(10);
+
+  const handleInputChange = (newValue) => {
+    setValue(newValue);
+  };
+
+  const handleReset = () => {
+    setValue(10);
+    console.log(value);
+  };
 
   const handleMethodChange = (value) => {
     setMethod(value);
@@ -371,7 +416,15 @@ export const AddTestModal = ({ visible, onCancel }) => {
     setLoading(false);
   };
   return (
-    <Modal width={1000} open={visible} onCancel={onCancel} footer={null}>
+    <Modal
+      width={1000}
+      open={visible}
+      onCancel={onCancel}
+      title={
+        <div style={{ textAlign: "center", fontSize: "24px" }}>New Test</div>
+      }
+      footer={null}
+    >
       <Form
         layout="vertical"
         form={form}
@@ -384,11 +437,17 @@ export const AddTestModal = ({ visible, onCancel }) => {
         }}
         style={{
           maxWidth: 1200,
+          marginTop: 50,
         }}
         initialValues={{
           remember: true,
         }}
         autoComplete="off"
+        onValuesChange={(changedValues) => {
+          if (changedValues.disablePort) {
+            form.setFieldsValue({ port: 0 });
+          }
+        }}
       >
         <Row>
           <Col span={11} offset={1}>
@@ -426,17 +485,23 @@ export const AddTestModal = ({ visible, onCancel }) => {
             >
               <Input placeholder="google.com" type="text" name="url" />
             </Form.Item>
-            <Form.Item
-              label="Port"
-              name="port"
-              // rules={[
-              //   {
-              //     required: true,
-              //     message: "Please input the port !!",
-              //   },
-              // ]}
-            >
-              <Input placeholder="8888" type="text" name="port" />
+            <Form.Item label="Port" name="port">
+              <Row>
+                <Col span={8}>
+                  <Form.Item name="disablePort" valuePropName="checked" noStyle>
+                    <Checkbox>No Port</Checkbox>
+                  </Form.Item>
+                </Col>
+                <Col span={16}>
+                  <Input
+                    placeholder="8888"
+                    defaultValue={"0"}
+                    type="text"
+                    name="port"
+                    disabled={form.getFieldValue("disablePort")}
+                  />
+                </Col>
+              </Row>
             </Form.Item>
           </Col>
           <Col span={10} offset={2}>
@@ -465,11 +530,12 @@ export const AddTestModal = ({ visible, onCancel }) => {
               <Row>
                 <Col span={10}>
                   <InputNumber
-                    min={10}
-                    max={1000}
                     value={value}
-                    onChange={setValue}
+                    min={1}
+                    max={1000}
                     step={10}
+                    name="usersNumber"
+                    onChange={handleInputChange}
                   />
                 </Col>
                 <Col span={10}>
@@ -479,13 +545,14 @@ export const AddTestModal = ({ visible, onCancel }) => {
                       color: "white",
                     }}
                     type="default"
-                    onClick={() => {
-                      setValue(10);
-                    }}
+                    onClick={handleReset}
                   >
-                    <RedoOutlined spin style={{
-                      fontSize:"15px"
-                    }} />
+                    <RedoOutlined
+                      spin
+                      style={{
+                        fontSize: "15px",
+                      }}
+                    />
                     Reset
                   </Button>
                 </Col>
