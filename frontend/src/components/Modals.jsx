@@ -8,7 +8,6 @@ import {
   Col,
   Select,
   Checkbox,
-  InputNumber,
 } from "antd";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
@@ -17,7 +16,6 @@ import ProfileServices from "../services/ProfileServices";
 import AdminServices from "../services/AdminServices/AdminServices";
 import TesterService from "../services/TesterServices/TesterService";
 import { CircularChart } from "./ChartsComponent";
-import { RedoOutlined } from "@ant-design/icons";
 
 export const EmailModal = ({ visible, onCancel }) => {
   const [form] = Form.useForm();
@@ -43,34 +41,36 @@ export const EmailModal = ({ visible, onCancel }) => {
       onCancel={onCancel}
       title={
         <div style={{ textAlign: "center", fontSize: "24px" }}>
-          Update Email
+          Mise à jour de l'email
         </div>
       }
       footer={null}
     >
       <Form layout="vertical" form={form} onFinish={onFinish}>
         <Form.Item
-          label="Type new email"
+          label="Saisir un nouvel email"
           name="newMail"
           rules={[
-            { required: true, message: "New email is required" },
-            { type: "email", message: "Please enter a valid email" },
+            { required: true, message: "Le nouvel email est obligatoire" },
+            { type: "email", message: "Veuillez saisir un email valide !" },
           ]}
         >
           <Input placeholder="new email" />
         </Form.Item>
         <Form.Item
-          label="Retype new email"
+          label="Retaper un nouvel email"
           name="newMailRetype"
           rules={[
-            { required: true, message: "Please retype new email" },
+            { required: true, message: "Veuillez retaper le nouvel email" },
             ({ getFieldValue }) => ({
               validator(_, value) {
                 if (!value || getFieldValue("newMail") === value) {
                   return Promise.resolve();
                 }
                 return Promise.reject(
-                  new Error("The two emails that you entered do not match!")
+                  new Error(
+                    "Les deux emails que vous avez saisis ne correspondent pas !"
+                  )
                 );
               },
             }),
@@ -79,16 +79,14 @@ export const EmailModal = ({ visible, onCancel }) => {
           <Input placeholder="retype new email" />
         </Form.Item>
         <Form.Item
-          label="Password"
+          label="Mot de passe"
           name="password"
-          rules={[{ required: true, message: "Password is required" }]}
+          rules={[{ required: true, message: "Mot de passe est obligatoire" }]}
         >
-          <Input.Password placeholder="password" />
+          <Input.Password placeholder="Mot de passe" />
         </Form.Item>
         <Form.Item>
-          <Button htmlType="submit">
-            {loading ? <Spin /> : "Update email"}
-          </Button>
+          <Button htmlType="Envoyer">{loading ? <Spin /> : "MAJ email"}</Button>
         </Form.Item>
       </Form>
     </Modal>
@@ -121,7 +119,7 @@ export const InfoModal = ({ visible, onCancel, info }) => {
       onCancel={onCancel}
       title={
         <div style={{ textAlign: "center", fontSize: "24px" }}>
-          Update your credentials
+          Mise à jour du profil
         </div>
       }
       footer={null}
@@ -132,7 +130,7 @@ export const InfoModal = ({ visible, onCancel, info }) => {
         onFinish={onFinish}
         initialValues={{ lastname: info.lastname, firstname: info.firstname }}
       >
-        <Form.Item label={`Old Info`}>
+        <Form.Item label={`Anciennes informations`}>
           <Input
             disabled
             placeholder={`${info.lastname + " " + info.firstname}`}
@@ -140,25 +138,25 @@ export const InfoModal = ({ visible, onCancel, info }) => {
         </Form.Item>
 
         <Form.Item
-          label={`Type new lastname`}
-          rules={[{ required: true, message: "Lastname is required" }]}
-          tooltip="This is a required field"
+          label={`Saisir un nouveau nom`}
+          rules={[{ required: true, message: "Le nom est obligatoire" }]}
+          tooltip="Ce champ est obligatoire"
           name="lastname"
         >
-          <Input placeholder="lastname" />
+          <Input placeholder="Nom" />
         </Form.Item>
         <Form.Item
-          label="Type new firstname"
-          rules={[{ required: true, message: "Firstname is required" }]}
-          tooltip="This is a required field"
+          label="Tapez un nouveau prénom"
+          rules={[{ required: true, message: "Le prénom est obligatoire" }]}
+          tooltip="Ce champ est obligatoire"
           name="firstname"
         >
-          <Input placeholder="firstname" />
+          <Input placeholder="Prénom" />
         </Form.Item>
 
         <Form.Item>
-          <Button htmlType="submit">
-            {loading ? <Spin /> : "Update Profile"}
+          <Button htmlType="Envoyer">
+            {loading ? <Spin /> : "MAJ Profil"}
           </Button>
         </Form.Item>
       </Form>
@@ -190,7 +188,7 @@ export const PasswordModal = ({ visible, onCancel }) => {
       onCancel={onCancel}
       title={
         <div style={{ textAlign: "center", fontSize: "24px" }}>
-          Update password
+          Mise à jour du mot de passe
         </div>
       }
       footer={null}
@@ -206,9 +204,11 @@ export const PasswordModal = ({ visible, onCancel }) => {
         }}
       >
         <Form.Item
-          label={"Old password"}
-          rules={[{ required: true, message: "New email is required" }]}
-          tooltip="This is a required field"
+          label={"Ancien mot de passe"}
+          rules={[
+            { required: true, message: "Un nouvel email est obligatoire" },
+          ]}
+          tooltip="Ce champ est obligatoire"
           name="oldPassword"
         >
           <Input.Password placeholder="Type old password" />
@@ -216,8 +216,13 @@ export const PasswordModal = ({ visible, onCancel }) => {
 
         <Form.Item
           label={`Type new password`}
-          rules={[{ required: true, message: "Please type your new password" }]}
-          tooltip="This is a required field"
+          rules={[
+            {
+              required: true,
+              message: "Veuillez saisir votre nouveau mot de passe",
+            },
+          ]}
+          tooltip="Ce champ est obligatoire"
           name="newPassword"
         >
           <Input.Password placeholder="Type new password" type="password" />
@@ -225,16 +230,19 @@ export const PasswordModal = ({ visible, onCancel }) => {
         <Form.Item
           label={"Retype new password"}
           rules={[
-            { required: true, message: "Please retype your new password" },
+            {
+              required: true,
+              message: "Veuillez retaper votre nouveau mot de passe",
+            },
           ]}
-          tooltip="This is a required field"
+          tooltip="Ce champ est obligatoire"
           name="newPasswordConfirm"
         >
           <Input.Password placeholder="Retype new password" type="password" />
         </Form.Item>
         <Form.Item>
           <Button htmlType="submit">
-            {loading ? <Spin /> : "Update Password"}
+            {loading ? <Spin /> : "MAJ du mot de passe"}
           </Button>
         </Form.Item>
       </Form>
@@ -291,11 +299,11 @@ export const AddUserModal = ({ visible, onCancel }) => {
         <Row gutter={16}>
           <Col span={10}>
             <Form.Item
-              label="Type firstname"
+              label="Saisir le prénom"
               name="firstname"
               rules={[
-                { required: true, message: "Firstname is required" },
-                { type: "text", message: "Please enter a name" },
+                { required: true, message: "Le prénom est obligatoire" },
+                { type: "text", message: "Veuillez saisir un nom" },
               ]}
             >
               <Input placeholder="Jon" />
@@ -303,11 +311,11 @@ export const AddUserModal = ({ visible, onCancel }) => {
           </Col>
           <Col span={10}>
             <Form.Item
-              label="Type lastname"
+              label="Saisir le nom"
               name="lastname"
               rules={[
-                { required: true, message: "Lastname is required" },
-                { type: "text", message: "Please enter a name" },
+                { required: true, message: "Le nom est obligatoire" },
+                { type: "text", message: "Veuillez entrer le nom !" },
               ]}
             >
               <Input placeholder="Doe" />
@@ -315,27 +323,27 @@ export const AddUserModal = ({ visible, onCancel }) => {
           </Col>
         </Row>
         <Form.Item
-          label="Type email"
+          label="Saisir l'email"
           name="email"
           rules={[
-            { required: true, message: "Email is required" },
-            { type: "email", message: "Please enter a valid email" },
+            { required: true, message: "Email est obligatoire" },
+            { type: "email", message: "Veuillez entrer un email valide" },
           ]}
         >
           <Input placeholder="jon.doe@jon.doe" />
         </Form.Item>
         <Form.Item
-          label="Type the password"
+          label="Saisir le mot de passe"
           name="password"
-          rules={[{ required: true, message: "Password is required" }]}
+          rules={[{ required: true, message: "Mot de passe est obligtoire" }]}
         >
           <Input.Password placeholder="password" />
         </Form.Item>
         <Form.Item
-          label="Type the password"
+          label="Retaper le mot de passe"
           name="passwordVerify"
           rules={[
-            { required: true, message: "Please retype password" },
+            { required: true, message: "Veuillez retaper le mot de passe" },
             ({ getFieldValue }) => ({
               validator(_, value) {
                 if (!value || getFieldValue("password") === value) {
@@ -343,19 +351,19 @@ export const AddUserModal = ({ visible, onCancel }) => {
                 }
                 return Promise.reject(
                   new Error(
-                    "The two passwords that you entered does not match!"
+                    "Les deux mots de passe que vous avez introduits ne correspondent pas !"
                   )
                 );
               },
             }),
           ]}
         >
-          <Input.Password placeholder="retype password" />
+          <Input.Password placeholder="Retaper le mot de passe" />
         </Form.Item>
         <Form.Item
-          label="Choose a role for the new user"
+          label="Choisir un rôle pour le nouvel utilisateur"
           name="role"
-          rules={[{ required: true, message: "Role is required" }]}
+          rules={[{ required: true, message: "Le rôle est obligatoire" }]}
         >
           <Select
             options={[
@@ -388,16 +396,6 @@ export const AddTestModal = ({ visible, onCancel }) => {
 
   const [loading, setLoading] = useState(false);
   const [method, setMethod] = useState("");
-  const [value, setValue] = useState(10);
-
-  const handleInputChange = (newValue) => {
-    setValue(newValue);
-  };
-
-  const handleReset = () => {
-    setValue(10);
-    console.log(value);
-  };
 
   const handleMethodChange = (value) => {
     setMethod(value);
@@ -409,11 +407,13 @@ export const AddTestModal = ({ visible, onCancel }) => {
       .then(() => {
         if (values.data) onCancel();
         toast.success("Test effectué avec succès");
+        onCancel();
       })
       .catch(() => {
         toast.danger("Test echoué");
       });
     setLoading(false);
+    onCancel();
   };
   return (
     <Modal
@@ -421,7 +421,9 @@ export const AddTestModal = ({ visible, onCancel }) => {
       open={visible}
       onCancel={onCancel}
       title={
-        <div style={{ textAlign: "center", fontSize: "24px" }}>New Test</div>
+        <div style={{ textAlign: "center", fontSize: "24px" }}>
+          Nouveau test
+        </div>
       }
       footer={null}
     >
@@ -450,21 +452,24 @@ export const AddTestModal = ({ visible, onCancel }) => {
         }}
       >
         <Row>
-          <Col span={11} offset={1}>
+          <Col span={10} offset={2}>
             <Form.Item
-              label="Test Name"
+              label="Nom du test"
               name="testName"
               rules={[
-                { required: true, message: "Please input the test name !!" },
+                { required: true, message: "Veuillez saisir le nom du test !" },
               ]}
             >
               <Input placeholder="Java test" type="text" name="testName" />
             </Form.Item>
             <Form.Item
-              label="Protocol"
+              label="Protocole"
               name="protocol"
               rules={[
-                { required: true, message: "Please input the protocol !!" },
+                {
+                  required: true,
+                  message: "Veuillez saisir le protocol du test !",
+                },
               ]}
             >
               <Select
@@ -481,7 +486,7 @@ export const AddTestModal = ({ visible, onCancel }) => {
             <Form.Item
               label="URL"
               name="url"
-              rules={[{ required: true, message: "Please input the URL !!" }]}
+              rules={[{ required: true, message: "Veuillez saisir l'URL !" }]}
             >
               <Input placeholder="google.com" type="text" name="url" />
             </Form.Item>
@@ -504,67 +509,48 @@ export const AddTestModal = ({ visible, onCancel }) => {
               </Row>
             </Form.Item>
           </Col>
-          <Col span={10} offset={2}>
+          <Col span={11} offset={1}>
             <Form.Item
-              label="Path"
+              label="Chemin"
               name="path"
               rules={[
                 {
                   required: true,
-                  message: "Please input the path !!",
+                  message: "Veuillez saisir le chemin !",
                 },
               ]}
             >
               <Input type="text" name="path" placeholder="/about" />
             </Form.Item>
             <Form.Item
-              label="Number of users"
+              label="Nombre&nbsp;d'utilisateurs"
               name="usersNumber"
               rules={[
                 {
                   required: true,
-                  message: "Please input the number !!",
+                  message: "Veuillez saisir le nombre d'utilisateurs !",
                 },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (value > 0) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error("Ce champs doit etre supérieur à zero")
+                    );
+                  },
+                }),
               ]}
             >
-              <Row>
-                <Col span={10}>
-                  <InputNumber
-                    value={value}
-                    min={1}
-                    max={1000}
-                    step={10}
-                    name="usersNumber"
-                    onChange={handleInputChange}
-                  />
-                </Col>
-                <Col span={10}>
-                  <Button
-                    style={{
-                      backgroundColor: "yellowgreen",
-                      color: "white",
-                    }}
-                    type="default"
-                    onClick={handleReset}
-                  >
-                    <RedoOutlined
-                      spin
-                      style={{
-                        fontSize: "15px",
-                      }}
-                    />
-                    Reset
-                  </Button>
-                </Col>
-              </Row>
+              <Input name="usersNumber" />
             </Form.Item>
             <Form.Item
-              label="Method"
+              label="Méthode"
               name="method"
               rules={[
                 {
                   required: true,
-                  message: "Please input the method !!",
+                  message: "Veuillez saisir la méthode !",
                 },
               ]}
             >
@@ -582,12 +568,12 @@ export const AddTestModal = ({ visible, onCancel }) => {
             </Form.Item>
             {method === "post" && (
               <Form.Item
-                label="Request Body"
+                label="Le corps de la requête"
                 name="data"
                 rules={[
                   {
                     required: true,
-                    message: "Please input the request body !!",
+                    message: "Veuillez saisir le corps en format JSON !",
                   },
                 ]}
               >
@@ -603,7 +589,7 @@ export const AddTestModal = ({ visible, onCancel }) => {
                 htmlType="submit"
                 style={{ backgroundColor: "green", color: "white" }}
               >
-                {loading ? <Spin /> : "Executer test"}
+                {loading ? <Spin /> : "Executer le test"}
               </Button>
             </Form.Item>
           </Col>

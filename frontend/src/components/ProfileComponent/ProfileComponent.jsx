@@ -114,21 +114,21 @@ function ProfileComponent() {
                       onClick={() => setModalMailVisible(true)}
                       style={{ backgroundColor: "#2596be", color: "white" }}
                     >
-                      Update mail
+                      MAJ email
                     </Button>
                     <Button
                       type="primary"
                       onClick={() => setModalPasswordVisible(true)}
                       style={{ backgroundColor: "#2596be", color: "white" }}
                     >
-                      Update password
+                      MAJ mot de passe
                     </Button>
                     <Button
                       type="primary"
                       onClick={() => setModalInfoVisible(true)}
                       style={{ backgroundColor: "#2596be", color: "white" }}
                     >
-                      Update info
+                      MAJ profil
                     </Button>
 
                     <EmailModal

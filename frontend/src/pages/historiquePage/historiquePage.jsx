@@ -44,7 +44,7 @@ const Page = ({ role }) => {
           shape="round"
           icon={<FileAddOutlined spin={true} />}
         >
-          Executer test
+          Nouveau test
         </Button>
       )}
       <Row>
