@@ -24,14 +24,14 @@ const LayoutComponent = ({ headerLogo, mainContent, currentPage, role }) => {
     },
     {
       icon: DatabaseOutlined,
-      label: "Historique",
+      label: "Historique des tests",
       clickEvent: () => {
         window.location.href = `/${role}/historiques`;
       },
     },
     {
       icon: UserOutlined,
-      label: "Profile",
+      label: "Mon profil",
       clickEvent: () => {
         window.location.href = `/${role}/profile`;
       },
@@ -48,7 +48,7 @@ const LayoutComponent = ({ headerLogo, mainContent, currentPage, role }) => {
   if (role === "admin") {
     data.splice(2, 0, {
       icon: UsergroupAddOutlined,
-      label: "All users",
+      label: "Utilisateurs",
       clickEvent: () => {
         window.location.href = `/${role}/all-users`;
       },

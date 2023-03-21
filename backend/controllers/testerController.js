@@ -119,7 +119,7 @@ const executeTest = async (req, res) => {
         }
 
         test.detail = statsArray;
-        test.save();
+        test.save().catch((e) => res.send(e));
         return res.status(200).json(statsArray);
       }
 
@@ -144,7 +144,7 @@ const executeTest = async (req, res) => {
       setTimeout(() => {
         clearInterval(output);
         test.detail = statsArray;
-        test.save();
+        test.save().catch((e) => res.send(e));
         res.json({
           jvm: statsArray,
         });
@@ -162,7 +162,7 @@ const executeTest = async (req, res) => {
       .pipe(csv())
       .on("data", (data) => results.push(data["success"]))
       .on("end", async () => {
-        results[2] === "true"
+        results[1] === "true"
           ? (test.status = "Passed")
           : (test.status = "failed");
         await test
