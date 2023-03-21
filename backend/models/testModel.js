@@ -30,6 +30,10 @@ const testSchema = new mongoose.Schema(
       type: String,
       // required: true,
     },
+    usersNumber: {
+      required: true,
+      type: Number
+    },
     data: {
       type: String,
     },

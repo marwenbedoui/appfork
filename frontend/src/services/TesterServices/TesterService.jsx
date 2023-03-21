@@ -19,6 +19,7 @@ const executerTest = async (data) => {
       url: data.url,
       port: data.port,
       path: data.path,
+      usersNumber: data.usersNumber,
       method: data.method,
       data: dataParsed,
       createdBy: jwtDecode(token).userId,

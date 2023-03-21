@@ -8,6 +8,7 @@ import {
   Col,
   Select,
   Checkbox,
+  InputNumber,
 } from "antd";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
@@ -16,6 +17,7 @@ import ProfileServices from "../services/ProfileServices";
 import AdminServices from "../services/AdminServices/AdminServices";
 import TesterService from "../services/TesterServices/TesterService";
 import { CircularChart } from "./ChartsComponent";
+import { RedoOutlined } from "@ant-design/icons";
 
 export const EmailModal = ({ visible, onCancel }) => {
   const [form] = Form.useForm();
@@ -186,7 +188,6 @@ export const PasswordModal = ({ visible, onCancel }) => {
     <Modal
       open={visible}
       onCancel={onCancel}
-      
       title={
         <div style={{ textAlign: "center", fontSize: "24px" }}>
           Update password
@@ -268,14 +269,12 @@ export const AddUserModal = ({ visible, onCancel }) => {
       open={visible}
       onCancel={onCancel}
       title={
-        <div style={{ textAlign: "center", fontSize: "24px" }}>
-          Add user
-        </div>
+        <div style={{ textAlign: "center", fontSize: "24px" }}>Add user</div>
       }
       footer={null}
     >
       <Form
-        style={{marginTop:25}}
+        style={{ marginTop: 25 }}
         layout="vertical"
         form={form}
         autoComplete="off"
@@ -389,6 +388,16 @@ export const AddTestModal = ({ visible, onCancel }) => {
 
   const [loading, setLoading] = useState(false);
   const [method, setMethod] = useState("");
+  const [value, setValue] = useState(10);
+
+  const handleInputChange = (newValue) => {
+    setValue(newValue);
+  };
+
+  const handleReset = () => {
+    setValue(10);
+    console.log(value);
+  };
 
   const handleMethodChange = (value) => {
     setMethod(value);
@@ -507,6 +516,47 @@ export const AddTestModal = ({ visible, onCancel }) => {
               ]}
             >
               <Input type="text" name="path" placeholder="/about" />
+            </Form.Item>
+            <Form.Item
+              label="Number of users"
+              name="usersNumber"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input the number !!",
+                },
+              ]}
+            >
+              <Row>
+                <Col span={10}>
+                  <InputNumber
+                    value={value}
+                    min={1}
+                    max={1000}
+                    step={10}
+                    name="usersNumber"
+                    onChange={handleInputChange}
+                  />
+                </Col>
+                <Col span={10}>
+                  <Button
+                    style={{
+                      backgroundColor: "yellowgreen",
+                      color: "white",
+                    }}
+                    type="default"
+                    onClick={handleReset}
+                  >
+                    <RedoOutlined
+                      spin
+                      style={{
+                        fontSize: "15px",
+                      }}
+                    />
+                    Reset
+                  </Button>
+                </Col>
+              </Row>
             </Form.Item>
             <Form.Item
               label="Method"

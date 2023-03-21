@@ -18,7 +18,9 @@ const getTemplate = (test) => `<?xml version="1.0" encoding="UTF-8"?>
             <boolProp name="LoopController.continue_forever">false</boolProp>
             <stringProp name="LoopController.loops">1</stringProp>
           </elementProp>
-          <stringProp name="ThreadGroup.num_threads">10</stringProp>
+          <stringProp name="ThreadGroup.num_threads">${
+            test.usersNumber
+          }</stringProp>
           <stringProp name="ThreadGroup.ramp_time">1</stringProp>
           <boolProp name="ThreadGroup.scheduler">false</boolProp>
           <stringProp name="ThreadGroup.duration"></stringProp>

@@ -35,6 +35,7 @@ const executeTest = async (req, res) => {
     path: req.body.path,
     method: req.body.method,
     createdBy: req.body.createdBy,
+    usersNumber: req.body.usersNumber,
     status,
     data,
     testName: req.body.testName,
