@@ -66,11 +66,30 @@ const updateMail = async (data) => {
   }
 };
 
+const updateImage = async (data, formData) => {
+  //console.log("hello");
+  const result = await axios.put(
+    `${API_URL}update-image`,
+    {
+      image: data.image,
+    },
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return result.data;
+};
+
 const ProfileServices = {
   getInfos,
   updateInfo,
   updateMail,
   updatePassword,
+  updateImage,
 };
 
 export default ProfileServices;

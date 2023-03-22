@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Row, Col, Space, Button, Upload, message } from "antd";
+import { Avatar, Row, Col, Space, Button, Upload } from "antd";
 import "./ProfileComponent.css";
 import ProfileServices from "../../services/ProfileServices";
 import { PasswordModal, EmailModal, InfoModal } from "../Modals";
 import { UploadOutlined } from "@ant-design/icons";
+import { toast } from "react-toastify";
 
 function ProfileComponent() {
   const [modalMailVisible, setModalMailVisible] = useState(false);
   const [modalInfoVisible, setModalInfoVisible] = useState(false);
   const [modalPasswordVisible, setModalPasswordVisible] = useState(false);
-
+  const [filename, setFilename] = useState("");
   const [userInfo, setUserInfo] = useState({});
 
   const handleCancelMail = () => {
@@ -35,9 +36,18 @@ function ProfileComponent() {
   };
 
   const handleUpload = (file) => {
-    message.success(`${file.name} file uploaded successfully!`);
-  };
+    try {
+      const formData = new FormData();
+      formData.append("image", filename);
+      ProfileServices.updateImage(formData);
 
+      toast.success(`${file.name} file uploaded successfully!`);
+    } catch (error) {}
+  };
+  
+  const base64String = btoa(
+    String.fromCharCode(...new Uint8Array())
+  );
   useEffect(() => {
     ProfileServices.getInfos().then((res) => setUserInfo(res));
   }, [userInfo]);
@@ -64,7 +74,11 @@ function ProfileComponent() {
                       <Avatar
                         className="profile-picture"
                         size={128}
-                        src="https://xsgames.co/randomusers/avatar.php?g=pixel"
+                        src={
+                          userInfo.image === "" 
+                            ? "https://xsgames.co/randomusers/avatar.php?g=pixel"
+                            : `data:image/*;base64,${base64String}`
+                        }
                       />
                       {showButton && (
                         <div
@@ -83,7 +97,10 @@ function ProfileComponent() {
                           <Upload
                             accept=".jpg,.jpeg,.png"
                             showUploadList={false}
-                            onChange={(info) => handleUpload(info.file)}
+                            onChange={(info, e) => {
+                              handleUpload(info.file);
+                              setFilename(e.target.files[0]);
+                            }}
                           >
                             <UploadOutlined
                               style={{ fontSize: "3rem", color: "white" }}

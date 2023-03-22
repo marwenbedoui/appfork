@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/userModel");
 const Test = require("../models/testModel");
+const fs = require("fs")
 
 //function : adding user
 const register = async (req, res) => {
@@ -51,10 +52,16 @@ const register = async (req, res) => {
       firstname,
       passwordHash,
       role,
+      image: "",
+      info: {
+        data: "",
+        contentType: "image/*",
+      },
     }).save();
 
     return res.status(200).json({ message: "Registred successfully!" });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "error in adding user" });
   }
 };

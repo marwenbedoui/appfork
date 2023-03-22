@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
   firstname: {
     type: String,
     required: true,
-    lowercase: true
+    lowercase: true,
   },
   email: {
     type: String,
@@ -21,8 +21,8 @@ const userSchema = new mongoose.Schema({
         // Define the regular expression for email validation
         return /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(v);
       },
-      message: props => `${props.value} is not a valid email address!`
-    }
+      message: (props) => `${props.value} is not a valid email address!`,
+    },
   },
   passwordHash: { type: String, required: true },
   role: {
@@ -31,6 +31,7 @@ const userSchema = new mongoose.Schema({
     default: "simpleUser",
     required: true,
   },
+  image: { type: Buffer }
 });
 
 const User = mongoose.model("user", userSchema);
