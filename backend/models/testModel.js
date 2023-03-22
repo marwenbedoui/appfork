@@ -32,7 +32,7 @@ const testSchema = new mongoose.Schema(
     },
     usersNumber: {
       required: true,
-      type: Number
+      type: Number,
     },
     data: {
       type: String,

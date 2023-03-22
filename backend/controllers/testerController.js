@@ -1,14 +1,11 @@
 const Test = require("../models/testModel");
 const util = require("util");
-const { exec, spawn } = require("child_process");
+const { exec } = require("child_process");
 const jwt = require("jsonwebtoken");
 const execPromise = util.promisify(require("child_process").exec);
 const path = require("path");
 const fs = require("fs");
 const csv = require("csv-parser");
-const osUtils = require("os-utils");
-const { performance } = require("perf_hooks");
-const FastSpeedtest = require("fast-speedtest-api");
 const { getTemplate } = require("../test/template/getTemplate");
 const { postTemplate } = require("../test/template/postTemplate");
 const bytes = require("bytes");
@@ -89,7 +86,7 @@ const executeTest = async (req, res) => {
       const lines = jpsStdout.split("\n");
       let processId = null;
       lines.forEach((line) => {
-        if (line.includes("TestApplication")) {
+        if (line.includes("ApacheJMeter.jar")) {
           const parts = line.split(" ");
           processId = parts[0];
         }
@@ -253,42 +250,11 @@ const TestsPerUser = (req, res) => {
     });
 };
 
-const getResults = (req, res) => {
-  osUtils.cpuUsage(function (cpuUsage) {
-    const start = performance.now();
-
-    const speedtest = new FastSpeedtest({
-      token: "YXNkZmFzZGxmbnNkYWZoYXNkZmhrYWxm",
-      verbose: false,
-      timeout: 10000,
-      https: true,
-      urlCount: 5,
-      bufferSize: 8,
-      unit: FastSpeedtest.UNITS.Mbps,
-    });
-
-    speedtest.getSpeed().then((networkSpeed) => {
-      const end = performance.now();
-
-      const memoryUsage = process.memoryUsage().heapUsed / 1024 / 1024;
-
-      const performanceData = {
-        cpuUsage: cpuUsage * 100,
-        diskIoTime: end - start,
-        networkSpeed,
-        memoryUsage,
-      };
-
-      res.json(performanceData);
-    });
-  });
-};
-
 const getTestById = async (req, res) => {
   const id = req.params.id;
   await Test.findById(id)
     .then((response) => {
-      res.status(200).send(response.detail);
+      res.status(200).send(response);
     })
     .catch((e) => {
       res.status(500).json(e);
@@ -298,7 +264,6 @@ const getTestById = async (req, res) => {
 //exports
 exports.executeTest = executeTest;
 exports.getAllTests = getAllTests;
-exports.getResults = getResults;
 exports.TestStatePerUser = TestStatePerUser;
 exports.TestsPerUser = TestsPerUser;
 exports.getTestById = getTestById;
