@@ -33,7 +33,7 @@ app.listen(PORT, () => {
 
 require("./config/database").connect();
 
-var dir = path.join(__dirname, "/test/reports");
+var dir = path.join(__dirname, "/uploads");
 app.use(express.static(dir));
 
 //routers

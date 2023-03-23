@@ -5,13 +5,27 @@ import ProfileServices from "../../services/ProfileServices";
 import { PasswordModal, EmailModal, InfoModal } from "../Modals";
 import { UploadOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
+import base64js from "base64-js";
 
 function ProfileComponent() {
   const [modalMailVisible, setModalMailVisible] = useState(false);
   const [modalInfoVisible, setModalInfoVisible] = useState(false);
   const [modalPasswordVisible, setModalPasswordVisible] = useState(false);
-  const [filename, setFilename] = useState("");
   const [userInfo, setUserInfo] = useState({});
+  const [imageUrl, setImageUrl] = useState();
+
+  useEffect(() => {
+    ProfileServices.getInfos().then((res) => {
+      setUserInfo(res);
+      const byteArray = new Uint8Array(res.image.data);
+      if (res.image.data.length === 0) {
+        setImageUrl(null);
+      } else {
+        const base64String = base64js.fromByteArray(byteArray);
+        setImageUrl(`http://localhost:5000/${atob(base64String)}`);
+      }
+    });
+  }, [userInfo, imageUrl]);
 
   const handleCancelMail = () => {
     setModalMailVisible(false);
@@ -35,22 +49,14 @@ function ProfileComponent() {
     setShowButton(false);
   };
 
-  const handleUpload = (file) => {
-    try {
-      const formData = new FormData();
-      formData.append("image", filename);
-      ProfileServices.updateImage(formData);
-
-      toast.success(`${file.name} file uploaded successfully!`);
-    } catch (error) {}
+  const handleUpload = () => {
+    toast.success(`File uploaded successfully!`);
   };
-  
-  const base64String = btoa(
-    String.fromCharCode(...new Uint8Array())
-  );
-  useEffect(() => {
-    ProfileServices.getInfos().then((res) => setUserInfo(res));
-  }, [userInfo]);
+
+  const handleRemove = () => {
+    setImageUrl(null);
+  };
+
   return (
     <div className="profile-page">
       <div className="site-page-header-ghost-wrapper">
@@ -71,15 +77,21 @@ function ProfileComponent() {
                       onMouseEnter={handleMouseEnter}
                       onMouseLeave={handleMouseLeave}
                     >
-                      <Avatar
-                        className="profile-picture"
-                        size={128}
-                        src={
-                          userInfo.image === "" 
-                            ? "https://xsgames.co/randomusers/avatar.php?g=pixel"
-                            : `data:image/*;base64,${base64String}`
-                        }
-                      />
+                      {imageUrl === null ? (
+                        <Avatar
+                          className="profile-picture"
+                          size={128}
+                          src={
+                            "https://xsgames.co/randomusers/avatar.php?g=pixel"
+                          }
+                        />
+                      ) : (
+                        <Avatar
+                          className="profile-picture"
+                          size={128}
+                          src={imageUrl}
+                        />
+                      )}
                       {showButton && (
                         <div
                           style={{
@@ -94,13 +106,54 @@ function ProfileComponent() {
                             justifyContent: "center",
                           }}
                         >
-                          <Upload
+                          {/* <Upload
                             accept=".jpg,.jpeg,.png"
                             showUploadList={false}
-                            onChange={(info, e) => {
-                              handleUpload(info.file);
-                              setFilename(e.target.files[0]);
+                            onChange={(e) => {
+                              setFilename(e.file);
+                              handleUpload(e.file);
                             }}
+                          >
+                            <UploadOutlined
+                              style={{ fontSize: "3rem", color: "white" }}
+                            />
+                          </Upload> */}
+                          <Upload
+                            name="image"
+                            method="put"
+                            action="http://localhost:5000/api/v1/update-image"
+                            headers={{
+                              Authorization: `Bearer ${ProfileServices.token}`,
+                            }}
+                            listType="picture-card"
+                            className="avatar-uploader"
+                            showUploadList={false}
+                            beforeUpload={(file) => {
+                              const isJpgOrPng =
+                                file.type === "image/jpeg" ||
+                                file.type === "image/png";
+                              if (!isJpgOrPng) {
+                                toast.error(
+                                  "You can only upload JPG/PNG file!"
+                                );
+                              }
+                              const isLt2M = file.size / 1024 / 1024 < 2;
+                              if (!isLt2M) {
+                                toast.error("Image must smaller than 2MB!");
+                              }
+                              return isJpgOrPng && isLt2M;
+                            }}
+                            onChange={(info) => {
+                              if (info.file.status === "done") {
+                                const byteArray = new Uint8Array(
+                                  info.file.response.image.data
+                                );
+                                const base64String =
+                                  base64js.fromByteArray(byteArray);
+                                handleUpload(atob(base64String));
+                              }
+                            }}
+                            onRemove={handleRemove}
                           >
                             <UploadOutlined
                               style={{ fontSize: "3rem", color: "white" }}

@@ -10,6 +10,7 @@ import { Header } from "antd/es/layout/layout";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import ProfileServices from "../services/ProfileServices";
+import base64js from "base64-js";
 
 const { Content, Footer, Sider } = Layout;
 
@@ -62,10 +63,21 @@ const LayoutComponent = ({ headerLogo, mainContent, currentPage, role }) => {
   }));
 
   const [userInfo, setUserInfo] = useState({});
+  const [imageUrl, setImageUrl] = useState();
 
   useEffect(() => {
-    ProfileServices.getInfos().then((res) => setUserInfo(res));
-  }, [userInfo]);
+    ProfileServices.getInfos().then((res) => {
+      setUserInfo(res);
+      const byteArray = new Uint8Array(res.image.data);
+      if (res.image.data.length === 0) {
+        setImageUrl(null);
+      } else {
+        const base64String = base64js.fromByteArray(byteArray);
+        setImageUrl(`http://localhost:5000/${atob(base64String)}`);
+      }
+    });
+  }, [userInfo, imageUrl]);
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -97,11 +109,15 @@ const LayoutComponent = ({ headerLogo, mainContent, currentPage, role }) => {
             }}
           >
             <Col span={24}>
-              <Avatar
-                className="profile-picture"
-                size={128}
-                src="https://xsgames.co/randomusers/avatar.php?g=pixel"
-              />
+              {imageUrl === null ? (
+                <Avatar
+                  className="profile-picture"
+                  size={128}
+                  src={"https://xsgames.co/randomusers/avatar.php?g=pixel"}
+                />
+              ) : (
+                <Avatar className="profile-picture" size={128} src={imageUrl} />
+              )}
             </Col>
             <Col span={24}>
               <Typography.Title
