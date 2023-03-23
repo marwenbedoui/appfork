@@ -7,15 +7,14 @@ const multer = require("multer");
 //creating image storage
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
-    callback(null, "../uploads");
+    callback(null, "./uploads");
   },
   filename: (req, file, callback) => {
     callback(null, Date.now() + file.originalname);
   },
 });
-const upload = multer({ storage: storage }).single("image");
 
-//
+const upload = multer({ storage: storage }).single("image");
 
 //login
 router.post("/login", usersController.login);
@@ -32,6 +31,6 @@ router.put("/update-mail", isUser, usersController.updateMail);
 //get user info
 router.get("/get-info", isUser, usersController.getInfo);
 //update user image
-router.put("/update-image",upload,isUser,usersController.updateImage)
+router.put("/update-image", upload, isUser, usersController.updateImage);
 
 module.exports = router;

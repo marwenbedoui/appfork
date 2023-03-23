@@ -203,9 +203,10 @@ const updateImage = async (req, res) => {
 
     // Update the user's image
     user.image = req.file.filename;
-    await user.save();
-
-    res.json(user);
+    await user
+      .save()
+      .then((response) => res.json(response))
+      .catch((e) => res.send(e));
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
