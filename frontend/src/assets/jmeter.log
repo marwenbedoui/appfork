@@ -1,0 +1,22 @@
+2023-03-23 14:03:13,912 INFO o.a.j.u.JMeterUtils: Setting Locale to en_EN
+2023-03-23 14:03:13,939 INFO o.a.j.JMeter: Loading user properties from: C:\Program Files\apache-jmeter-5.5\bin\user.properties
+2023-03-23 14:03:13,948 INFO o.a.j.JMeter: Loading system properties from: C:\Program Files\apache-jmeter-5.5\bin\system.properties
+2023-03-23 14:03:13,957 INFO o.a.j.JMeter: Copyright (c) 1998-2022 The Apache Software Foundation
+2023-03-23 14:03:13,957 INFO o.a.j.JMeter: Version 5.5
+2023-03-23 14:03:13,957 INFO o.a.j.JMeter: java.version=1.8.0_202
+2023-03-23 14:03:13,957 INFO o.a.j.JMeter: java.vm.name=Java HotSpot(TM) 64-Bit Server VM
+2023-03-23 14:03:13,957 INFO o.a.j.JMeter: os.name=Windows 10
+2023-03-23 14:03:13,957 INFO o.a.j.JMeter: os.arch=amd64
+2023-03-23 14:03:13,957 INFO o.a.j.JMeter: os.version=10.0
+2023-03-23 14:03:13,958 INFO o.a.j.JMeter: file.encoding=Cp1252
+2023-03-23 14:03:13,958 INFO o.a.j.JMeter: java.awt.headless=null
+2023-03-23 14:03:13,958 INFO o.a.j.JMeter: Max memory     =1073741824
+2023-03-23 14:03:13,958 INFO o.a.j.JMeter: Available Processors =12
+2023-03-23 14:03:13,961 INFO o.a.j.JMeter: Default Locale=English (EN)
+2023-03-23 14:03:13,962 INFO o.a.j.JMeter: JMeter  Locale=English (EN)
+2023-03-23 14:03:13,962 INFO o.a.j.JMeter: JMeterHome=C:\Program Files\apache-jmeter-5.5
+2023-03-23 14:03:13,962 INFO o.a.j.JMeter: user.dir  =C:\Users\Lajmi\Desktop\testing_app_pfe\frontend\src\assets
+2023-03-23 14:03:13,962 INFO o.a.j.JMeter: PWD       =C:\Users\Lajmi\Desktop\testing_app_pfe\frontend\src\assets
+2023-03-23 14:03:13,966 INFO o.a.j.JMeter: IP: 192.168.56.1 Name: DESKTOP-NSN240G FullName: DESKTOP-NSN240G
+2023-03-23 14:03:13,979 INFO o.a.j.JMeter: Loaded icon properties from org/apache/jmeter/images/icon.properties
+2023-03-23 14:03:14,227 INFO o.a.j.JMeterGuiLauncher: Setting LAF to: com.github.weisj.darklaf.DarkLaf:com.github.weisj.darklaf.theme.DarculaTheme

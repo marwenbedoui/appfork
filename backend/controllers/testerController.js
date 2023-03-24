@@ -1,6 +1,6 @@
 const Test = require("../models/testModel");
 const util = require("util");
-const { exec } = require("child_process");
+const { exec, spawn } = require("child_process");
 const jwt = require("jsonwebtoken");
 const execPromise = util.promisify(require("child_process").exec);
 const path = require("path");
@@ -67,13 +67,18 @@ const executeTest = async (req, res) => {
   //jmeter command the path should be updated
   const jmeterCommand = `${process.env.JMETERPATH} -n -t ${jmxOutputPath} -l ${reportPath}`;
 
-  //executing the jmeter command and writing in the reports.csv
-  exec(jmeterCommand, async (err, stdout, stderr) => {
-    if (err) {
-      console.error(`JMeter test failed: ${stderr}`);
-      res.status(500).send({ message: "JMeter test failed" });
-    }
-    console.log(`JMeter test started: ${stdout}`);
+  // Exécute la commande "ls" avec les arguments "-la"
+  const ls = spawn(`${process.env.JMETERPATH}`, [
+    `-n`,
+    `-t`,
+    `${jmxOutputPath}`,
+    `-l`,
+    `${reportPath}`,
+  ]);
+
+  // Affiche les données envoyées dans la sortie standard
+  ls.stdout.on("data", async (data) => {
+    console.log(`JMeter test started: ${data}`);
     try {
       // Execute the jps command to list all Java processes
       const { stdout: jpsStdout, stderr: jpsStderr } = await execPromise("jps");
@@ -86,7 +91,7 @@ const executeTest = async (req, res) => {
       const lines = jpsStdout.split("\n");
       let processId = null;
       lines.forEach((line) => {
-        if (line.includes("ApacheJMeter.jar")) {
+        if (line.includes("TestApplication")) {
           const parts = line.split(" ");
           processId = parts[0];
         }
@@ -114,37 +119,27 @@ const executeTest = async (req, res) => {
             timestamp: formattedDate,
           });
         }
-
+        console.log();
         test.detail = statsArray;
         test.save().catch((e) => res.send(e));
         return res.status(200).json(statsArray);
       }
 
-      const intervalId = () => {
-        const interval = setInterval(async () => {
-          const stats = await pidusage(processId);
-          statsArray.push({
-            cpu: stats.cpu.toFixed(2) + "%",
-            memory: bytes(stats.memory),
-            timestamp: moment(stats.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-          });
-          if (statsArray.length >= 16) {
-            console.log(statsArray);
-            clearInterval(interval); // Clear the interval when statsArray has 5 elements
-          }
-        }, 1000);
-        return interval; // Return the interval ID
-      };
-
-      const output = intervalId();
+      setTimeout(async () => {
+        const stats = await pidusage(processId);
+        statsArray.push({
+          cpu: stats.cpu.toFixed(2) + "%",
+          memory: bytes(stats.memory),
+          timestamp: moment(stats.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+        });
+        if (statsArray.length >= 16) {
+          console.log(statsArray);
+          clearInterval(interval); // Clear the interval when statsArray has 5 elements
+        }
+      }, 1000);
 
       setTimeout(() => {
-        clearInterval(output);
         test.detail = statsArray;
-        test.save().catch((e) => res.send(e));
-        res.json({
-          jvm: statsArray,
-        });
       }, 15000);
     } catch (err) {
       console.error(err);
@@ -152,26 +147,35 @@ const executeTest = async (req, res) => {
     }
   });
 
-  //getting the status from the csv file and saving the test with the new status
-  setTimeout(() => {
-    const results = [];
-    fs.createReadStream(reportPath)
-      .pipe(csv())
-      .on("data", (data) => results.push(data["success"]))
-      .on("end", async () => {
-        results[1] === "true"
-          ? (test.status = "Passed")
-          : (test.status = "failed");
-        await test
-          .save()
-          // .then((data) => res.send(data))
-          .catch((err) => {
-            res.status(500).send({
-              message: err.message || "Error",
+  // Affiche les données envoyées dans la sortie d'erreur
+  ls.stderr.on("data", (data) => {
+    console.error(`JMeter test failed: ${data}`);
+    res.status(500).send({ message: "JMeter test failed" });
+  });
+
+  // Affiche un message quand le processus est terminé
+  ls.on("close", (code) => {
+    console.log(`child process exited with code ${code}`);
+    setTimeout(() => {
+      const results = [];
+      fs.createReadStream(reportPath)
+        .pipe(csv())
+        .on("data", (data) => results.push(data["success"]))
+        .on("end", async () => {
+          results[1] === "true"
+            ? (test.status = "Passed")
+            : (test.status = "failed");
+          await test
+            .save()
+            .then((data) => res.send(data))
+            .catch((err) => {
+              res.status(500).send({
+                message: err.message || "Error",
+              });
             });
-          });
-      });
-  }, 10000);
+        });
+    }, 10000);
+  });
 };
 
 const getAllTests = (req, res) => {
