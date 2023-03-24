@@ -26,7 +26,7 @@ const rapportSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    responseTime: {
+    processTime: {
       type: Number,
       required: true,
     },
@@ -51,9 +51,9 @@ const rapportSchema = new mongoose.Schema(
   }
 );
 
-rapportSchema.virtual("processTime").get(function () {
-  return this.elapsed * 2 - this.Connect - this.Latency;
-});
+// rapportSchema.virtual("processTime").get(function () {
+//   return this.elapsed * 2 - this.Connect - this.Latency;
+// });
 
 const Rapport = mongoose.model("rapport", rapportSchema);
 
