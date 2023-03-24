@@ -11,6 +11,7 @@ const { postTemplate } = require("../test/template/postTemplate");
 const bytes = require("bytes");
 const pidusage = require("pidusage");
 const moment = require("moment");
+const Rapport = require("../models/rapportModel");
 
 const executeTest = async (req, res) => {
   const statsArray = [];
@@ -160,7 +161,27 @@ const executeTest = async (req, res) => {
       const results = [];
       fs.createReadStream(reportPath)
         .pipe(csv())
-        .on("data", (data) => results.push(data["success"]))
+        .on("data", (row) => {
+          // results.push(data["success"]);
+          const rapport = new Rapport({
+            timeStamp: new Date(parseInt(row.timeStamp)),
+            elapsed: parseInt(row.elapsed),
+            bytes: parseInt(row.bytes),
+            sentBytes: parseInt(row.sentBytes),
+            Latency: parseInt(row.Latency),
+            Connect: parseInt(row.Connect),
+            processTime:
+              parseInt(row.elapsed) * 2 -
+              parseInt(row.Connect) -
+              parseInt(row.Latency),
+            responseCode: parseInt(row.responseCode),
+            success: row.success === 1,
+          });
+          rapport
+            .save()
+            .then(() => console.log("Rapport saved successfully"))
+            .catch((error) => console.error(error));
+        })
         .on("end", async () => {
           results[1] === "true"
             ? (test.status = "Passed")
