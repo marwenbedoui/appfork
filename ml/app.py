@@ -1,7 +1,9 @@
 import os
-from flask import Flask
+from flask import Flask, Response
 from dotenv import load_dotenv
 from pymongo import MongoClient
+import csv
+
 
 app = Flask(__name__)
 load_dotenv()
@@ -55,7 +57,19 @@ def get_rapports():
     # return the list of tests as a JSON response
     return {"rapports": rapport_list}
 
+@app.route('/rapports/csv')
+def generate_csv():
+    # Récupération des données de la collection "rapports"
+    rapports = rapports_collection.find()
 
+    # Configuration du fichier CSV
+    with open('rapports.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['timeStamp', 'elapsed', 'bytes', 'sentBytes', 'Latency', 'Connect', 'processTime', 'responseCode', 'success'])
+        for rapport in rapports:
+            writer.writerow([rapport["timeStamp"], rapport["elapsed"], rapport["bytes"], rapport["sentBytes"], rapport["Latency"],  rapport["Connect"],  rapport["processTime"], rapport["responseCode"], rapport["success"]])
+
+    return 'Le fichier CSV a été généré.'
 
 if __name__ == '__main__':
     app.run(host="localhost", port=5001)
