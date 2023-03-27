@@ -120,7 +120,6 @@ const executeTest = async (req, res) => {
             timestamp: formattedDate,
           });
         }
-        console.log();
         test.detail = statsArray;
         test.save().catch((e) => res.send(e));
         return res.status(200).json(statsArray);
@@ -133,10 +132,6 @@ const executeTest = async (req, res) => {
           memory: bytes(stats.memory),
           timestamp: moment(stats.timestamp).format("YYYY-MM-DD HH:mm:ss"),
         });
-        if (statsArray.length >= 16) {
-          console.log(statsArray);
-          clearInterval(interval); // Clear the interval when statsArray has 5 elements
-        }
       }, 1000);
 
       setTimeout(() => {
