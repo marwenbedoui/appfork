@@ -160,16 +160,20 @@ const executeTest = async (req, res) => {
           // results.push(data["success"]);
           const rapport = new Rapport({
             timeStamp: new Date(parseInt(row.timeStamp)),
-            elapsed: parseInt(row.elapsed),
-            bytes: parseInt(row.bytes),
-            sentBytes: parseInt(row.sentBytes),
-            Latency: parseInt(row.Latency),
-            Connect: parseInt(row.Connect),
+            elapsed: !isNaN(row.elapsed) ? parseInt(row.elapsed) : 0,
+            bytes: !isNaN(row.bytes) ? parseInt(row.bytes) : 0,
+            sentBytes: !isNaN(row.sentBytes) ? parseInt(row.sentBytes) : 0,
+            Latency: !isNaN(row.Latency) ? parseInt(row.Latency) : 0,
+            Connect: !isNaN(row.Connect) ? parseInt(row.Connect) : 0,
             processTime:
-              parseInt(row.elapsed) * 2 -
-              parseInt(row.Connect) -
-              parseInt(row.Latency),
-            responseCode: parseInt(row.responseCode),
+              !isNaN(row.elapsed) && !isNaN(row.Connect) && !isNaN(row.Latency)
+                ? parseInt(row.elapsed) * 2 -
+                  parseInt(row.Connect) -
+                  parseInt(row.Latency)
+                : 0,
+            responseCode: !isNaN(row.responseCode)
+              ? parseInt(row.responseCode)
+              : 400,
             success: row.success === 1,
           });
           rapport
