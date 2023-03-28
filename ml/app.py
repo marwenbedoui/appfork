@@ -72,4 +72,4 @@ def generate_csv():
     return 'Le fichier CSV a été généré.'
 
 if __name__ == '__main__':
-    app.run(host="localhost", port=5001)
+    app.run(host="localhost", port=os.environ.get("FLASK_RUN_PORT"))
