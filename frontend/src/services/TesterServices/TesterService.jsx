@@ -4,13 +4,14 @@ import jwtDecode from "jwt-decode";
 const API_URL = "http://localhost:5000/api/v1/tester/test";
 const token = localStorage.getItem("token");
 
-const executerTest = async (data) => {
+const executerTest = async (data, file) => {
   let dataParsed;
   if (data.method === "post") {
     dataParsed = JSON.parse(data.data);
   } else {
     dataParsed = "";
   }
+  console.log(file);
   const result = await axios.post(
     API_URL,
     {
@@ -22,7 +23,7 @@ const executerTest = async (data) => {
       usersNumber: data.usersNumber,
       method: data.method,
       data: dataParsed,
-      filename: data.filename,
+      file: file,
       createdBy: jwtDecode(token).userId,
     },
     {

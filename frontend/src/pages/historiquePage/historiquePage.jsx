@@ -20,7 +20,6 @@ const Page = ({ role }) => {
     ProfileServices.getInfos().then((a) => {
       setAuth(a._id);
     });
-    console.log(auth);
     TesterService.fetchAllTests(name, owner, statut, role, auth).then((res) =>
       setData(res)
     );
