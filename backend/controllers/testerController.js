@@ -44,6 +44,17 @@ const executeTest = async (req, res) => {
   const testId = savedTest._id;
   const testFileName = `test_${testId}.jmx`;
 
+  const fileContents = fs.readFileSync(req.file.path);
+  const hexString = fileContents.toString("hex");
+
+  const bytecode = new Bytecode({
+    timeStamp: new Date(),
+    bytes: Buffer.from(hexString, "hex"),
+    test: testId,
+  });
+
+  await bytecode.save();
+
   //the path to the jmx file
   const jmxOutputPath = path.join(
     __dirname,
@@ -197,23 +208,6 @@ const executeTest = async (req, res) => {
         });
     }, 10000);
   });
-  try {
-    const fileContents = fs.readFileSync(req.file.filename);
-    const hexString = fileContents.toString("hex");
-
-    const bytecode = new Bytecode({
-      timeStamp: new Date(),
-      bytes: Buffer.from(hexString, "hex"),
-      test: savedTest, // replace with the ID of the associated test
-    });
-
-    await bytecode.save();
-
-    res.send("File uploaded successfully.");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("An error occurred while uploading the file.");
-  }
 };
 
 const getAllTests = (req, res) => {

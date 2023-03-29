@@ -8,7 +8,6 @@ import {
   Col,
   Select,
   Checkbox,
-  Upload,
 } from "antd";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
@@ -401,16 +400,11 @@ export const AddTestModal = ({ visible, onCancel }) => {
   const handleMethodChange = (value) => {
     setMethod(value);
   };
-  const handleUpload = () => {
-    toast.success(`File uploaded successfully!`);
-  };
+  const [file, setFile] = useState(null);
 
-  const handleRemove = () => {
-    return;
-  };
   const onFinish = async (values) => {
     setLoading(true);
-    await TesterService.executerTest(values)
+    await TesterService.executerTest(values, file)
       .then(() => {
         if (values.data) onCancel();
         toast.success("Test effectué avec succès");
@@ -422,6 +416,7 @@ export const AddTestModal = ({ visible, onCancel }) => {
     setLoading(false);
     onCancel();
   };
+
   return (
     <Modal
       width={1000}
@@ -436,6 +431,7 @@ export const AddTestModal = ({ visible, onCancel }) => {
     >
       <Form
         layout="vertical"
+        enctype="multipart/form-data"
         form={form}
         onFinish={onFinish}
         labelCol={{
@@ -515,8 +511,12 @@ export const AddTestModal = ({ visible, onCancel }) => {
                 </Col>
               </Row>
             </Form.Item>
-            <Form.Item label="Upload bytecode" name="bytecode">
-              <input name="bytes" type="file" />
+            <Form.Item label="Upload bytecode" name="file">
+              <Input
+                name="file"
+                type="file"
+                onChange={(e) => setFile(e.target.files[0])}
+              />
             </Form.Item>
           </Col>
           <Col span={11} offset={1}>
