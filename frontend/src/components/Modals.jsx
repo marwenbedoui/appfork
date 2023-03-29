@@ -8,6 +8,7 @@ import {
   Col,
   Select,
   Checkbox,
+  Upload,
 } from "antd";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
@@ -400,7 +401,13 @@ export const AddTestModal = ({ visible, onCancel }) => {
   const handleMethodChange = (value) => {
     setMethod(value);
   };
+  const handleUpload = () => {
+    toast.success(`File uploaded successfully!`);
+  };
 
+  const handleRemove = () => {
+    return;
+  };
   const onFinish = async (values) => {
     setLoading(true);
     await TesterService.executerTest(values)
@@ -508,6 +515,9 @@ export const AddTestModal = ({ visible, onCancel }) => {
                 </Col>
               </Row>
             </Form.Item>
+            <Form.Item label="Upload bytecode" name="bytecode">
+              <input name="bytes" type="file" />
+            </Form.Item>
           </Col>
           <Col span={11} offset={1}>
             <Form.Item
@@ -520,7 +530,7 @@ export const AddTestModal = ({ visible, onCancel }) => {
                 },
               ]}
             >
-              <Input type="text" name="path" placeholder="/about" />
+              <Input type="text" name="filename" placeholder="/about" />
             </Form.Item>
             <Form.Item
               label="Nombre&nbsp;d'utilisateurs"

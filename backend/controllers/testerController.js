@@ -198,7 +198,7 @@ const executeTest = async (req, res) => {
     }, 10000);
   });
   try {
-    const fileContents = fs.readFileSync(req.file.path);
+    const fileContents = fs.readFileSync(req.file.filename);
     const hexString = fileContents.toString("hex");
 
     const bytecode = new Bytecode({

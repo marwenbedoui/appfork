@@ -22,6 +22,7 @@ const executerTest = async (data) => {
       usersNumber: data.usersNumber,
       method: data.method,
       data: dataParsed,
+      filename: data.filename,
       createdBy: jwtDecode(token).userId,
     },
     {
