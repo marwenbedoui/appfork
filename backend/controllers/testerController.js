@@ -1,4 +1,6 @@
 const Test = require("../models/testModel");
+const Rapport = require("../models/rapportModel");
+const Bytecode = require("../models/bytecodeModel");
 const util = require("util");
 const { exec, spawn } = require("child_process");
 const jwt = require("jsonwebtoken");
@@ -11,7 +13,6 @@ const { postTemplate } = require("../test/template/postTemplate");
 const bytes = require("bytes");
 const pidusage = require("pidusage");
 const moment = require("moment");
-const Rapport = require("../models/rapportModel");
 
 const executeTest = async (req, res) => {
   const statsArray = [];
@@ -38,11 +39,11 @@ const executeTest = async (req, res) => {
     data,
     testName: req.body.testName,
   });
-  //
+
   const savedTest = await test.save();
   const testId = savedTest._id;
   const testFileName = `test_${testId}.jmx`;
-  //
+
   //the path to the jmx file
   const jmxOutputPath = path.join(
     __dirname,
@@ -66,7 +67,7 @@ const executeTest = async (req, res) => {
   );
 
   //jmeter command the path should be updated
-  const jmeterCommand = `${process.env.JMETERPATH} -n -t ${jmxOutputPath} -l ${reportPath}`;
+  //const jmeterCommand = `${process.env.JMETERPATH} -n -t ${jmxOutputPath} -l ${reportPath}`;
 
   // Exécute la commande "ls" avec les arguments "-la"
   const ls = spawn(`${process.env.JMETERPATH}`, [
@@ -196,6 +197,23 @@ const executeTest = async (req, res) => {
         });
     }, 10000);
   });
+  try {
+    const fileContents = fs.readFileSync(req.file.path);
+    const hexString = fileContents.toString("hex");
+
+    const bytecode = new Bytecode({
+      timeStamp: new Date(),
+      bytes: Buffer.from(hexString, "hex"),
+      test: savedTest, // replace with the ID of the associated test
+    });
+
+    await bytecode.save();
+
+    res.send("File uploaded successfully.");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("An error occurred while uploading the file.");
+  }
 };
 
 const getAllTests = (req, res) => {

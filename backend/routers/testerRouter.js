@@ -1,8 +1,22 @@
 const router = require("express").Router();
 const testerController = require("../controllers/testerController");
 const { isUser } = require("../middlewares/Auth");
+const multer = require("multer");
 
-router.post("/tester/test", isUser, testerController.executeTest);
+//initializing multer
+//creating image storage
+const storage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, "./uploads/bytecode");
+  },
+  filename: (req, file, callback) => {
+    callback(null, Date.now() + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage }).single("file");
+
+router.post("/tester/test", upload, isUser, testerController.executeTest);
 //get test
 router.get("/tester/test/", isUser, testerController.getAllTests);
 router.get("/tester/test/number", isUser, testerController.TestStatePerUser);
