@@ -2,18 +2,28 @@ import React, { useEffect, useState } from "react";
 import LayoutComponent from "../../components/LayoutComponent";
 import TalanLogo from "../../assets/talan-logo.png";
 import { useParams } from "react-router-dom";
-import { Button, Col, Empty, Row, Spin, Space, Progress } from "antd";
+import { Button, Col, Empty, Row, Spin, Space } from "antd";
 import TesterService from "../../services/TesterServices/TesterService";
 import { TestChart } from "../../components/ChartsComponent";
-import { RollbackOutlined, PercentageOutlined } from "@ant-design/icons";
+import {
+  //RollbackOutlined,
+  PercentageOutlined,
+  RedoOutlined,
+} from "@ant-design/icons";
 import { toast } from "react-toastify";
+import { TestPercentageModal } from "../../components/Modals";
 
 const Page = ({ role }) => {
+  const [modalPercentageVisible, setModalPercentageVisible] = useState(false);
   const [data, setData] = useState([]);
   const [detail, setDetail] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const { id } = useParams();
+
+  const handleCancelPercentage = () => {
+    setModalPercentageVisible(false);
+  };
 
   const executeTest = async (data) => {
     setLoading(true);
@@ -42,35 +52,11 @@ const Page = ({ role }) => {
   if (!detail || detail.length === 0) {
     return <Empty tip="Loading" size="large" />;
   }
-  const path = `/${role}/historiques`;
+  //const path = `/${role}/historiques`;
   return (
     <Row gutter={[16, 16]}>
       <Col span={24}>
-        <Space style={{ float: "right" }}>
-          <Button
-            size="large"
-            type="primary"
-            style={{ float: "right", backgroundColor: "green", color: "white" }}
-            shape="round"
-            htmlType="submit"
-            onClick={() => executeTest(data)}
-          >
-            {loading ? <Spin /> : "Executer le test"}
-          </Button>
-          <Button
-            size="large"
-            type="primary"
-            href={path}
-            style={{
-              float: "right",
-              backgroundColor: "#121212",
-              color: "white",
-            }}
-            icon={<PercentageOutlined />}
-            shape="round"
-          >
-            Voir le pourcentage
-          </Button>
+        {/* <Space style={{ float: "left" }}>
           <Button
             size="large"
             type="primary"
@@ -81,21 +67,44 @@ const Page = ({ role }) => {
           >
             Retour
           </Button>
+        </Space> */}
+        <Space style={{ float: "right" }}>
+          <Button
+            size="large"
+            type="primary"
+            style={{
+              float: "right",
+              backgroundColor: "#121212",
+              color: "white",
+            }}
+            icon={<PercentageOutlined />}
+            shape="round"
+            onClick={() => setModalPercentageVisible(true)}
+          >
+            Voir le pourcentage
+          </Button>
+          <Button
+            size="large"
+            type="primary"
+            style={{ float: "right", backgroundColor: "green", color: "white" }}
+            shape="round"
+            htmlType="submit"
+            onClick={() => executeTest(data)}
+            icon={<RedoOutlined />}
+          >
+            {loading ? <Spin /> : "Executer le test"}
+          </Button>
+
+          <TestPercentageModal
+            onCancel={handleCancelPercentage}
+            visible={modalPercentageVisible}
+            percentage={data.pourcentage}
+          />
         </Space>
       </Col>
+
       <Col span={24}>
         <TestChart values={detail} />
-      </Col>
-      <Col span={24}>
-        <Space wrap>
-          <Progress
-            type="circle"
-            percent={data.pourcentage.failed}
-            size={80}
-            status="exception"
-          />
-          <Progress type="circle" percent={data.pourcentage.passed} size={80} />
-        </Space>
       </Col>
     </Row>
   );

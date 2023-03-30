@@ -106,18 +106,6 @@ function ProfileComponent() {
                             justifyContent: "center",
                           }}
                         >
-                          {/* <Upload
-                            accept=".jpg,.jpeg,.png"
-                            showUploadList={false}
-                            onChange={(e) => {
-                              setFilename(e.file);
-                              handleUpload(e.file);
-                            }}
-                          >
-                            <UploadOutlined
-                              style={{ fontSize: "3rem", color: "white" }}
-                            />
-                          </Upload> */}
                           <Upload
                             name="image"
                             method="put"

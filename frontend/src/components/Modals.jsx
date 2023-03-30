@@ -8,6 +8,8 @@ import {
   Col,
   Select,
   Checkbox,
+  Progress,
+  Space,
 } from "antd";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
@@ -630,6 +632,48 @@ export const TestStatusModel = ({ visible, onCancel, id, name }) => {
       >
         Fermer
       </Button>
+    </Modal>
+  );
+};
+
+export const TestPercentageModal = ({ visible, onCancel, percentage }) => {
+  return (
+    <Modal
+      open={visible}
+      onCancel={onCancel}
+      title="Pourcentage du test"
+      width={450}
+      footer={null}
+    >
+      <Row justify="center" align="middle" style={{marginTop:"25px" , marginBottom:"25"}}>
+        <Col>
+          <Row justify="center">
+            <Space wrap>
+              <Progress
+                type="circle"
+                percent={percentage.failed}
+                status="exception"
+                format={() => `${percentage.failed}%`}
+              />
+              <Progress
+                type="circle"
+                percent={percentage.passed}
+                format={() => `${percentage.passed}%`}
+                status="success"
+              />
+            </Space>
+          </Row>
+          <Row justify="center" style={{ marginTop: "24px" }}>
+            <Button
+              type="primary"
+              onClick={onCancel}
+              style={{ backgroundColor: "#2596be", color: "white" }}
+            >
+              Fermer
+            </Button>
+          </Row>
+        </Col>
+      </Row>
     </Modal>
   );
 };
