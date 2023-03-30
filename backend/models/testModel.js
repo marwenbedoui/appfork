@@ -28,8 +28,16 @@ const testSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      // required: true,
     },
+    pourcentage: {
+      passed: {
+        type: String,
+      },
+      failed: {
+        type: String,
+      },
+    },
+
     usersNumber: {
       required: true,
       type: Number,
