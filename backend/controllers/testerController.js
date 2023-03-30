@@ -14,6 +14,43 @@ const bytes = require("bytes");
 const pidusage = require("pidusage");
 const moment = require("moment");
 
+function calculateMajority(arr) {
+  let trueCount = 0;
+  let falseCount = 0;
+
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === "true") {
+      trueCount++;
+    } else {
+      falseCount++;
+    }
+  }
+
+  if (trueCount > falseCount) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function calculatePercentage(arr) {
+  let trueCount = 0;
+  let falseCount = 0;
+
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === "true") {
+      trueCount++;
+    } else {
+      falseCount++;
+    }
+  }
+
+  const truePercentage = (trueCount / arr.length) * 100;
+  const falsePercentage = (falseCount / arr.length) * 100;
+
+  return { truePercentage, falsePercentage };
+}
+
 const executeTest = async (req, res) => {
   const statsArray = [];
   //initialzing a void status
@@ -169,7 +206,7 @@ const executeTest = async (req, res) => {
       fs.createReadStream(reportPath)
         .pipe(csv())
         .on("data", (row) => {
-          // results.push(data["success"]);
+          results.push(row["success"]);
           const rapport = new Rapport({
             timeStamp: new Date(parseInt(row.timeStamp)),
             elapsed: !isNaN(row.elapsed) ? parseInt(row.elapsed) : 0,
@@ -188,13 +225,14 @@ const executeTest = async (req, res) => {
               : 400,
             success: row.success === 1,
           });
-          rapport
-            .save()
-            .then(() => console.log("Rapport saved successfully"))
-            .catch((error) => console.error(error));
+          rapport.save().catch((error) => console.error(error));
         })
         .on("end", async () => {
-          results[1] === "true"
+          let majority = calculateMajority(results);
+          test.pourcentage.passed = calculatePercentage(results).truePercentage;
+          test.pourcentage.failed =
+            calculatePercentage(results).falsePercentage;
+          majority === true
             ? (test.status = "Passed")
             : (test.status = "failed");
           await test

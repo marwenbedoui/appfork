@@ -511,11 +511,21 @@ export const AddTestModal = ({ visible, onCancel }) => {
                 </Col>
               </Row>
             </Form.Item>
-            <Form.Item label="Upload bytecode" name="file">
-              <Input
+            <Form.Item
+              label="Upload bytecode"
+              name="file"
+              rules={[
+                { required: true, message: "Veuillez ajouter un fichier !" },
+              ]}
+            >
+              <input
                 name="file"
                 type="file"
-                onChange={(e) => setFile(e.target.files[0])}
+                accept=".class"
+                onChange={(e) => {
+                  console.log(e);
+                  setFile(e.target.files[0]);
+                }}
               />
             </Form.Item>
           </Col>

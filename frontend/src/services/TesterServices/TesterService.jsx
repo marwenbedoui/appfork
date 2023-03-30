@@ -11,7 +11,6 @@ const executerTest = async (data, file) => {
   } else {
     dataParsed = "";
   }
-  console.log(file);
   const result = await axios.post(
     API_URL,
     {
@@ -29,6 +28,7 @@ const executerTest = async (data, file) => {
     {
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
       },
     }
   );
