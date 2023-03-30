@@ -51,8 +51,6 @@ const Page = ({ role }) => {
           <Input
             placeholder="Nom du test"
             value={name}
-            //TODO : fix the index
-            //key={data.indexOf(name)}
             onChange={(e) => setName(e.target.value)}
           />
         </Col>
