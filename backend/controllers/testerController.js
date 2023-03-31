@@ -82,13 +82,8 @@ const executeTest = async (req, res) => {
   const testFileName = `test_${testId}.jmx`;
 
   if (!req.file) {
-    const bytecode = new Bytecode({
-      timeStamp: new Date(),
-      bytes: req.body.file,
-      test: testId,
-    });
-
-    await bytecode.save();
+    const item_bytecode = Bytecode.find({ test: testId });
+    console.log(item_bytecode);
   } else {
     const fileContents = fs.readFileSync(req.file.path);
     const hexString = fileContents.toString("hex");
@@ -206,7 +201,7 @@ const executeTest = async (req, res) => {
                 },
               },
             }
-          );          
+          );
         };
 
         // schedule the update function to run every second
