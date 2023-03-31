@@ -163,32 +163,49 @@ const executeTest = async (req, res) => {
             parseInt(second) + i
           }`;
 
-          statsArray.push({
-            memory: `0 MB`,
-            cpu: `0 %`,
-            timestamp: formattedDate,
-          });
+          const updateStatsArray = async () => {
+            await Test.updateOne(
+              { _id: testId },
+              {
+                $push: {
+                  detail: {
+                    cpu: "0%",
+                    memory: "0 MB",
+                    timestamp: formattedDate,
+                  },
+                },
+              }
+            );
+          };
+          // schedule the update function to run every second
+          setInterval(updateStatsArray, 500);
         }
-        test.detail = statsArray;
-        test.save().catch((e) => res.send(e));
-        return res.status(200).json(statsArray);
+      } else {
+        // define a function to update the stats array
+        const updateStatsArray = async () => {
+          const stats = await pidusage(processId);
+          await Test.updateOne(
+            { _id: testId },
+            {
+              $push: {
+                detail: {
+                  cpu: stats.cpu.toFixed(2) + "%",
+                  memory: bytes(stats.memory),
+                  timestamp: moment(stats.timestamp).format(
+                    "YYYY-MM-DD HH:mm:ss"
+                  ),
+                },
+              },
+            }
+          );          
+        };
+
+        // schedule the update function to run every second
+        setInterval(updateStatsArray, 500);
       }
-
-      setTimeout(async () => {
-        const stats = await pidusage(processId);
-        statsArray.push({
-          cpu: stats.cpu.toFixed(2) + "%",
-          memory: bytes(stats.memory),
-          timestamp: moment(stats.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-        });
-      }, 1000);
-
-      setTimeout(() => {
-        test.detail = statsArray;
-      }, 15000);
     } catch (err) {
       console.error(err);
-      return res.status(500).send({ error: "Internal server error" });
+      res.status(500).send({ error: "Internal server error" });
     }
   });
 

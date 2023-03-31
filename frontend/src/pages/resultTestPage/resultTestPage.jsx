@@ -49,8 +49,11 @@ const Page = ({ role }) => {
       });
   }, [id]);
 
-  if (!detail || detail.length === 0) {
+  if (!detail ) {
     return <Empty tip="Loading" size="large" />;
+  }
+  if (detail.length === 0) {
+    return <Spin tip="Loading" size="large" />;
   }
   //const path = `/${role}/historiques`;
   return (
