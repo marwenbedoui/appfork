@@ -645,7 +645,11 @@ export const TestPercentageModal = ({ visible, onCancel, percentage }) => {
       width={450}
       footer={null}
     >
-      <Row justify="center" align="middle" style={{marginTop:"25px" , marginBottom:"25"}}>
+      <Row
+        justify="center"
+        align="middle"
+        style={{ marginTop: "25px", marginBottom: "25" }}
+      >
         <Col>
           <Row justify="center">
             <Space wrap>
