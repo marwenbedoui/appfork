@@ -14,7 +14,7 @@ const bytes = require("bytes");
 const pidusage = require("pidusage");
 const moment = require("moment");
 const { calculatePercentage, calculateMajority } = require("../functions");
-const perfmon = require("perfmon");
+const si = require("systeminformation");
 
 const executeTest = async (req, res) => {
   const statsArray = [];
@@ -141,13 +141,19 @@ const executeTest = async (req, res) => {
         }
       } else {
         const stats = await pidusage(processId);
+        const activeNetInterface = await si.networkInterfaceDefault();
+        const networkStats = await si.networkStats(activeNetInterface);
+
         statsArray.push({
           cpu: stats.cpu.toFixed(2) + "%",
           memory: bytes(stats.memory),
+          network: {
+            received: networkStats[0].rx_bytes / 1000000 + " MB",
+            transferred: networkStats[0].tx_bytes / 1000000 + " MB",
+          },
           timestamp: moment(stats.timestamp).format("YYYY-MM-DD HH:mm:ss"),
         });
-        test.detail = statsArray
-        
+        test.detail = statsArray;
       }
     } catch (err) {
       console.error(err);

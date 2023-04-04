@@ -53,6 +53,14 @@ const testSchema = new mongoose.Schema(
         memory: {
           type: String,
         },
+        network: {
+          received: {
+            type: String,
+          },
+          transferred: {
+            type: String,
+          },
+        },
         timestamp: {
           type: String,
         },
