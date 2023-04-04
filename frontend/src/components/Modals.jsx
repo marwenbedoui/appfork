@@ -404,6 +404,7 @@ export const AddTestModal = ({ visible, onCancel }) => {
     setMethod(value);
   };
   const [file, setFile] = useState(null);
+  
 
   const onFinish = async (values) => {
     setLoading(true);
@@ -424,6 +425,8 @@ export const AddTestModal = ({ visible, onCancel }) => {
 
   return (
     <Modal
+      closable={false}
+      maskClosable={false}
       width={1000}
       open={visible}
       onCancel={onCancel}
