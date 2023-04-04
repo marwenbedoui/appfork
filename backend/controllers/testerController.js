@@ -135,25 +135,43 @@ const executeTest = async (req, res) => {
           statsArray.push({
             cpu: "0%",
             memory: "0 MB",
+            network: "0 Byte",
+            disk: "0 Go",
             timestamp: formattedDate,
           });
           test.detail = statsArray;
         }
       } else {
-        const stats = await pidusage(processId);
-        const activeNetInterface = await si.networkInterfaceDefault();
-        const networkStats = await si.networkStats(activeNetInterface);
+        const updateStatsArray = async () => {
+          const stats = await pidusage(processId);
+          const activeNetInterface = await si.networkInterfaceDefault();
+          const networkStats = await si.networkStats(activeNetInterface);
+          const diskUsage = await si.fsSize();
 
-        statsArray.push({
-          cpu: stats.cpu.toFixed(2) + "%",
-          memory: bytes(stats.memory),
-          network: {
-            received: networkStats[0].rx_bytes / 1000000 + " MB",
-            transferred: networkStats[0].tx_bytes / 1000000 + " MB",
-          },
-          timestamp: moment(stats.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-        });
-        test.detail = statsArray;
+          statsArray.push({
+            cpu: Math.abs(stats.cpu.toFixed(2) / 100) + " %",
+            memory: bytes(stats.memory),
+            network: {
+              received: networkStats[0].rx_bytes / 1000000 + " MB",
+              transferred: networkStats[0].tx_bytes / 1000000 + " MB",
+            },
+            disk: {
+              mount: diskUsage[0].mount,
+              total: `${diskUsage[0].size / 1000000000} Go`,
+              used: `${diskUsage[0].used / 1000000000} Go`,
+              free: `${diskUsage[0].available / 1000000000} Go`,
+              use: `${diskUsage[0].use}%`,
+            },
+            timestamp: moment(stats.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+          });
+          test.detail = statsArray;
+        };
+
+        const intervalId = setInterval(updateStatsArray, 1500);
+
+        setTimeout(() => {
+          clearInterval(intervalId);
+        }, 5000);
       }
     } catch (err) {
       console.error(err);
