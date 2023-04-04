@@ -49,7 +49,7 @@ const Page = ({ role }) => {
       });
   }, [id]);
 
-  if (!detail ) {
+  if (!detail) {
     return <Empty tip="Loading" size="large" />;
   }
   if (detail.length === 0) {
@@ -107,7 +107,20 @@ const Page = ({ role }) => {
       </Col>
 
       <Col span={24}>
-        <TestChart values={detail} />
+        <Row style={{ marginBottom: "40px" }}>
+          <Col span={12} style={{ marginBottom: "20px", marginTop: "20px" }}>
+            <TestChart values={detail} field="CPU" />
+          </Col>
+          <Col span={12} style={{ marginBottom: "20px", marginTop: "20px" }}>
+            <TestChart values={detail} field="Memory" />
+          </Col>
+          <Col span={12} style={{ marginBottom: "20px", marginTop: "20px" }}>
+            <TestChart values={detail} field="Disk" />
+          </Col>
+          <Col span={12} style={{ marginBottom: "20px", marginTop: "20px" }}>
+            <TestChart values={detail} field="Network" />
+          </Col>
+        </Row>
       </Col>
     </Row>
   );
