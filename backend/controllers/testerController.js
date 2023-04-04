@@ -14,6 +14,7 @@ const bytes = require("bytes");
 const pidusage = require("pidusage");
 const moment = require("moment");
 const { calculatePercentage, calculateMajority } = require("../functions");
+const perfmon = require("perfmon");
 
 const executeTest = async (req, res) => {
   const statsArray = [];
@@ -131,45 +132,22 @@ const executeTest = async (req, res) => {
             parseInt(second) + i
           }`;
 
-          const updateStatsArray = async () => {
-            await Test.updateOne(
-              { _id: testId },
-              {
-                $push: {
-                  detail: {
-                    cpu: "0%",
-                    memory: "0 MB",
-                    timestamp: formattedDate,
-                  },
-                },
-              }
-            );
-          };
-          // schedule the update function to run every second
-          setInterval(updateStatsArray, 500);
+          statsArray.push({
+            cpu: "0%",
+            memory: "0 MB",
+            timestamp: formattedDate,
+          });
+          test.detail = statsArray;
         }
       } else {
-        // define a function to update the stats array
-        const updateStatsArray = async () => {
-          const stats = await pidusage(processId);
-          await Test.updateOne(
-            { _id: testId },
-            {
-              $push: {
-                detail: {
-                  cpu: stats.cpu.toFixed(2) + "%",
-                  memory: bytes(stats.memory),
-                  timestamp: moment(stats.timestamp).format(
-                    "YYYY-MM-DD HH:mm:ss"
-                  ),
-                },
-              },
-            }
-          );
-        };
-
-        // schedule the update function to run every second
-        setInterval(updateStatsArray, 500);
+        const stats = await pidusage(processId);
+        statsArray.push({
+          cpu: stats.cpu.toFixed(2) + "%",
+          memory: bytes(stats.memory),
+          timestamp: moment(stats.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+        });
+        test.detail = statsArray
+        
       }
     } catch (err) {
       console.error(err);
@@ -192,31 +170,32 @@ const executeTest = async (req, res) => {
         .pipe(csv())
         .on("data", (row) => {
           results.push(row["success"]);
-          const rapport = new Rapport({
-            timeStamp: new Date(parseInt(row.timeStamp)),
-            elapsed: !isNaN(row.elapsed) ? parseInt(row.elapsed) : 0,
-            bytes: !isNaN(row.bytes) ? parseInt(row.bytes) : 0,
-            sentBytes: !isNaN(row.sentBytes) ? parseInt(row.sentBytes) : 0,
-            Latency: !isNaN(row.Latency) ? parseInt(row.Latency) : 0,
-            Connect: !isNaN(row.Connect) ? parseInt(row.Connect) : 0,
-            processTime:
-              !isNaN(row.elapsed) && !isNaN(row.Connect) && !isNaN(row.Latency)
-                ? parseInt(row.elapsed) * 2 -
-                  parseInt(row.Connect) -
-                  parseInt(row.Latency)
-                : 0,
-            responseCode: !isNaN(row.responseCode)
-              ? parseInt(row.responseCode)
-              : 400,
-            success: row.success === 1,
-          });
-          rapport.save().catch((error) => console.error(error));
+          // const rapport = new Rapport({
+          //   timeStamp: new Date(parseInt(row.timeStamp)),
+          //   elapsed: !isNaN(row.elapsed) ? parseInt(row.elapsed) : 0,
+          //   bytes: !isNaN(row.bytes) ? parseInt(row.bytes) : 0,
+          //   sentBytes: !isNaN(row.sentBytes) ? parseInt(row.sentBytes) : 0,
+          //   Latency: !isNaN(row.Latency) ? parseInt(row.Latency) : 0,
+          //   Connect: !isNaN(row.Connect) ? parseInt(row.Connect) : 0,
+          //   processTime:
+          //     !isNaN(row.elapsed) && !isNaN(row.Connect) && !isNaN(row.Latency)
+          //       ? parseInt(row.elapsed) * 2 -
+          //         parseInt(row.Connect) -
+          //         parseInt(row.Latency)
+          //       : 0,
+          //   responseCode: !isNaN(row.responseCode)
+          //     ? parseInt(row.responseCode)
+          //     : 400,
+          //   success: row.success === 1,
+          // });
+          // rapport.save().catch((error) => console.error(error));
         })
         .on("end", async () => {
           let majority = calculateMajority(results);
-          test.pourcentage.passed = calculatePercentage(results).truePercentage;
+          test.pourcentage.passed =
+            calculatePercentage(results).truePercentage.toFixed(2);
           test.pourcentage.failed =
-            calculatePercentage(results).falsePercentage;
+            calculatePercentage(results).falsePercentage.toFixed(2);
           majority === true
             ? (test.status = "Passed")
             : (test.status = "failed");

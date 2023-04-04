@@ -520,15 +520,47 @@ export const AddTestModal = ({ visible, onCancel }) => {
                 { required: true, message: "Veuillez ajouter un fichier !" },
               ]}
             >
-              <input
-                name="file"
-                type="file"
-                accept=".class"
-                onChange={(e) => {
-                  console.log(e);
-                  setFile(e.target.files[0]);
-                }}
-              />
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <label
+                  htmlFor="file-upload"
+                  style={{ marginRight: "10px", fontSize: "16px" }}
+                >
+                  Sélectionnez un fichier :
+                </label>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <input
+                    id="file-upload"
+                    name="file"
+                    type="file"
+                    accept=".class"
+                    onChange={(e) => {
+                      console.log(e);
+                      setFile(e.target.files[0]);
+                    }}
+                    style={{ display: "none" }}
+                  />
+                  <label
+                    htmlFor="file-upload"
+                    style={{
+                      fontSize: "14px",
+                      padding: "10px",
+                      backgroundColor: "#f5f5f5",
+                      border: "1px solid #ccc",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Parcourir
+                  </label>
+                  <div style={{ marginLeft: "10px" }}>
+                    {file && (
+                      <span style={{ fontSize: "14px", fontWeight: "bold" }}>
+                        {file.name}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
             </Form.Item>
           </Col>
           <Col span={11} offset={1}>
