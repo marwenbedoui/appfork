@@ -18,6 +18,7 @@ import ProfileServices from "../services/ProfileServices";
 import AdminServices from "../services/AdminServices/AdminServices";
 import TesterService from "../services/TesterServices/TesterService";
 import { CircularChart } from "./ChartsComponent";
+import AuthVerifyService from "../services/AuthServices/AuthVerifyService";
 
 export const EmailModal = ({ visible, onCancel }) => {
   const [form] = Form.useForm();
@@ -406,11 +407,13 @@ export const AddTestModal = ({ visible, onCancel }) => {
 
   const onFinish = async (values) => {
     setLoading(true);
+    const role = AuthVerifyService.userRole();
     await TesterService.executerTest(values, file)
-      .then(() => {
+      .then((res) => {
         if (values.data) onCancel();
         toast.success("Test effectué avec succès");
         onCancel();
+        window.location.href = `/${role}/test/${res._id}`;
       })
       .catch(() => {
         toast.danger("Test echoué");

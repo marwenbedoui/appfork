@@ -20,8 +20,20 @@ const authVerify = () => {
   return 0;
 };
 
+const userRole = () => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    if (jwtDecode(token).exp * 1000 < Date.now()) {
+      localStorage.clear();
+      return 0;
+    }
+    return jwtDecode(token).userRole;
+  }
+};
+
 const AuthVerifyService = {
   authVerify,
+  userRole,
 };
 
 export default AuthVerifyService;

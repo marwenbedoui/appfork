@@ -182,51 +182,49 @@ const executeTest = async (req, res) => {
   // Affiche un message quand le processus est terminé
   ls.on("close", (code) => {
     console.log(`child process exited with code ${code}`);
-    setTimeout(() => {
-      const results = [];
-      fs.createReadStream(reportPath)
-        .pipe(csv())
-        .on("data", (row) => {
-          results.push(row["success"]);
-          const rapport = new Rapport({
-            timeStamp: new Date(parseInt(row.timeStamp)),
-            elapsed: !isNaN(row.elapsed) ? parseInt(row.elapsed) : 0,
-            bytes: !isNaN(row.bytes) ? parseInt(row.bytes) : 0,
-            sentBytes: !isNaN(row.sentBytes) ? parseInt(row.sentBytes) : 0,
-            Latency: !isNaN(row.Latency) ? parseInt(row.Latency) : 0,
-            Connect: !isNaN(row.Connect) ? parseInt(row.Connect) : 0,
-            processTime:
-              !isNaN(row.elapsed) && !isNaN(row.Connect) && !isNaN(row.Latency)
-                ? parseInt(row.elapsed) * 2 -
-                  parseInt(row.Connect) -
-                  parseInt(row.Latency)
-                : 0,
-            responseCode: !isNaN(row.responseCode)
-              ? parseInt(row.responseCode)
-              : 400,
-            success: row.success === 1,
-          });
-          rapport.save().catch((error) => console.error(error));
-        })
-        .on("end", async () => {
-          let majority = calculateMajority(results);
-          test.pourcentage.passed =
-            calculatePercentage(results).truePercentage.toFixed(2);
-          test.pourcentage.failed =
-            calculatePercentage(results).falsePercentage.toFixed(2);
-          majority === true
-            ? (test.status = "Passed")
-            : (test.status = "failed");
-          await test
-            .save()
-            .then((data) => res.send(data))
-            .catch((err) => {
-              res.status(500).send({
-                message: err.message || "Error",
-              });
-            });
+    // setTimeout(() => {
+    const results = [];
+    fs.createReadStream(reportPath)
+      .pipe(csv())
+      .on("data", (row) => {
+        results.push(row["success"]);
+        const rapport = new Rapport({
+          timeStamp: new Date(parseInt(row.timeStamp)),
+          elapsed: !isNaN(row.elapsed) ? parseInt(row.elapsed) : 0,
+          bytes: !isNaN(row.bytes) ? parseInt(row.bytes) : 0,
+          sentBytes: !isNaN(row.sentBytes) ? parseInt(row.sentBytes) : 0,
+          Latency: !isNaN(row.Latency) ? parseInt(row.Latency) : 0,
+          Connect: !isNaN(row.Connect) ? parseInt(row.Connect) : 0,
+          processTime:
+            !isNaN(row.elapsed) && !isNaN(row.Connect) && !isNaN(row.Latency)
+              ? parseInt(row.elapsed) * 2 -
+                parseInt(row.Connect) -
+                parseInt(row.Latency)
+              : 0,
+          responseCode: !isNaN(row.responseCode)
+            ? parseInt(row.responseCode)
+            : 400,
+          success: row.success === 1,
         });
-    }, 10000);
+        // rapport.save().catch((error) => console.error(error));
+      })
+      .on("end", async () => {
+        let majority = calculateMajority(results);
+        test.pourcentage.passed =
+          calculatePercentage(results).truePercentage.toFixed(2);
+        test.pourcentage.failed =
+          calculatePercentage(results).falsePercentage.toFixed(2);
+        majority === true ? (test.status = "Passed") : (test.status = "failed");
+        await test
+          .save()
+          .then((data) => res.send(data))
+          .catch((err) => {
+            res.status(500).send({
+              message: err.message || "Error",
+            });
+          });
+      });
+    // }, 10000);
   });
 };
 

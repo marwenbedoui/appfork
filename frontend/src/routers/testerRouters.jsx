@@ -7,20 +7,20 @@ import ResultTestPage from "../pages/resultTestPage/resultTestPage";
 export const TesterRouters = () => {
   return (
     <Switch>
-      <Route exact path="/testeur/accueil">
-        <DashbaordPage role="testeur" />
+      <Route exact path="/tester/accueil">
+        <DashbaordPage role="tester" />
       </Route>
-      <Route exact path="/testeur/historiques">
-        <HistoriquePage role="testeur" />
+      <Route exact path="/tester/historiques">
+        <HistoriquePage role="tester" />
       </Route>
-      <Route exact path="/testeur/profile">
-        <ProfilePage role="testeur" />
+      <Route exact path="/tester/profile">
+        <ProfilePage role="tester" />
       </Route>
-      <Route exact path="/testeur/test/:id">
-        <ResultTestPage role="testeur" />
+      <Route exact path="/tester/test/:id">
+        <ResultTestPage role="tester" />
       </Route>
       <Route exact path="*">
-        <Redirect to="/testeur/accueil" />
+        <Redirect to="/tester/accueil" />
       </Route>
     </Switch>
   );
