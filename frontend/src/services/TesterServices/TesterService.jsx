@@ -42,7 +42,7 @@ const fetchAllTests = async (name, owner, status, role, auth) => {
     },
   });
   let filteredData;
-  if (role === "testeur") {
+  if (role === "tester") {
     filteredData = result.data.filter(
       (seance) =>
         seance.testName.toUpperCase().includes(name.toUpperCase()) &&

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Formik } from "formik";
 import { Alert, Button, Form, Input } from "antd";
 import AuthService from "../services/AuthServices/AuthServices";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import "../pages/loginPage/loginPage.css";
 
 export const FormLogin = () => {
   const [error, setError] = useState(false);
@@ -36,16 +38,8 @@ export const FormLogin = () => {
         <>
           <Form
             onSubmit={props.handleSubmit}
+            className="login-form"
             name="basic"
-            labelCol={{
-              span: 8,
-            }}
-            wrapperCol={{
-              span: 16,
-            }}
-            style={{
-              maxWidth: 600,
-            }}
             initialValues={{
               remember: true,
             }}
@@ -90,6 +84,7 @@ export const FormLogin = () => {
               ]}
             >
               <Input
+                prefix={<UserOutlined className="site-form-item-icon" />}
                 type="email"
                 onChange={props.handleChange}
                 onBlur={props.handleBlur}
@@ -108,6 +103,7 @@ export const FormLogin = () => {
               ]}
             >
               <Input.Password
+                prefix={<LockOutlined className="site-form-item-icon" />}
                 type="password"
                 onChange={props.handleChange}
                 onBlur={props.handleBlur}
@@ -123,6 +119,7 @@ export const FormLogin = () => {
             >
               <Button
                 type="primary"
+                className="login-form-button"
                 htmlType="submit"
                 onClick={props.handleSubmit}
               >

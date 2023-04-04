@@ -54,7 +54,7 @@ const Page = ({ role }) => {
             onChange={(e) => setName(e.target.value)}
           />
         </Col>
-        {role === "testeur" ? (
+        {role === "tester" ? (
           ""
         ) : (
           <Col span={5} offset={1}>
