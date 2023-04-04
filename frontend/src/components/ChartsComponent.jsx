@@ -7,7 +7,7 @@ export const TestChart = ({ values, field }) => {
   const xAxisData = values.map((data) => data.timestamp);
   const cpuData = values.map((data) => parseFloat(data.cpu));
   const memoryData = values.map((data) => parseFloat(data.memory));
-  const diskUse = values.map((data) => parseFloat(data.disk.use));
+  const diskUse = values.map((data) => parseFloat(data.disk));
   const recievedNet = values.map((data) => parseFloat(data.network.received));
   const transferredNet = values.map((data) =>
     parseFloat(data.network.transferred)

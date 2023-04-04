@@ -155,13 +155,7 @@ const executeTest = async (req, res) => {
               received: networkStats[0].rx_bytes / 1000000 + " MB",
               transferred: networkStats[0].tx_bytes / 1000000 + " MB",
             },
-            disk: {
-              mount: diskUsage[0].mount,
-              total: `${diskUsage[0].size / 1000000000} Go`,
-              used: `${diskUsage[0].used / 1000000000} Go`,
-              free: `${diskUsage[0].available / 1000000000} Go`,
-              use: `${diskUsage[0].use}%`,
-            },
+            disk: `${diskUsage[0].use}%`,
             timestamp: moment(stats.timestamp).format("YYYY-MM-DD HH:mm:ss"),
           });
           test.detail = statsArray;

@@ -62,21 +62,7 @@ const testSchema = new mongoose.Schema(
           },
         },
         disk: {
-          mount: {
-            type: String,
-          },
-          total: {
-            type: String,
-          },
-          used: {
-            type: String,
-          },
-          free: {
-            type: String,
-          },
-          use: {
-            type: String,
-          },
+          type: String,
         },
         timestamp: {
           type: String,
