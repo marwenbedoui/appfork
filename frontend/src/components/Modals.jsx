@@ -403,13 +403,12 @@ export const AddTestModal = ({ visible, onCancel }) => {
   const handleMethodChange = (value) => {
     setMethod(value);
   };
-  const [file, setFile] = useState(null);
-  
+  const [files, setFiles] = useState([]);
 
   const onFinish = async (values) => {
     setLoading(true);
     const role = AuthVerifyService.userRole();
-    await TesterService.executerTest(values, file)
+    await TesterService.executerTest(values, files)
       .then((res) => {
         if (values.data) onCancel();
         toast.success("Test effectué avec succès");
@@ -521,7 +520,7 @@ export const AddTestModal = ({ visible, onCancel }) => {
             </Form.Item>
             <Form.Item
               label="Upload bytecode"
-              name="file"
+              name="files"
               rules={[
                 { required: true, message: "Veuillez ajouter un fichier !" },
               ]}
@@ -531,17 +530,17 @@ export const AddTestModal = ({ visible, onCancel }) => {
                   htmlFor="file-upload"
                   style={{ marginRight: "10px", fontSize: "16px" }}
                 >
-                  Sélectionnez un fichier :
+                  Sélectionnez un ou plusieurs fichiers :
                 </label>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <input
                     id="file-upload"
-                    name="file"
+                    name="files"
                     type="file"
                     accept=".class"
+                    multiple
                     onChange={(e) => {
-                      console.log(e);
-                      setFile(e.target.files[0]);
+                      setFiles([...files, ...e.target.files]);
                     }}
                     style={{ display: "none" }}
                   />
@@ -559,11 +558,14 @@ export const AddTestModal = ({ visible, onCancel }) => {
                     Parcourir
                   </label>
                   <div style={{ marginLeft: "10px" }}>
-                    {file && (
-                      <span style={{ fontSize: "14px", fontWeight: "bold" }}>
-                        {file.name}
+                    {files.map((file) => (
+                      <span
+                        key={file.name}
+                        style={{ fontSize: "14px", fontWeight: "bold" }}
+                      >
+                        {file.name}{" "}
                       </span>
-                    )}
+                    ))}
                   </div>
                 </div>
               </div>
