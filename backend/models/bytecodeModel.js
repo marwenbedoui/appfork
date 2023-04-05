@@ -5,16 +5,17 @@ const bytecodeSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  bytes: {
-    type: Buffer,
-    //required: true,
-  },
+  bytes: [
+    {
+      type: Buffer,
+      //required: true,
+    },
+  ],
   test: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "test",
   },
 });
-
 
 const Bytecode = mongoose.model("bytecode", bytecodeSchema);
 

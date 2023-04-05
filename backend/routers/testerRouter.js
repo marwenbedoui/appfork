@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage }).single("file");
+const upload = multer({ storage: storage }).array("files");
 
 router.post("/tester/test", upload, isUser, testerController.executeTest);
 //get test

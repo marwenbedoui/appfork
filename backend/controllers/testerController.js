@@ -47,18 +47,20 @@ const executeTest = async (req, res) => {
   const testFileName = `test_${testId}.jmx`;
 
   if (!req.file) {
-    const item_bytecode = Bytecode.find({ test: testId });
+    const item_bytecode = await Bytecode.find({ test: testId });
     console.log(item_bytecode);
   } else {
-    const fileContents = fs.readFileSync(req.file.path);
-    const hexString = fileContents.toString("hex");
+    for (let i = 0; i < req.files.length; i++) {
+      const fileContents = fs.readFileSync(req.files[i].path);
+      const hexString = fileContents.toString("hex");
 
-    const bytecode = new Bytecode({
-      timeStamp: new Date(),
-      bytes: Buffer.from(hexString, "hex"),
-      test: testId,
-    });
-    await bytecode.save();
+      const bytecode = new Bytecode({
+        timeStamp: new Date(),
+        bytes: [Buffer.from(hexString, "hex")],
+        test: testId,
+      });
+      await bytecode.save();
+    }
   }
 
   //the path to the jmx file
