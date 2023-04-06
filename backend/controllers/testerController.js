@@ -2,7 +2,7 @@ const Test = require("../models/testModel");
 const Rapport = require("../models/rapportModel");
 const Bytecode = require("../models/bytecodeModel");
 const util = require("util");
-const { exec, spawn } = require("child_process");
+const { spawn } = require("child_process");
 const jwt = require("jsonwebtoken");
 const execPromise = util.promisify(require("child_process").exec);
 const path = require("path");
@@ -51,8 +51,6 @@ const executeTest = async (req, res) => {
     console.log("no upload", item_bytecode);
   } else {
     for (let i = 0; i < req.files.length; i++) {
-      // const fileContents = fs.readFileSync(req.files[i].path);
-      // const hexString = fileContents.toString("hex");
       v.push(
         Buffer.from(fs.readFileSync(req.files[i].path).toString("hex"), "hex")
       );
@@ -86,9 +84,6 @@ const executeTest = async (req, res) => {
     "/test/reports",
     reportFileName
   );
-
-  //jmeter command the path should be updated
-  //const jmeterCommand = `${process.env.JMETERPATH} -n -t ${jmxOutputPath} -l ${reportPath}`;
 
   // Exécute la commande "ls" avec les arguments "-la"
   const ls = spawn(`${process.env.JMETERPATH}`, [
@@ -250,6 +245,28 @@ const getAllTests = (req, res) => {
     });
 };
 
+const getAllTestsByTester = (req, res) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  const currentUser = jwt.verify(token, process.env.TOKEN_KEY);
+
+  Test.find({ createdBy: currentUser.userId });
+  var total = Test.count();
+  Test.find({ createdBy: currentUser.userId })
+    .populate("createdBy")
+    .exec()
+    .then((data) => {
+      res.set("Access-Control-Expose-Headers", "X-Total-Count");
+      res.set("X-Total-Count", total);
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Error",
+      });
+    });
+};
+
 const TestStatePerUser = (req, res) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
@@ -325,3 +342,4 @@ exports.getAllTests = getAllTests;
 exports.TestStatePerUser = TestStatePerUser;
 exports.TestsPerUser = TestsPerUser;
 exports.getTestById = getTestById;
+exports.getAllTestsByTester = getAllTestsByTester;

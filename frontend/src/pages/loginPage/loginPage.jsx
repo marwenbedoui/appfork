@@ -9,7 +9,7 @@ export const LoginPage = () => {
       <div className="login-header">
         <img className="login-logo" src={talanLogo} alt="Talan logo" />
       </div>
-      <h1 className="login-title">Connexion</h1>
+      <h2 className="login-title">Se connecter</h2>
       <FormLogin />
     </div>
   );

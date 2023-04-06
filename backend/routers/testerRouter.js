@@ -24,6 +24,7 @@ router.post(
 );
 //get test
 router.get("/tester/test/", isUser, testerController.getAllTests);
+router.get("/tester/test/tester", isUser, testerController.getAllTestsByTester);
 router.get("/tester/test/number", isUser, testerController.TestStatePerUser);
 router.get("/tester/test/all/", isUser, testerController.TestsPerUser);
 router.get("/tester/test/:id", isUser, testerController.getTestById);
