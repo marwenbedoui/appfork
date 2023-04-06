@@ -424,7 +424,7 @@ export const AddTestModal = ({ visible, onCancel }) => {
     setLoading(true);
     const role = AuthVerifyService.userRole();
     console.log(values);
-    await TesterService.executerTest(values, files)
+    await TesterService.executerTest(values, false, files)
       .then((res) => {
         if (values.data) onCancel();
         toast.success("Test effectué avec succès");
