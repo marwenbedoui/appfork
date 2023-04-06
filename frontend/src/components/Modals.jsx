@@ -10,6 +10,7 @@ import {
   Checkbox,
   Progress,
   Space,
+  Table,
 } from "antd";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
@@ -734,6 +735,88 @@ export const TestPercentageModal = ({ visible, onCancel, percentage }) => {
           </Row>
         </Col>
       </Row>
+    </Modal>
+  );
+};
+
+export const TestDetailModal = ({ visible, onCancel, detailArray }) => {
+  const columns = [
+    {
+      title: "Champ",
+      dataIndex: "detail",
+      key: "detail",
+      render: (text) => <span style={{ color: "#0077c2" }}>{text}</span>,
+    },
+    {
+      title: "Valeur",
+      dataIndex: "value",
+      key: "value",
+      render: (text) => <span style={{ color: "#2d9a1a" }}>{text}</span>,
+    },
+  ];
+  const data = [
+    {
+      key: "1",
+      detail: "Nom du test",
+      value: detailArray.testName,
+    },
+    {
+      key: "2",
+      detail: "Protocole du test",
+      value: detailArray.protocol,
+    },
+    {
+      key: "3",
+      detail: "L'url du test",
+      value: detailArray.url,
+    },
+    {
+      key: "4",
+      detail: "Port du test",
+      value: detailArray.port,
+    },
+    {
+      key: "5",
+      detail: "Chemin du test",
+      value: detailArray.path,
+    },
+    {
+      key: "6",
+      detail: "Méthode du test",
+      value: detailArray.method,
+    },
+    {
+      key: "7",
+      detail: "Nombre d'utilisateurs",
+      value: detailArray.usersNumber,
+    },
+  ];
+  return (
+    <Modal
+      title={
+        <div
+          style={{
+            textAlign: "center",
+            fontSize: "24px",
+            marginBottom: "20px",
+            color: "#1784C6",
+          }}
+        >
+          Détails du test
+        </div>
+      }
+      onCancel={onCancel}
+      open={visible}
+      width={400}
+      footer={null}
+    >
+      <Table
+        columns={columns}
+        dataSource={data}
+        pagination={false}
+        bordered
+        size="small"
+      />
     </Modal>
   );
 };

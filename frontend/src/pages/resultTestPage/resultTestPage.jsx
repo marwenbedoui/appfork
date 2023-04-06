@@ -5,12 +5,17 @@ import { useParams } from "react-router-dom";
 import { Button, Col, Empty, Row, Spin, Space } from "antd";
 import TesterService from "../../services/TesterServices/TesterService";
 import { TestChart } from "../../components/ChartsComponent";
-import { PercentageOutlined, RedoOutlined } from "@ant-design/icons";
+import {
+  PercentageOutlined,
+  RedoOutlined,
+  EyeOutlined,
+} from "@ant-design/icons";
 import { toast } from "react-toastify";
-import { TestPercentageModal } from "../../components/Modals";
+import { TestDetailModal, TestPercentageModal } from "../../components/Modals";
 
 const Page = ({ role }) => {
   const [modalPercentageVisible, setModalPercentageVisible] = useState(false);
+  const [modalDetailVisible, setModalDetailVisible] = useState(false);
   const [data, setData] = useState([]);
   const [detail, setDetail] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -19,6 +24,9 @@ const Page = ({ role }) => {
 
   const handleCancelPercentage = () => {
     setModalPercentageVisible(false);
+  };
+  const handleCancelDetail = () => {
+    setModalDetailVisible(false);
   };
 
   const executeTest = async (data) => {
@@ -60,7 +68,21 @@ const Page = ({ role }) => {
             type="primary"
             style={{
               float: "right",
-              backgroundColor: "#121212",
+              backgroundColor: "#36454F",
+              color: "white",
+            }}
+            icon={<EyeOutlined />}
+            shape="round"
+            onClick={() => setModalDetailVisible(true)}
+          >
+            Détail
+          </Button>
+          <Button
+            size="large"
+            type="primary"
+            style={{
+              float: "right",
+              backgroundColor: "#4682B4",
               color: "white",
             }}
             icon={<PercentageOutlined />}
@@ -72,7 +94,11 @@ const Page = ({ role }) => {
           <Button
             size="large"
             type="primary"
-            style={{ float: "right", backgroundColor: "green", color: "white" }}
+            style={{
+              float: "right",
+              backgroundColor: "#FFA07A",
+              color: "white",
+            }}
             shape="round"
             htmlType="submit"
             onClick={() => executeTest(data)}
@@ -85,6 +111,11 @@ const Page = ({ role }) => {
             onCancel={handleCancelPercentage}
             visible={modalPercentageVisible}
             percentage={data.pourcentage}
+          />
+          <TestDetailModal
+            onCancel={handleCancelDetail}
+            visible={modalDetailVisible}
+            detailArray={data}
           />
         </Space>
       </Col>
