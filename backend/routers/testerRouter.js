@@ -14,9 +14,14 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage }).array("files");
+const upload = multer({ storage: storage });
 
-router.post("/tester/test", upload, isUser, testerController.executeTest);
+router.post(
+  "/tester/test",
+  upload.array("files"),
+  isUser,
+  testerController.executeTest
+);
 //get test
 router.get("/tester/test/", isUser, testerController.getAllTests);
 router.get("/tester/test/number", isUser, testerController.TestStatePerUser);

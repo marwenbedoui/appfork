@@ -76,6 +76,7 @@ export const FormLogin = () => {
             <Form.Item
               label="Email"
               name="username"
+              className="email"
               rules={[
                 {
                   required: true,
@@ -89,6 +90,7 @@ export const FormLogin = () => {
                 onChange={props.handleChange}
                 onBlur={props.handleBlur}
                 value={props.values.email}
+                className="login-form-input"
                 name="email"
               />
             </Form.Item>
@@ -108,10 +110,12 @@ export const FormLogin = () => {
                 onChange={props.handleChange}
                 onBlur={props.handleBlur}
                 value={props.values.password}
+                className="login-form-input"
                 name="password"
               />
             </Form.Item>
             <Form.Item
+              className="login-form-button"
               wrapperCol={{
                 offset: 8,
                 span: 16,
@@ -119,7 +123,6 @@ export const FormLogin = () => {
             >
               <Button
                 type="primary"
-                className="login-form-button"
                 htmlType="submit"
                 onClick={props.handleSubmit}
               >
