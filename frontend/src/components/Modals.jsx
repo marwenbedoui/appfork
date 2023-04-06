@@ -171,6 +171,15 @@ export const PasswordModal = ({ visible, onCancel }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
+  // Custom validation rule to check if new password and confirmation password match
+  const checkPasswordsMatch = (rule, value) => {
+    if (value && value !== form.getFieldValue("newPassword")) {
+      Promise.resolve("Les deux mots de passe doivent être identiques.");
+    } else {
+      Promise.resolve();
+    }
+  };
+
   const onFinish = async (values) => {
     setLoading(true);
     try {
@@ -224,6 +233,11 @@ export const PasswordModal = ({ visible, onCancel }) => {
               required: true,
               message: "Veuillez saisir votre nouveau mot de passe",
             },
+            {
+              min: 8,
+              message: "Le mot de passe doit avoir au moins 8 caractères",
+            },
+            { validator: checkPasswordsMatch },
           ]}
           tooltip="Ce champ est obligatoire"
           name="newPassword"
@@ -237,6 +251,7 @@ export const PasswordModal = ({ visible, onCancel }) => {
               required: true,
               message: "Veuillez retaper votre nouveau mot de passe",
             },
+            { validator: checkPasswordsMatch },
           ]}
           tooltip="Ce champ est obligatoire"
           name="newPasswordConfirm"
