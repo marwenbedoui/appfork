@@ -170,7 +170,11 @@ const LayoutComponent = ({ headerLogo, mainContent, currentPage, role }) => {
               margin: "7px",
             }}
           >
-            <img style={{ height: "50px" }} src={headerLogo} alt="logo talan" />
+            <img
+              style={{ height: "30px", marginLeft: "20px" }}
+              src={headerLogo}
+              alt="logo talan"
+            />
           </div>
         </Header>
         <Content

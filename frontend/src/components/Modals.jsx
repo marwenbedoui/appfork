@@ -408,6 +408,7 @@ export const AddTestModal = ({ visible, onCancel }) => {
   const onFinish = async (values) => {
     setLoading(true);
     const role = AuthVerifyService.userRole();
+    console.log(values);
     await TesterService.executerTest(values, files)
       .then((res) => {
         if (values.data) onCancel();

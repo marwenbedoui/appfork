@@ -45,22 +45,24 @@ const executeTest = async (req, res) => {
   const savedTest = await test.save();
   const testId = savedTest._id;
   const testFileName = `test_${testId}.jmx`;
-
-  if (!req.file) {
+  let v = [];
+  if (!req.files) {
     const item_bytecode = await Bytecode.find({ test: testId });
-    console.log(item_bytecode);
+    console.log("no upload", item_bytecode);
   } else {
     for (let i = 0; i < req.files.length; i++) {
-      const fileContents = fs.readFileSync(req.files[i].path);
-      const hexString = fileContents.toString("hex");
-
-      const bytecode = new Bytecode({
-        timeStamp: new Date(),
-        bytes: [Buffer.from(hexString, "hex")],
-        test: testId,
-      });
-      await bytecode.save();
+      // const fileContents = fs.readFileSync(req.files[i].path);
+      // const hexString = fileContents.toString("hex");
+      v.push(
+        Buffer.from(fs.readFileSync(req.files[i].path).toString("hex"), "hex")
+      );
     }
+    const bytecode = new Bytecode({
+      timeStamp: new Date(),
+      bytes: v,
+      test: testId,
+    });
+    await bytecode.save();
   }
 
   //the path to the jmx file
