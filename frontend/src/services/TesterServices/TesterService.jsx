@@ -4,30 +4,44 @@ import jwtDecode from "jwt-decode";
 const API_URL = "http://localhost:5000/api/v1/tester/test";
 const token = localStorage.getItem("token");
 
-const executerTest = async (data, files) => {
-  let dataParsed;
+const executerTest = async (data, nouv, files) => {
+  let dataParsed, req;
   if (data.method === "post") {
     dataParsed = JSON.parse(data.data);
   } else {
     dataParsed = "";
   }
-  console.log(files);
-  const formData = new FormData();
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    formData.append("files", file);
+  if (nouv) {
+    req = {
+      testName: data.testName,
+      protocol: data.protocol,
+      url: data.url,
+      port: data.port,
+      path: data.path,
+      usersNumber: data.usersNumber,
+      method: data.method,
+      data: dataParsed,
+      createdBy: jwtDecode(token).userId,
+    };
+  } else {
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      formData.append("files", file);
+    }
+    formData.append("testName", data.testName);
+    formData.append("protocol", data.protocol);
+    formData.append("url", data.url);
+    formData.append("port", data.port);
+    formData.append("path", data.path);
+    formData.append("usersNumber", data.usersNumber);
+    formData.append("method", data.method);
+    formData.append("data", dataParsed);
+    formData.append("createdBy", jwtDecode(token).userId);
+    req = formData;
   }
-  formData.append("testName", data.testName);
-  formData.append("protocol", data.protocol);
-  formData.append("url", data.url);
-  formData.append("port", data.port);
-  formData.append("path", data.path);
-  formData.append("usersNumber", data.usersNumber);
-  formData.append("method", data.method);
-  formData.append("data", dataParsed);
-  formData.append("createdBy", jwtDecode(token).userId);
 
-  const result = await axios.post(API_URL, formData, {
+  const result = await axios.post(API_URL, req, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "multipart/form-data",
@@ -44,6 +58,11 @@ const fetchAllTests = async (name, owner, status, role, auth) => {
   });
   let filteredData;
   if (role === "tester") {
+    const result = await axios.get(`${API_URL}/tester`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     filteredData = result.data.filter(
       (seance) =>
         seance.testName.toUpperCase().includes(name.toUpperCase()) &&

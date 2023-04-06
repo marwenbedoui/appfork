@@ -26,7 +26,6 @@ export const FormLogin = () => {
                 (e.response && e.response.data && e.response.data.msg) ||
                 e.message ||
                 e.toString();
-
               setError(true);
               setMsg(resMessage);
             }
@@ -43,6 +42,8 @@ export const FormLogin = () => {
             initialValues={{
               remember: true,
             }}
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 16 }}
             autoComplete="off"
           >
             {error ? (
