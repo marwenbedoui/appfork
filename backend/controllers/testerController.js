@@ -204,8 +204,9 @@ const executeTest = async (req, res) => {
             ? parseInt(row.responseCode)
             : 400,
           success: row.success === 1,
+          test: testId,
         });
-        // rapport.save().catch((error) => console.error(error));
+        rapport.save().catch((error) => console.error(error));
       })
       .on("end", async () => {
         let majority = calculateMajority(results);

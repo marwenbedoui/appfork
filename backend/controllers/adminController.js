@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/userModel");
 const Test = require("../models/testModel");
-const fs = require("fs")
+const fs = require("fs");
 
 //function : adding user
 const register = async (req, res) => {
