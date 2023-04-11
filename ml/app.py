@@ -21,6 +21,7 @@ db = client[os.environ.get("MY_MONGO_DB")]
 collection = db["tests"]
 rapports_collection = db["rapports"]
 
+
 @app.route('/')
 def hello():
     return 'Hello,World'
@@ -41,21 +42,6 @@ def get_tests():
     # return the list of tests as a JSON response
     return {"tests": test_list}
 
-@app.route('/rapports', methods=['GET'])
-def get_rapports():
-    # query the collection and retrieve all documents
-    rapports = rapports_collection.find()
-
-    # create a list of test dictionaries
-    rapport_list = []
-    for rapport in rapports:
-        rapport_dict = {"timeStamp": rapport["timeStamp"],"elapsed": rapport["elapsed"], "bytes": rapport["bytes"],
-                      "sentBytes": rapport["sentBytes"], "Latency": rapport["Latency"], "Connect": rapport["Connect"], 
-                      "processTime": rapport["processTime"], "responseCode": rapport["responseCode"], "success": rapport["success"]}
-        rapport_list.append(rapport_dict)
-
-    # return the list of tests as a JSON response
-    return {"rapports": rapport_list}
 
 @app.route('/rapports/csv')
 def generate_csv():
@@ -65,11 +51,14 @@ def generate_csv():
     # Configuration du fichier CSV
     with open('rapports.csv', 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['timeStamp', 'elapsed', 'bytes', 'sentBytes', 'Latency', 'Connect', 'processTime', 'responseCode', 'success'])
+        writer.writerow(['timeStamp', 'elapsed', 'bytes', 'sentBytes',
+                        'Latency', 'Connect', 'processTime', 'responseCode', 'bytecode', 'success'])
         for rapport in rapports:
-            writer.writerow([rapport["timeStamp"], rapport["elapsed"], rapport["bytes"], rapport["sentBytes"], rapport["Latency"],  rapport["Connect"],  rapport["processTime"], rapport["responseCode"], rapport["success"]])
+            writer.writerow([rapport["timeStamp"], rapport["elapsed"], rapport["bytes"], rapport["sentBytes"],
+                            rapport["Latency"],  rapport["Connect"],  rapport["processTime"], rapport["responseCode"], rapport["bytecode"], rapport["success"]])
 
     return 'Le fichier CSV a été généré.'
+
 
 if __name__ == '__main__':
     app.run(host="localhost", port=os.environ.get("FLASK_RUN_PORT"))
