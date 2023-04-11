@@ -134,7 +134,10 @@ const executeTest = async (req, res) => {
           statsArray.push({
             cpu: "0%",
             memory: "0 MB",
-            network: "0 Byte",
+            network: {
+              received: "0 MB",
+              transferred :"0 MB"
+            },
             disk: "0 Go",
             timestamp: formattedDate,
           });
