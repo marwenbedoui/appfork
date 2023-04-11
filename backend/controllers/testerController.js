@@ -46,10 +46,9 @@ const executeTest = async (req, res) => {
   const testId = savedTest._id;
   const testFileName = `test_${testId}.jmx`;
   let v = [];
-  let savedBytecode;
+  let savedBytecode, item_bytecode;
   if (req.files.length === 0) {
-    const item_bytecode = await Bytecode.find({ test: testId });
-    console.log("no upload", item_bytecode);
+    item_bytecode = await Bytecode.find({ test: req.body.link });
   } else {
     console.log(req.files);
     for (let i = 0; i < req.files.length; i++) {
@@ -224,7 +223,9 @@ const executeTest = async (req, res) => {
           success: row.success === 1,
           bytecode: savedBytecode
             ? "http://localhost:5000/generated/" + savedBytecode._id
-            : "cncilchi",
+            : "http://localhost:5000/generated/" +
+              item_bytecode[0]._id +
+              ".txt",
           test: testId,
         });
         rapport.save().catch((error) => console.error(error));

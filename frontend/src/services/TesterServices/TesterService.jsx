@@ -21,6 +21,7 @@ const executerTest = async (data, nouv, files) => {
       usersNumber: data.usersNumber,
       method: data.method,
       data: dataParsed,
+      link: data._id,
       createdBy: jwtDecode(token).userId,
     };
   } else {
