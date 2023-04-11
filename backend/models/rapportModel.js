@@ -38,22 +38,16 @@ const rapportSchema = new mongoose.Schema(
       type: Boolean,
       required: true,
     },
+    bytecode: {
+      type: String
+    },
     test: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "test",
-      // required: true,
     },
   },
-  {
-    // Enable virtual properties
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
-  }
 );
 
-// rapportSchema.virtual("processTime").get(function () {
-//   return this.elapsed * 2 - this.Connect - this.Latency;
-// });
 
 const Rapport = mongoose.model("rapport", rapportSchema);
 

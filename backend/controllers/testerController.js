@@ -46,10 +46,12 @@ const executeTest = async (req, res) => {
   const testId = savedTest._id;
   const testFileName = `test_${testId}.jmx`;
   let v = [];
-  if (!req.files) {
+  let savedBytecode;
+  if (req.files.length === 0) {
     const item_bytecode = await Bytecode.find({ test: testId });
     console.log("no upload", item_bytecode);
   } else {
+    console.log(req.files);
     for (let i = 0; i < req.files.length; i++) {
       v.push(
         Buffer.from(fs.readFileSync(req.files[i].path).toString("hex"), "hex")
@@ -60,7 +62,20 @@ const executeTest = async (req, res) => {
       bytes: v,
       test: testId,
     });
-    await bytecode.save();
+    savedBytecode = await bytecode.save();
+    //the path to the bytecode file
+    const bytecodeFileName = `${savedBytecode._id}.txt`;
+    const generatedDirPath = path.join(__dirname, "../", "/uploads/generated");
+    const bytecodeOutputPath = path.join(generatedDirPath, bytecodeFileName);
+    const bytesArray = savedBytecode.bytes;
+    const text = bytesArray.join("\n\n\n");
+
+    // create the 'generated' directory if it doesn't exist
+    if (!fs.existsSync(generatedDirPath)) {
+      fs.mkdirSync(generatedDirPath);
+    }
+    //get the bytecode by id and save it to a file
+    fs.writeFileSync(bytecodeOutputPath, text, "utf-8");
   }
 
   //the path to the jmx file
@@ -136,7 +151,7 @@ const executeTest = async (req, res) => {
             memory: "0 MB",
             network: {
               received: "0 MB",
-              transferred :"0 MB"
+              transferred: "0 MB",
             },
             disk: "0 Go",
             timestamp: formattedDate,
@@ -207,6 +222,9 @@ const executeTest = async (req, res) => {
             ? parseInt(row.responseCode)
             : 400,
           success: row.success === 1,
+          bytecode: savedBytecode
+            ? "http://localhost:5000/generated/" + savedBytecode._id
+            : "cncilchi",
           test: testId,
         });
         rapport.save().catch((error) => console.error(error));
