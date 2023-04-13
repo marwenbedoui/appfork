@@ -159,7 +159,7 @@ const TableComponent = ({ data, isAdminPage, role }) => {
       columns={columns}
       dataSource={data}
       pagination={{
-        pageSize: 7,
+        pageSize: 6,
       }}
       rowKey="_id"
     />

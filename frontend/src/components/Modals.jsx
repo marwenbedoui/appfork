@@ -20,6 +20,7 @@ import AdminServices from "../services/AdminServices/AdminServices";
 import TesterService from "../services/TesterServices/TesterService";
 import { CircularChart } from "./ChartsComponent";
 import AuthVerifyService from "../services/AuthServices/AuthVerifyService";
+import { FileAddOutlined, DeleteTwoTone } from "@ant-design/icons";
 
 export const EmailModal = ({ visible, onCancel }) => {
   const [form] = Form.useForm();
@@ -420,6 +421,7 @@ export const AddTestModal = ({ visible, onCancel }) => {
     setMethod(value);
   };
   const [files, setFiles] = useState([]);
+  const hasFiles = files.length > 0;
 
   const onFinish = async (values) => {
     setLoading(true);
@@ -535,6 +537,7 @@ export const AddTestModal = ({ visible, onCancel }) => {
                 </Col>
               </Row>
             </Form.Item>
+
             <Form.Item
               label="Upload bytecode"
               name="files"
@@ -542,10 +545,10 @@ export const AddTestModal = ({ visible, onCancel }) => {
                 { required: true, message: "Veuillez ajouter un fichier !" },
               ]}
             >
-              <div style={{ display: "flex", alignItems: "center" }}>
+              <div style={{ display: "flex", flexDirection: "column" }}>
                 <label
                   htmlFor="file-upload"
-                  style={{ marginRight: "10px", fontSize: "16px" }}
+                  style={{ fontSize: "16px", marginBottom: "10px" }}
                 >
                   Sélectionnez un ou plusieurs fichiers :
                 </label>
@@ -572,16 +575,61 @@ export const AddTestModal = ({ visible, onCancel }) => {
                       cursor: "pointer",
                     }}
                   >
-                    Parcourir
+                    {hasFiles ? <FileAddOutlined /> : <span>Parcourir</span>}
                   </label>
-                  <div style={{ marginLeft: "10px" }}>
-                    {files.map((file) => (
-                      <span
+                  <div
+                    style={{
+                      marginLeft: "10px",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    {files.map((file, index) => (
+                      <div
                         key={file.name}
-                        style={{ fontSize: "14px", fontWeight: "bold" }}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          marginBottom: "5px",
+                          padding: "5px",
+                          border: "1px solid #ccc",
+                          borderRadius: "5px",
+                        }}
                       >
-                        {file.name}{" "}
-                      </span>
+                        <span
+                          style={{
+                            fontSize: "14px",
+                            fontWeight: "bold",
+                            marginRight: "5px",
+                            flexGrow: 1,
+                            overflow: "hidden",
+                            whiteSpace: "nowrap",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          {file.name}
+                        </span>
+                        <div
+                          style={{
+                            borderLeft: "1px solid #ccc",
+                            paddingLeft: "5px",
+                          }}
+                        >
+                          <Button
+                            type="button"
+                            onClick={() => {
+                              const newFiles = [...files];
+                              newFiles.splice(index, 1);
+                              setFiles(newFiles);
+                            }}
+                          >
+                            <DeleteTwoTone
+                              twoToneColor="#ff4d4f"
+                              style={{ fontSize: "20px" }}
+                            />
+                          </Button>
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>

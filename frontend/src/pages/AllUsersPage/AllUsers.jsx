@@ -1,4 +1,4 @@
-import { Button, Tooltip } from "antd";
+import { Button } from "antd";
 import React, { useEffect, useState } from "react";
 import TalanLogo from "../../assets/talan-logo.png";
 import { AddUserModal } from "../../components/Modals";
@@ -19,28 +19,26 @@ const Page = () => {
     AdminServices.getAllUsers().then((res) => setData(res));
   }, [data]);
   return (
-    <>
-      <Tooltip title="Add new user">
-        <Button
-          size="large"
-          type="primary"
-          onClick={() => setModalAddUserForm(true)}
-          style={{
-            float: "right",
-            marginBottom: "30px",
-            backgroundColor: "#2596be",
-            color: "white",
-          }}
-          shape="round"
-          icon={<UserAddOutlined spin={true} />}
-        >
-          Add user
-        </Button>
-      </Tooltip>
+    <div>
+      <Button
+        size="large"
+        type="primary"
+        onClick={() => setModalAddUserForm(true)}
+        style={{
+          float: "right",
+          marginBottom: "15px",
+          backgroundColor: "#2596be",
+          color: "white",
+        }}
+        shape="round"
+        icon={<UserAddOutlined spin={true} />}
+      >
+        Add user
+      </Button>
 
       <AddUserModal onCancel={handleCancelAddUser} visible={modalAddUserForm} />
       <TableComponent data={data} isAdminPage={true} />
-    </>
+    </div>
   );
 };
 

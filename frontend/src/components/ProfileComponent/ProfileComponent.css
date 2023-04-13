@@ -24,10 +24,12 @@
 
 .profile-info {
   margin-top: 20px;
+  font-size: 28px;
+  font-weight: bold;
 }
 
 .profile-name {
-  font-size: 28px;
+  font-size: 18px;
   font-weight: bold;
 }
 
