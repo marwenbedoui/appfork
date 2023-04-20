@@ -2,7 +2,7 @@ const Test = require("../models/testModel");
 const Rapport = require("../models/rapportModel");
 const Bytecode = require("../models/bytecodeModel");
 const util = require("util");
-const { spawn } = require("child_process");
+const { spawn, exec } = require("child_process");
 const jwt = require("jsonwebtoken");
 const execPromise = util.promisify(require("child_process").exec);
 const path = require("path");
@@ -250,6 +250,36 @@ const executeTest = async (req, res) => {
   });
 };
 
+const getDiff = (req, res) => {
+  const command = "git diff HEAD~1 HEAD";
+  const differenceFileName = `difference.txt`;
+  const generatedDirPath = path.join(__dirname, "../", "/uploads/difference");
+  const bytecodeOutputPath = path.join(generatedDirPath, differenceFileName);
+
+  // create the 'generated' directory if it doesn't exist
+  if (!fs.existsSync(generatedDirPath)) {
+    fs.mkdirSync(generatedDirPath);
+  }
+
+  exec(command, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Erreur: ${error.message}`);
+      fs.writeFileSync(bytecodeOutputPath, error.message, "utf-8");
+      res.send(`Erreur: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.error(`stderr: ${stderr}`);
+      fs.writeFileSync(bytecodeOutputPath, stderr, "utf-8");
+      res.send(`stderr: ${stderr}`);
+      return;
+    }
+    console.log(`stdout: ${stdout}`);
+    fs.writeFileSync(bytecodeOutputPath, stdout, "utf-8");
+    res.send(`stdout: ${stdout}`);
+  });
+};
+
 const getAllTests = (req, res) => {
   Test.find();
   var total = Test.count();
@@ -366,3 +396,4 @@ exports.TestStatePerUser = TestStatePerUser;
 exports.TestsPerUser = TestsPerUser;
 exports.getTestById = getTestById;
 exports.getAllTestsByTester = getAllTestsByTester;
+exports.getDiff = getDiff;
