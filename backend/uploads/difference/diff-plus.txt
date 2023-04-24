@@ -1,20 +1,5 @@
-diff --git a/backend/controllers/testerController.js b/backend/controllers/testerController.js
-index e6e8832..b6dc6d2 100644
---- a/backend/controllers/testerController.js
 +++ b/backend/controllers/testerController.js
-@@ -2,7 +2,7 @@ const Test = require("../models/testModel");
- const Rapport = require("../models/rapportModel");
- const Bytecode = require("../models/bytecodeModel");
- const util = require("util");
--const { spawn } = require("child_process");
 +const { spawn, exec } = require("child_process");
- const jwt = require("jsonwebtoken");
- const execPromise = util.promisify(require("child_process").exec);
- const path = require("path");
-@@ -250,6 +250,36 @@ const executeTest = async (req, res) => {
-   });
- };
- 
 +const getDiff = (req, res) => {
 +  const command = "git diff HEAD~1 HEAD";
 +  const differenceFileName = `difference.txt`;
@@ -45,31 +30,10 @@ index e6e8832..b6dc6d2 100644
 +  });
 +};
 +
- const getAllTests = (req, res) => {
-   Test.find();
-   var total = Test.count();
-@@ -366,3 +396,4 @@ exports.TestStatePerUser = TestStatePerUser;
- exports.TestsPerUser = TestsPerUser;
- exports.getTestById = getTestById;
- exports.getAllTestsByTester = getAllTestsByTester;
 +exports.getDiff = getDiff;
-diff --git a/backend/routers/testerRouter.js b/backend/routers/testerRouter.js
-index 2a04fd5..fc8cf39 100644
---- a/backend/routers/testerRouter.js
 +++ b/backend/routers/testerRouter.js
-@@ -28,5 +28,6 @@ router.get("/tester/test/tester", isUser, testerController.getAllTestsByTester);
- router.get("/tester/test/number", isUser, testerController.TestStatePerUser);
- router.get("/tester/test/all/", isUser, testerController.TestsPerUser);
- router.get("/tester/test/:id", isUser, testerController.getTestById);
 +router.get("/tester/diff", isUser, testerController.getDiff);
- 
- module.exports = router;
-diff --git a/backend/uploads/difference/difference.txt b/backend/uploads/difference/difference.txt
-new file mode 100644
-index 0000000..ee4aea2
---- /dev/null
 +++ b/backend/uploads/difference/difference.txt
-@@ -0,0 +1,531 @@
 +diff --git a/frontend/src/components/Modals.jsx b/frontend/src/components/Modals.jsx
 +index 5e6836f..cd03b16 100644
 +--- a/frontend/src/components/Modals.jsx
@@ -601,11 +565,3 @@ index 0000000..ee4aea2
 +   );
 + };
 + 
-diff --git a/backend/uploads/generated/643e644f0939939a38b5faf7.txt b/backend/uploads/generated/643e644f0939939a38b5faf7.txt
-new file mode 100644
-index 0000000..6c5e8c9
-Binary files /dev/null and b/backend/uploads/generated/643e644f0939939a38b5faf7.txt differ
-diff --git a/backend/uploads/generated/643e66110939939a38b64165.txt b/backend/uploads/generated/643e66110939939a38b64165.txt
-new file mode 100644
-index 0000000..6c5e8c9
-Binary files /dev/null and b/backend/uploads/generated/643e66110939939a38b64165.txt differ

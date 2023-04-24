@@ -256,6 +256,9 @@ const getDiff = (req, res) => {
   const generatedDirPath = path.join(__dirname, "../", "/uploads/difference");
   const bytecodeOutputPath = path.join(generatedDirPath, differenceFileName);
 
+  const outputFilePathWithPlus = path.join(generatedDirPath, "diff-plus.txt");
+  const outputFilePathWithMinus = path.join(generatedDirPath, "diff-minus.txt");
+
   // create the 'generated' directory if it doesn't exist
   if (!fs.existsSync(generatedDirPath)) {
     fs.mkdirSync(generatedDirPath);
@@ -277,6 +280,18 @@ const getDiff = (req, res) => {
     console.log(`stdout: ${stdout}`);
     fs.writeFileSync(bytecodeOutputPath, stdout, "utf-8");
     res.send(`stdout: ${stdout}`);
+
+    const inputLines = fs.readFileSync(bytecodeOutputPath, "utf-8").split("\n");
+
+    const linesWithPlus = inputLines.filter((line) => line.startsWith("+"));
+    const linesWithMinus = inputLines.filter((line) => line.startsWith("-"));
+
+    fs.writeFileSync(outputFilePathWithPlus, linesWithPlus.join("\n"), "utf-8");
+    fs.writeFileSync(
+      outputFilePathWithMinus,
+      linesWithMinus.join("\n"),
+      "utf-8"
+    );
   });
 };
 
