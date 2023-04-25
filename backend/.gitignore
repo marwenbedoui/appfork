@@ -6,4 +6,6 @@ jmeter.log
 /test/reports
 /test/tests
 .env
-/uploads/bytecode
+/uploads/difference
+/uploads/diff-plus
+/uploads/diff-minus
