@@ -495,7 +495,28 @@ export const AddTestModal = ({ visible, onCancel, step, next, back }) => {
                     },
                   ]}
                 >
-                  <Input type="text" name="linkRepo" placeholder="github.com/abc.def" />
+                  <Input
+                    type="text"
+                    name="linkRepo"
+                    placeholder="github.com/abc.def"
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Chemin du projet"
+                  name="file"
+                  rules={[
+                    {
+                      required: true,
+                      message:
+                        "Veuillez saisir le lien du projet dans votre ordinateur !",
+                    },
+                  ]}
+                >
+                  <Input
+                    type="text"
+                    name="file"
+                    placeholder="c://bureau/java-proj"
+                  />
                 </Form.Item>
                 <Form.Item
                   label="Protocole"

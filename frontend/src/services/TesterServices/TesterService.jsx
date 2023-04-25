@@ -4,7 +4,8 @@ import jwtDecode from "jwt-decode";
 const API_URL = "http://localhost:5000/api/v1/tester/test";
 const token = localStorage.getItem("token");
 
-const executerTest = async (data, nouv, files) => {
+// const executerTest = async (data, nouv, files) => {
+const executerTest = async (data) => {
   let dataParsed, req;
   if (data.method === "post") {
     dataParsed = JSON.parse(data.data);
@@ -12,19 +13,20 @@ const executerTest = async (data, nouv, files) => {
     dataParsed = "";
   }
   // if (nouv) {
-    req = {
-      testName: data.testName,
-      protocol: data.protocol,
-      url: data.url,
-      port: data.port,
-      path: data.path,
-      usersNumber: data.usersNumber,
-      linkRepo:data.linkRepo,
-      method: data.method,
-      data: dataParsed,
-      link: data._id,
-      createdBy: jwtDecode(token).userId,
-    };
+  req = {
+    testName: data.testName,
+    linkRepo: data.linkRepo,
+    file: data.file,
+    protocol: data.protocol,
+    url: data.url,
+    port: data.port,
+    path: data.path,
+    usersNumber: data.usersNumber,
+    method: data.method,
+    data: dataParsed,
+    link: data._id,
+    createdBy: jwtDecode(token).userId,
+  };
   // } else {
   //   const formData = new FormData();
   //   for (let i = 0; i < files.length; i++) {
