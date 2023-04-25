@@ -20,7 +20,12 @@ import AdminServices from "../services/AdminServices/AdminServices";
 import TesterService from "../services/TesterServices/TesterService";
 import { CircularChart } from "./ChartsComponent";
 import AuthVerifyService from "../services/AuthServices/AuthVerifyService";
-import { FileAddOutlined, DeleteTwoTone } from "@ant-design/icons";
+import {
+  // FileAddOutlined,
+  // DeleteTwoTone,
+  ArrowLeftOutlined,
+  ArrowRightOutlined,
+} from "@ant-design/icons";
 
 export const EmailModal = ({ visible, onCancel }) => {
   const [form] = Form.useForm();
@@ -411,7 +416,7 @@ export const AddUserModal = ({ visible, onCancel }) => {
   );
 };
 
-export const AddTestModal = ({ visible, onCancel }) => {
+export const AddTestModal = ({ visible, onCancel, step, next, back }) => {
   const [form] = Form.useForm();
 
   const [loading, setLoading] = useState(false);
@@ -420,14 +425,343 @@ export const AddTestModal = ({ visible, onCancel }) => {
   const handleMethodChange = (value) => {
     setMethod(value);
   };
-  const [files, setFiles] = useState([]);
-  const hasFiles = files.length > 0;
+  //const [files, setFiles] = useState([]);
+  //const hasFiles = files.length > 0;
+
+  const renderContent = () => {
+    switch (step) {
+      case 1:
+        return (
+          <>
+            <p>This is the first step of the modal.</p>
+            <Button
+              type="primary"
+              style={{ marginLeft: "350px", backgroundColor: "#2F4858" }}
+              onClick={next}
+            >
+              Suivant <ArrowRightOutlined />
+            </Button>
+          </>
+        );
+      case 2:
+        return (
+          <Form
+            layout="vertical"
+            enctype="multipart/form-data"
+            form={form}
+            onFinish={onFinish}
+            labelCol={{
+              span: 8,
+            }}
+            wrapperCol={{
+              span: 16,
+            }}
+            style={{
+              maxWidth: 1200,
+              marginTop: 50,
+            }}
+            initialValues={{
+              remember: true,
+            }}
+            autoComplete="off"
+            onValuesChange={(changedValues) => {
+              if (changedValues.disablePort) {
+                form.setFieldsValue({ port: 0 });
+              }
+            }}
+          >
+            <Row>
+              <Col span={10} offset={2}>
+                <Form.Item
+                  label="Nom du test"
+                  name="testName"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Veuillez saisir le nom du test !",
+                    },
+                  ]}
+                >
+                  <Input placeholder="Java test" type="text" name="testName" />
+                </Form.Item>
+                <Form.Item
+                  label="Lien du repo github"
+                  name="linkRepo"
+                  rules={[
+                    {
+                      required: true,
+                      message:
+                        "Veuillez saisir le lien du projet dans github !",
+                    },
+                  ]}
+                >
+                  <Input type="text" name="linkRepo" placeholder="github.com/abc.def" />
+                </Form.Item>
+                <Form.Item
+                  label="Protocole"
+                  name="protocol"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Veuillez saisir le protocol du test !",
+                    },
+                  ]}
+                >
+                  <Select
+                    defaultValue={""}
+                    placeholder="http / https / .."
+                    style={{ width: "100%" }}
+                    name="protocol"
+                    options={[
+                      { value: "http", label: "HTTP" },
+                      { value: "https", label: "HTTPS" },
+                    ]}
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="URL"
+                  name="url"
+                  rules={[
+                    { required: true, message: "Veuillez saisir l'URL !" },
+                  ]}
+                >
+                  <Input placeholder="google.com" type="text" name="url" />
+                </Form.Item>
+
+                {/* <Form.Item
+                  label="Upload bytecode"
+                  name="files"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Veuillez ajouter un fichier !",
+                    },
+                  ]}
+                >
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <label
+                      htmlFor="file-upload"
+                      style={{ fontSize: "16px", marginBottom: "10px" }}
+                    >
+                      Sélectionnez un ou plusieurs fichiers :
+                    </label>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <input
+                        id="file-upload"
+                        name="files"
+                        type="file"
+                        accept=".class"
+                        multiple
+                        onChange={(e) => {
+                          setFiles([...files, ...e.target.files]);
+                        }}
+                        style={{ display: "none" }}
+                      />
+                      <label
+                        htmlFor="file-upload"
+                        style={{
+                          fontSize: "14px",
+                          padding: "10px",
+                          backgroundColor: "#f5f5f5",
+                          border: "1px solid #ccc",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {hasFiles ? (
+                          <FileAddOutlined />
+                        ) : (
+                          <span>Parcourir</span>
+                        )}
+                      </label>
+                      <div
+                        style={{
+                          marginLeft: "10px",
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        {files.map((file, index) => (
+                          <div
+                            key={file.name}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              marginBottom: "5px",
+                              padding: "5px",
+                              border: "1px solid #ccc",
+                              borderRadius: "5px",
+                            }}
+                          >
+                            <span
+                              style={{
+                                fontSize: "14px",
+                                fontWeight: "bold",
+                                marginRight: "5px",
+                                flexGrow: 1,
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
+                              }}
+                            >
+                              {file.name}
+                            </span>
+                            <div
+                              style={{
+                                borderLeft: "1px solid #ccc",
+                                paddingLeft: "5px",
+                              }}
+                            >
+                              <Button
+                                type="button"
+                                onClick={() => {
+                                  const newFiles = [...files];
+                                  newFiles.splice(index, 1);
+                                  setFiles(newFiles);
+                                }}
+                              >
+                                <DeleteTwoTone
+                                  twoToneColor="#ff4d4f"
+                                  style={{ fontSize: "20px" }}
+                                />
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </Form.Item> */}
+              </Col>
+              <Col span={11} offset={1}>
+                <Form.Item label="Port" name="port">
+                  <Row>
+                    <Col span={8}>
+                      <Form.Item
+                        name="disablePort"
+                        valuePropName="checked"
+                        noStyle
+                      >
+                        <Checkbox>No Port</Checkbox>
+                      </Form.Item>
+                    </Col>
+                    <Col span={16}>
+                      <Input
+                        placeholder="8888"
+                        defaultValue={"0"}
+                        type="text"
+                        name="port"
+                        disabled={form.getFieldValue("disablePort")}
+                      />
+                    </Col>
+                  </Row>
+                </Form.Item>
+                <Form.Item
+                  label="Chemin"
+                  name="path"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Veuillez saisir le chemin !",
+                    },
+                  ]}
+                >
+                  <Input type="text" name="path" placeholder="/about" />
+                </Form.Item>
+
+                <Form.Item
+                  label="Nombre&nbsp;d'utilisateurs"
+                  name="usersNumber"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Veuillez saisir le nombre d'utilisateurs !",
+                    },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (value > 0) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(
+                          new Error("Ce champs doit etre supérieur à zero")
+                        );
+                      },
+                    }),
+                  ]}
+                >
+                  <Input name="usersNumber" />
+                </Form.Item>
+                <Form.Item
+                  label="Méthode"
+                  name="method"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Veuillez saisir la méthode !",
+                    },
+                  ]}
+                >
+                  <Select
+                    defaultValue={""}
+                    placeholder="POST GET ..."
+                    style={{ width: "100%" }}
+                    name="method"
+                    onChange={handleMethodChange}
+                    options={[
+                      { value: "get", label: "GET" },
+                      { value: "post", label: "POST" },
+                    ]}
+                  />
+                </Form.Item>
+                {method === "post" && (
+                  <Form.Item
+                    label="Le corps de la requête"
+                    name="data"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Veuillez saisir le corps en format JSON !",
+                      },
+                    ]}
+                  >
+                    <Input.TextArea
+                      placeholder="Request body in JSON format"
+                      name="data"
+                      autoSize={{ minRows: 3, maxRows: 12 }}
+                    />
+                  </Form.Item>
+                )}
+                <Form.Item>
+                  <Space>
+                    <Button
+                      onClick={back}
+                      style={{ backgroundColor: "#2F4858", color: "white" }}
+                    >
+                      <ArrowLeftOutlined /> Retour
+                    </Button>
+                    <Button
+                      htmlType="submit"
+                      style={{ backgroundColor: "green", color: "white" }}
+                    >
+                      {loading ? <Spin /> : "Executer le test"}
+                    </Button>
+                  </Space>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+        );
+      default:
+        return null;
+    }
+  };
 
   const onFinish = async (values) => {
     setLoading(true);
     const role = AuthVerifyService.userRole();
     console.log(values);
-    await TesterService.executerTest(values, false, files)
+    //await TesterService.executerTest(values, false, files)
+    await TesterService.executerTest(values, false)
       .then((res) => {
         if (values.data) onCancel();
         toast.success("Test effectué avec succès");
@@ -441,287 +775,45 @@ export const AddTestModal = ({ visible, onCancel }) => {
     onCancel();
   };
 
-  return (
+  return step === 1 ? (
+    <Modal
+      closable={true}
+      maskClosable={true}
+      width={500}
+      open={visible}
+      onCancel={onCancel}
+      style={{
+        left: step === 1 ? 0 : "-100%",
+        transition: "left 0.5s ease-in-out",
+      }}
+      title={
+        <div style={{ textAlign: "center", fontSize: "24px" }}>
+          Les étapes à suivre
+        </div>
+      }
+      footer={null}
+    >
+      {renderContent()}
+    </Modal>
+  ) : (
     <Modal
       closable={false}
       maskClosable={false}
       width={1000}
       open={visible}
       onCancel={onCancel}
+      style={{
+        left: step === 2 ? 0 : "100%",
+        transition: "left 0.5s ease-in-out",
+      }}
       title={
         <div style={{ textAlign: "center", fontSize: "24px" }}>
-          Nouveau test
+          Formulaire pour un nouveau test
         </div>
       }
       footer={null}
     >
-      <Form
-        layout="vertical"
-        enctype="multipart/form-data"
-        form={form}
-        onFinish={onFinish}
-        labelCol={{
-          span: 8,
-        }}
-        wrapperCol={{
-          span: 16,
-        }}
-        style={{
-          maxWidth: 1200,
-          marginTop: 50,
-        }}
-        initialValues={{
-          remember: true,
-        }}
-        autoComplete="off"
-        onValuesChange={(changedValues) => {
-          if (changedValues.disablePort) {
-            form.setFieldsValue({ port: 0 });
-          }
-        }}
-      >
-        <Row>
-          <Col span={10} offset={2}>
-            <Form.Item
-              label="Nom du test"
-              name="testName"
-              rules={[
-                { required: true, message: "Veuillez saisir le nom du test !" },
-              ]}
-            >
-              <Input placeholder="Java test" type="text" name="testName" />
-            </Form.Item>
-            <Form.Item
-              label="Protocole"
-              name="protocol"
-              rules={[
-                {
-                  required: true,
-                  message: "Veuillez saisir le protocol du test !",
-                },
-              ]}
-            >
-              <Select
-                defaultValue={""}
-                placeholder="http / https / .."
-                style={{ width: "100%" }}
-                name="protocol"
-                options={[
-                  { value: "http", label: "HTTP" },
-                  { value: "https", label: "HTTPS" },
-                ]}
-              />
-            </Form.Item>
-            <Form.Item
-              label="URL"
-              name="url"
-              rules={[{ required: true, message: "Veuillez saisir l'URL !" }]}
-            >
-              <Input placeholder="google.com" type="text" name="url" />
-            </Form.Item>
-            <Form.Item label="Port" name="port">
-              <Row>
-                <Col span={8}>
-                  <Form.Item name="disablePort" valuePropName="checked" noStyle>
-                    <Checkbox>No Port</Checkbox>
-                  </Form.Item>
-                </Col>
-                <Col span={16}>
-                  <Input
-                    placeholder="8888"
-                    defaultValue={"0"}
-                    type="text"
-                    name="port"
-                    disabled={form.getFieldValue("disablePort")}
-                  />
-                </Col>
-              </Row>
-            </Form.Item>
-
-            <Form.Item
-              label="Upload bytecode"
-              name="files"
-              rules={[
-                { required: true, message: "Veuillez ajouter un fichier !" },
-              ]}
-            >
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <label
-                  htmlFor="file-upload"
-                  style={{ fontSize: "16px", marginBottom: "10px" }}
-                >
-                  Sélectionnez un ou plusieurs fichiers :
-                </label>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <input
-                    id="file-upload"
-                    name="files"
-                    type="file"
-                    accept=".class"
-                    multiple
-                    onChange={(e) => {
-                      setFiles([...files, ...e.target.files]);
-                    }}
-                    style={{ display: "none" }}
-                  />
-                  <label
-                    htmlFor="file-upload"
-                    style={{
-                      fontSize: "14px",
-                      padding: "10px",
-                      backgroundColor: "#f5f5f5",
-                      border: "1px solid #ccc",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    {hasFiles ? <FileAddOutlined /> : <span>Parcourir</span>}
-                  </label>
-                  <div
-                    style={{
-                      marginLeft: "10px",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    {files.map((file, index) => (
-                      <div
-                        key={file.name}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          marginBottom: "5px",
-                          padding: "5px",
-                          border: "1px solid #ccc",
-                          borderRadius: "5px",
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontSize: "14px",
-                            fontWeight: "bold",
-                            marginRight: "5px",
-                            flexGrow: 1,
-                            overflow: "hidden",
-                            whiteSpace: "nowrap",
-                            textOverflow: "ellipsis",
-                          }}
-                        >
-                          {file.name}
-                        </span>
-                        <div
-                          style={{
-                            borderLeft: "1px solid #ccc",
-                            paddingLeft: "5px",
-                          }}
-                        >
-                          <Button
-                            type="button"
-                            onClick={() => {
-                              const newFiles = [...files];
-                              newFiles.splice(index, 1);
-                              setFiles(newFiles);
-                            }}
-                          >
-                            <DeleteTwoTone
-                              twoToneColor="#ff4d4f"
-                              style={{ fontSize: "20px" }}
-                            />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </Form.Item>
-          </Col>
-          <Col span={11} offset={1}>
-            <Form.Item
-              label="Chemin"
-              name="path"
-              rules={[
-                {
-                  required: true,
-                  message: "Veuillez saisir le chemin !",
-                },
-              ]}
-            >
-              <Input type="text" name="filename" placeholder="/about" />
-            </Form.Item>
-            <Form.Item
-              label="Nombre&nbsp;d'utilisateurs"
-              name="usersNumber"
-              rules={[
-                {
-                  required: true,
-                  message: "Veuillez saisir le nombre d'utilisateurs !",
-                },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (value > 0) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(
-                      new Error("Ce champs doit etre supérieur à zero")
-                    );
-                  },
-                }),
-              ]}
-            >
-              <Input name="usersNumber" />
-            </Form.Item>
-            <Form.Item
-              label="Méthode"
-              name="method"
-              rules={[
-                {
-                  required: true,
-                  message: "Veuillez saisir la méthode !",
-                },
-              ]}
-            >
-              <Select
-                defaultValue={""}
-                placeholder="POST GET ..."
-                style={{ width: "100%" }}
-                name="method"
-                onChange={handleMethodChange}
-                options={[
-                  { value: "get", label: "GET" },
-                  { value: "post", label: "POST" },
-                ]}
-              />
-            </Form.Item>
-            {method === "post" && (
-              <Form.Item
-                label="Le corps de la requête"
-                name="data"
-                rules={[
-                  {
-                    required: true,
-                    message: "Veuillez saisir le corps en format JSON !",
-                  },
-                ]}
-              >
-                <Input.TextArea
-                  placeholder="Request body in JSON format"
-                  name="data"
-                  autoSize={{ minRows: 3, maxRows: 12 }}
-                />
-              </Form.Item>
-            )}
-            <Form.Item>
-              <Button
-                htmlType="submit"
-                style={{ backgroundColor: "green", color: "white" }}
-              >
-                {loading ? <Spin /> : "Executer le test"}
-              </Button>
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
+      {renderContent()}
     </Modal>
   );
 };

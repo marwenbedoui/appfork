@@ -16,6 +16,18 @@ const Page = ({ role }) => {
   const [owner, setOwner] = useState("");
   const [auth, setAuth] = useState([]);
   const [data, setData] = useState([]);
+  const [step, setStep] = useState(1);
+
+  const handleNext = () => {
+    setStep(step + 1);
+    console.log(step);
+  };
+
+  const handleBack = () => {
+    setStep(step - 1);
+    console.log(step);
+  };
+
   useEffect(() => {
     ProfileServices.getInfos().then((a) => {
       setAuth(a._id);
@@ -33,7 +45,10 @@ const Page = ({ role }) => {
         <Button
           size="large"
           type="primary"
-          onClick={() => setModalTest(true)}
+          onClick={() => {
+            setModalTest(true);
+            setStep(1);
+          }}
           style={{
             float: "right",
             marginBottom: "30px",
@@ -80,6 +95,9 @@ const Page = ({ role }) => {
         </Col>
       </Row>
       <AddTestModal
+        step={step}
+        next={handleNext}
+        back={handleBack}
         visible={modalTest}
         onCancel={() => {
           setModalTest(false);
