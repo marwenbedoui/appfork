@@ -11,7 +11,7 @@ const executerTest = async (data, nouv, files) => {
   } else {
     dataParsed = "";
   }
-  if (nouv) {
+  // if (nouv) {
     req = {
       testName: data.testName,
       protocol: data.protocol,
@@ -19,28 +19,29 @@ const executerTest = async (data, nouv, files) => {
       port: data.port,
       path: data.path,
       usersNumber: data.usersNumber,
+      linkRepo:data.linkRepo,
       method: data.method,
       data: dataParsed,
       link: data._id,
       createdBy: jwtDecode(token).userId,
     };
-  } else {
-    const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      formData.append("files", file);
-    }
-    formData.append("testName", data.testName);
-    formData.append("protocol", data.protocol);
-    formData.append("url", data.url);
-    formData.append("port", data.port);
-    formData.append("path", data.path);
-    formData.append("usersNumber", data.usersNumber);
-    formData.append("method", data.method);
-    formData.append("data", dataParsed);
-    formData.append("createdBy", jwtDecode(token).userId);
-    req = formData;
-  }
+  // } else {
+  //   const formData = new FormData();
+  //   for (let i = 0; i < files.length; i++) {
+  //     const file = files[i];
+  //     formData.append("files", file);
+  //   }
+  //   formData.append("testName", data.testName);
+  //   formData.append("protocol", data.protocol);
+  //   formData.append("url", data.url);
+  //   formData.append("port", data.port);
+  //   formData.append("path", data.path);
+  //   formData.append("usersNumber", data.usersNumber);
+  //   formData.append("method", data.method);
+  //   formData.append("data", dataParsed);
+  //   formData.append("createdBy", jwtDecode(token).userId);
+  //   req = formData;
+  // }
 
   const result = await axios.post(API_URL, req, {
     headers: {
