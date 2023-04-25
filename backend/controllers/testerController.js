@@ -245,7 +245,7 @@ const executeTest = async (req, res) => {
         test.pourcentage.failed =
           calculatePercentage(results).falsePercentage.toFixed(2);
         majority === true ? (test.status = "Passed") : (test.status = "failed");
-        await diff(req);
+        await diff(req, testId);
         await test
           .save()
           .then((data) => res.send(data))

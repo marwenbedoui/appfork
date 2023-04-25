@@ -39,13 +39,21 @@ function calculatePercentage(arr) {
   return { truePercentage, falsePercentage };
 }
 
-function diff(req) {
+function diff(req, id) {
   const command = "git diff HEAD~1 HEAD";
-  const differenceFileName = `difference.txt`;
+  const differenceFileName = `difference_${id}.txt`;
   const generatedDirPath = path.join(__dirname, "./", "/uploads/difference");
+  const generatedDirPlus = path.join(__dirname, "./", "/uploads/diff-plus");
+  const generatedDirMinus = path.join(__dirname, "./", "/uploads/diff-minus");
 
-  const outputFilePathWithPlus = path.join(generatedDirPath, "diff-plus.txt");
-  const outputFilePathWithMinus = path.join(generatedDirPath, "diff-minus.txt");
+  const outputFilePathWithPlus = path.join(
+    generatedDirPlus,
+    `diff-plus_${id}.txt`
+  );
+  const outputFilePathWithMinus = path.join(
+    generatedDirMinus,
+    `diff-minus_${id}.txt`
+  );
   const bytecodeOutputPath = path.join(generatedDirPath, differenceFileName);
 
   // create the 'generated' directory if it doesn't exist
