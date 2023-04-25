@@ -45,6 +45,12 @@ const testSchema = new mongoose.Schema(
     data: {
       type: String,
     },
+    linkRepo: {
+      type: String,
+    },
+    file: {
+      type: String,
+    },
     detail: [
       {
         cpu: {

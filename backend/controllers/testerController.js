@@ -13,7 +13,11 @@ const { postTemplate } = require("../test/template/postTemplate");
 const bytes = require("bytes");
 const pidusage = require("pidusage");
 const moment = require("moment");
-const { calculatePercentage, calculateMajority } = require("../functions");
+const {
+  calculatePercentage,
+  calculateMajority,
+  diff,
+} = require("../functions");
 const si = require("systeminformation");
 
 const executeTest = async (req, res) => {
@@ -37,6 +41,8 @@ const executeTest = async (req, res) => {
     method: req.body.method,
     createdBy: req.body.createdBy,
     usersNumber: req.body.usersNumber,
+    linkRepo: req.body.linkRepo,
+    file: req.body.file,
     status,
     data,
     testName: req.body.testName,
@@ -45,37 +51,39 @@ const executeTest = async (req, res) => {
   const savedTest = await test.save();
   const testId = savedTest._id;
   const testFileName = `test_${testId}.jmx`;
-  let v = [];
-  let savedBytecode, item_bytecode;
-  if (req.files.length === 0) {
-    item_bytecode = await Bytecode.find({ test: req.body.link });
-  } else {
-    console.log(req.files);
-    for (let i = 0; i < req.files.length; i++) {
-      v.push(
-        Buffer.from(fs.readFileSync(req.files[i].path).toString("hex"), "hex")
-      );
-    }
-    const bytecode = new Bytecode({
-      timeStamp: new Date(),
-      bytes: v,
-      test: testId,
-    });
-    savedBytecode = await bytecode.save();
-    //the path to the bytecode file
-    const bytecodeFileName = `${savedBytecode._id}.txt`;
-    const generatedDirPath = path.join(__dirname, "../", "/uploads/generated");
-    const bytecodeOutputPath = path.join(generatedDirPath, bytecodeFileName);
-    const bytesArray = savedBytecode.bytes;
-    const text = bytesArray.join("\n\n\n");
 
-    // create the 'generated' directory if it doesn't exist
-    if (!fs.existsSync(generatedDirPath)) {
-      fs.mkdirSync(generatedDirPath);
-    }
-    //get the bytecode by id and save it to a file
-    fs.writeFileSync(bytecodeOutputPath, text, "utf-8");
-  }
+  //bytecode
+  // let v = [];
+  // let savedBytecode, item_bytecode;
+  // if (req.files.length === 0) {
+  //   item_bytecode = await Bytecode.find({ test: req.body.link });
+  // } else {
+  //   console.log(req.files);
+  //   for (let i = 0; i < req.files.length; i++) {
+  //     v.push(
+  //       Buffer.from(fs.readFileSync(req.files[i].path).toString("hex"), "hex")
+  //     );
+  //   }
+  //   const bytecode = new Bytecode({
+  //     timeStamp: new Date(),
+  //     bytes: v,
+  //     test: testId,
+  //   });
+  //   savedBytecode = await bytecode.save();
+  //   //the path to the bytecode file
+  //   const bytecodeFileName = `${savedBytecode._id}.txt`;
+  //   const generatedDirPath = path.join(__dirname, "../", "/uploads/generated");
+  //   const bytecodeOutputPath = path.join(generatedDirPath, bytecodeFileName);
+  //   const bytesArray = savedBytecode.bytes;
+  //   const text = bytesArray.join("\n\n\n");
+
+  //   // create the 'generated' directory if it doesn't exist
+  //   if (!fs.existsSync(generatedDirPath)) {
+  //     fs.mkdirSync(generatedDirPath);
+  //   }
+  //   //get the bytecode by id and save it to a file
+  //   fs.writeFileSync(bytecodeOutputPath, text, "utf-8");
+  // }
 
   //the path to the jmx file
   const jmxOutputPath = path.join(
@@ -221,11 +229,11 @@ const executeTest = async (req, res) => {
             ? parseInt(row.responseCode)
             : 400,
           success: row.success === 1,
-          bytecode: savedBytecode
-            ? "http://localhost:5000/generated/" + savedBytecode._id
-            : "http://localhost:5000/generated/" +
-              item_bytecode[0]._id +
-              ".txt",
+          // bytecode: savedBytecode
+          //   ? "http://localhost:5000/generated/" + savedBytecode._id
+          //   : "http://localhost:5000/generated/" +
+          //     item_bytecode[0]._id +
+          //     ".txt",
           test: testId,
         });
         rapport.save().catch((error) => console.error(error));
@@ -237,6 +245,7 @@ const executeTest = async (req, res) => {
         test.pourcentage.failed =
           calculatePercentage(results).falsePercentage.toFixed(2);
         majority === true ? (test.status = "Passed") : (test.status = "failed");
+        await diff(req, testId);
         await test
           .save()
           .then((data) => res.send(data))
@@ -247,51 +256,6 @@ const executeTest = async (req, res) => {
           });
       });
     // }, 10000);
-  });
-};
-
-const getDiff = (req, res) => {
-  const command = "git diff HEAD~1 HEAD";
-  const differenceFileName = `difference.txt`;
-  const generatedDirPath = path.join(__dirname, "../", "/uploads/difference");
-  const bytecodeOutputPath = path.join(generatedDirPath, differenceFileName);
-
-  const outputFilePathWithPlus = path.join(generatedDirPath, "diff-plus.txt");
-  const outputFilePathWithMinus = path.join(generatedDirPath, "diff-minus.txt");
-
-  // create the 'generated' directory if it doesn't exist
-  if (!fs.existsSync(generatedDirPath)) {
-    fs.mkdirSync(generatedDirPath);
-  }
-
-  exec(command, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Erreur: ${error.message}`);
-      fs.writeFileSync(bytecodeOutputPath, error.message, "utf-8");
-      res.send(`Erreur: ${error.message}`);
-      return;
-    }
-    if (stderr) {
-      console.error(`stderr: ${stderr}`);
-      fs.writeFileSync(bytecodeOutputPath, stderr, "utf-8");
-      res.send(`stderr: ${stderr}`);
-      return;
-    }
-    console.log(`stdout: ${stdout}`);
-    fs.writeFileSync(bytecodeOutputPath, stdout, "utf-8");
-    res.send(`stdout: ${stdout}`);
-
-    const inputLines = fs.readFileSync(bytecodeOutputPath, "utf-8").split("\n");
-
-    const linesWithPlus = inputLines.filter((line) => line.startsWith("+"));
-    const linesWithMinus = inputLines.filter((line) => line.startsWith("-"));
-
-    fs.writeFileSync(outputFilePathWithPlus, linesWithPlus.join("\n"), "utf-8");
-    fs.writeFileSync(
-      outputFilePathWithMinus,
-      linesWithMinus.join("\n"),
-      "utf-8"
-    );
   });
 };
 
@@ -411,4 +375,3 @@ exports.TestStatePerUser = TestStatePerUser;
 exports.TestsPerUser = TestsPerUser;
 exports.getTestById = getTestById;
 exports.getAllTestsByTester = getAllTestsByTester;
-exports.getDiff = getDiff;

@@ -1,4 +1,0 @@
---- a/backend/controllers/testerController.js
--const { spawn } = require("child_process");
---- a/backend/routers/testerRouter.js
---- /dev/null
