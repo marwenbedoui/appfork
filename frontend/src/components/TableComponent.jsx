@@ -112,7 +112,7 @@ const TableComponent = ({ data, isAdminPage, role }) => {
                       setModalStatusTest(true);
                     }}
                   >
-                    Show status
+                    Afficher statistique
                   </Button>
                   <TestStatusModel
                     name={_id}
@@ -121,14 +121,14 @@ const TableComponent = ({ data, isAdminPage, role }) => {
                     visible={modalStatusTest}
                   />
                   <Popconfirm
-                    title="Delete user"
-                    description="Are you sure you want to delete this user?"
+                    title="Supprimer l'utilisateur"
+                    description="Êtes-vous sûr de vouloir supprimer cet utilisateur ?"
                     onConfirm={() => AdminServices.deleteUserById(_id)}
                     okText="Yes"
                     cancelText="No"
                   >
                     <Button type="primary" danger>
-                      Delete
+                      Supprimer
                     </Button>
                   </Popconfirm>
                 </Space>
@@ -136,14 +136,14 @@ const TableComponent = ({ data, isAdminPage, role }) => {
             } else {
               return (
                 <Popconfirm
-                  title="Delete user"
-                  description="Are you sure you want to delete this user?"
+                  title="Supprimer l'utilisateur"
+                  description="Êtes-vous sûr de vouloir supprimer cet utilisateur ?"
                   onConfirm={() => AdminServices.deleteUserById(_id)}
-                  okText="Yes"
-                  cancelText="No"
+                  okText="Oui"
+                  cancelText="Non"
                 >
                   <Button type="primary" danger>
-                    Delete
+                    Supprimer
                   </Button>
                 </Popconfirm>
               );

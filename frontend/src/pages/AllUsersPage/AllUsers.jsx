@@ -33,7 +33,7 @@ const Page = () => {
         shape="round"
         icon={<UserAddOutlined spin={true} />}
       >
-        Add user
+        Ajouter utilisateur
       </Button>
 
       <AddUserModal onCancel={handleCancelAddUser} visible={modalAddUserForm} />

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import * as echarts from "echarts";
 import TesterService from "../services/TesterServices/TesterService";
 import AdminServices from "../services/AdminServices/AdminServices";
+import { Empty } from "antd";
 
 export const TestChart = ({ values, field }) => {
   const xAxisData = values.map((data) => data.timestamp);
@@ -129,8 +130,11 @@ export const LineCharts = () => {
 
   useEffect(() => {
     const chartDom = document.getElementById("main");
+    if (!chartDom) return; // exit early if chartDom is not found
+
     const newChart = echarts.init(chartDom);
     setMyChart(newChart);
+
     return () => {
       newChart.dispose();
     };
@@ -187,7 +191,20 @@ export const LineCharts = () => {
     myChart && myChart.setOption(option);
   }, [myChart, data]);
 
-  return <div id="main" style={{ width: "100%", height: 500 }} />;
+  return (
+    <>
+      {data.length ? (
+        <div id="main" style={{ width: "100%", height: 500 }} />
+      ) : (
+        <Empty
+          imageStyle={{
+            height: 200,
+          }}
+          description={<span>Aucune donnée pour le moment</span>}
+        />
+      )}
+    </>
+  );
 };
 
 export const CircularChart = ({ isAdmin, id, name }) => {
@@ -196,8 +213,11 @@ export const CircularChart = ({ isAdmin, id, name }) => {
 
   useEffect(() => {
     const chartDom = document.getElementById(name);
+    if (!chartDom) return; // exit early if chartDom is not found
+
     const newChart = echarts.init(chartDom);
     setMyChart(newChart);
+
     return () => {
       newChart.dispose();
     };
@@ -280,5 +300,18 @@ export const CircularChart = ({ isAdmin, id, name }) => {
     myChart && myChart.setOption(option);
   }, [myChart, data, id, isAdmin]);
 
-  return <div id={name} style={{ width: "100%", height: 500 }} />;
+  return (
+    <>
+      {data.length ? (
+        <div id={name} style={{ width: "100%", height: 500 }} />
+      ) : (
+        <Empty
+          imageStyle={{
+            height: 200,
+          }}
+          description="Aucune donnée pour le moment"
+        />
+      )}
+    </>
+  );
 };

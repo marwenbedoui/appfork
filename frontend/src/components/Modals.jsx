@@ -65,7 +65,7 @@ export const EmailModal = ({ visible, onCancel }) => {
             { type: "email", message: "Veuillez saisir un email valide !" },
           ]}
         >
-          <Input placeholder="new email" />
+          <Input placeholder="nouveau.mail@nouv.mail" />
         </Form.Item>
         <Form.Item
           label="Retaper un nouvel email"
@@ -86,7 +86,7 @@ export const EmailModal = ({ visible, onCancel }) => {
             }),
           ]}
         >
-          <Input placeholder="retype new email" />
+          <Input placeholder="re.nouv-mail@re-no.mail" />
         </Form.Item>
         <Form.Item
           label="Mot de passe"
@@ -230,11 +230,11 @@ export const PasswordModal = ({ visible, onCancel }) => {
           tooltip="Ce champ est obligatoire"
           name="oldPassword"
         >
-          <Input.Password placeholder="Type old password" />
+          <Input.Password placeholder="ancienne mot de passe" />
         </Form.Item>
 
         <Form.Item
-          label={`Type new password`}
+          label={`Tapez le nouveau mot de passe`}
           rules={[
             {
               required: true,
@@ -249,10 +249,10 @@ export const PasswordModal = ({ visible, onCancel }) => {
           tooltip="Ce champ est obligatoire"
           name="newPassword"
         >
-          <Input.Password placeholder="Type new password" type="password" />
+          <Input.Password placeholder="nouveau mot de passe" type="password" />
         </Form.Item>
         <Form.Item
-          label={"Retype new password"}
+          label={"Retapez le nouveau mot de passe"}
           rules={[
             {
               required: true,
@@ -263,7 +263,7 @@ export const PasswordModal = ({ visible, onCancel }) => {
           tooltip="Ce champ est obligatoire"
           name="newPasswordConfirm"
         >
-          <Input.Password placeholder="Retype new password" type="password" />
+          <Input.Password placeholder="nouveau mot de passe" type="password" />
         </Form.Item>
         <Form.Item>
           <Button htmlType="submit">
@@ -302,7 +302,7 @@ export const AddUserModal = ({ visible, onCancel }) => {
       open={visible}
       onCancel={onCancel}
       title={
-        <div style={{ textAlign: "center", fontSize: "24px" }}>Add user</div>
+        <div style={{ textAlign: "center", fontSize: "24px" }}>Ajouter un utilisateur</div>
       }
       footer={null}
     >
@@ -408,7 +408,7 @@ export const AddUserModal = ({ visible, onCancel }) => {
             htmlType="submit"
             style={{ backgroundColor: "green", color: "white" }}
           >
-            {loading ? <Spin /> : "Add new user"}
+            {loading ? <Spin /> : "Ajouter"}
           </Button>
         </Form.Item>
       </Form>
