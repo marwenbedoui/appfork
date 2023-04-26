@@ -1,6 +1,6 @@
 import React from "react";
 import TalanLogo from "../../assets/talan-logo.png";
-import { Col, Row } from "antd";
+import {  Col, Row } from "antd";
 import LayoutComponent from "../../components/LayoutComponent";
 import { CircularChart, LineCharts } from "../../components/ChartsComponent";
 
