@@ -11,6 +11,7 @@ import {
   Progress,
   Space,
   Table,
+  Steps,
 } from "antd";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
@@ -25,7 +26,9 @@ import {
   // DeleteTwoTone,
   ArrowLeftOutlined,
   ArrowRightOutlined,
+  CheckOutlined,
 } from "@ant-design/icons";
+const { Step } = Steps;
 
 export const EmailModal = ({ visible, onCancel }) => {
   const [form] = Form.useForm();
@@ -302,7 +305,9 @@ export const AddUserModal = ({ visible, onCancel }) => {
       open={visible}
       onCancel={onCancel}
       title={
-        <div style={{ textAlign: "center", fontSize: "24px" }}>Ajouter un utilisateur</div>
+        <div style={{ textAlign: "center", fontSize: "24px" }}>
+          Ajouter un utilisateur
+        </div>
       }
       footer={null}
     >
@@ -421,6 +426,33 @@ export const AddTestModal = ({ visible, onCancel, step, next, back }) => {
 
   const [loading, setLoading] = useState(false);
   const [method, setMethod] = useState("");
+  const [currentStep, setCurrentStep] = useState(0);
+
+  const steps = [
+    {
+      title: "Authentifiez-vous sur GitHub ou GitLab",
+      description:
+        "Assurez-vous d'être authentifié sur votre compte GitHub ou GitLab.",
+    },
+    {
+      title: "Vérifiez votre accès au repository",
+      description:
+        "Assurez-vous d'être un collaborateur du repository de l'application que vous allez tester. Si ce n'est pas le cas, demandez à être ajouté en tant que collaborateur.",
+    },
+    {
+      title: "Remplissez le formulaire de test",
+      description:
+        "Après avoir vérifié ces éléments, vous pouvez remplir le formulaire pour tester votre application.",
+    },
+  ];
+
+  const handleNext = () => {
+    setCurrentStep(currentStep + 1);
+  };
+
+  const handlePrev = () => {
+    setCurrentStep(currentStep - 1);
+  };
 
   const handleMethodChange = (value) => {
     setMethod(value);
@@ -433,14 +465,43 @@ export const AddTestModal = ({ visible, onCancel, step, next, back }) => {
       case 1:
         return (
           <>
-            <p>This is the first step of the modal.</p>
-            <Button
-              type="primary"
-              style={{ marginLeft: "350px", backgroundColor: "#2F4858" }}
-              onClick={next}
-            >
-              Suivant <ArrowRightOutlined />
-            </Button>
+            <Steps current={currentStep}>
+              {steps.map((step) => (
+                <Step
+                  key={step.title}
+                  title={step.title}
+                  description={step.description}
+                />
+              ))}
+            </Steps>
+            <div style={{ marginTop: 20 }}>
+              {currentStep > 0 && (
+                <Button
+                  style={{ marginRight: 8, backgroundColor: "yellowgreen" }}
+                  onClick={handlePrev}
+                >
+                  <ArrowLeftOutlined /> Précédent
+                </Button>
+              )}
+              {currentStep < steps.length - 1 && (
+                <Button
+                  type="primary"
+                  onClick={handleNext}
+                  style={{ backgroundColor: "#00A07C" }}
+                >
+                  Suivant <ArrowRightOutlined />
+                </Button>
+              )}
+              {currentStep === steps.length - 1 && (
+                <Button
+                  type="primary"
+                  style={{ backgroundColor: "#41B95F" }}
+                  onClick={next}
+                >
+                  Etape suivante <CheckOutlined />
+                </Button>
+              )}
+            </div>
           </>
         );
       case 2:
@@ -755,8 +816,11 @@ export const AddTestModal = ({ visible, onCancel, step, next, back }) => {
                 <Form.Item>
                   <Space>
                     <Button
-                      onClick={back}
-                      style={{ backgroundColor: "#2F4858", color: "white" }}
+                      onClick={() => {
+                        back();
+                        setCurrentStep(0);
+                      }}
+                      style={{ backgroundColor: "yellowgreen", color: "white" }}
                     >
                       <ArrowLeftOutlined /> Retour
                     </Button>
@@ -800,9 +864,12 @@ export const AddTestModal = ({ visible, onCancel, step, next, back }) => {
     <Modal
       closable={true}
       maskClosable={true}
-      width={500}
+      width={1000}
       open={visible}
-      onCancel={onCancel}
+      onCancel={() => {
+        onCancel();
+        setCurrentStep(0)
+      }}
       style={{
         left: step === 1 ? 0 : "-100%",
         transition: "left 0.5s ease-in-out",
