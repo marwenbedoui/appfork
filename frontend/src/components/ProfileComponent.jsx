@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Avatar, Upload, Card, Tooltip, Tag } from "antd";
-import "./ProfileComponent.css";
-import ProfileServices from "../../services/ProfileServices";
-import { PasswordModal, EmailModal, InfoModal } from "../Modals";
+import "./styles/ProfileComponent.css";
+import ProfileServices from "../services/ProfileServices";
+import { PasswordModal, EmailModal, InfoModal } from "./Modals";
 import {
   UploadOutlined,
   MailTwoTone,

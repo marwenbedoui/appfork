@@ -1,7 +1,7 @@
 import React from "react";
 // import AdminLayoutComponent from "../../components/AdminLayoutComponent";
 import TalanLogo from "../../assets/talan-logo.png";
-import ProfileComponent from "../../components/ProfileComponent/ProfileComponent";
+import ProfileComponent from "../../components/ProfileComponent";
 import LayoutComponent from "../../components/LayoutComponent";
 
 export default function ProfilePage({ role }) {

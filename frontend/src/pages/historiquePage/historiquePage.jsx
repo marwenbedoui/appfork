@@ -16,16 +16,17 @@ const Page = ({ role }) => {
   const [owner, setOwner] = useState("");
   const [auth, setAuth] = useState([]);
   const [data, setData] = useState([]);
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
 
-  const handleNext = () => {
+  const handleFirst = () => {
+    setStep(0);
+  };
+  const handleSecond = () => {
     setStep(step + 1);
-    console.log(step);
   };
 
-  const handleBack = () => {
-    setStep(step - 1);
-    console.log(step);
+  const handleFinal = () => {
+    setStep(step + 2);
   };
 
   useEffect(() => {
@@ -47,12 +48,12 @@ const Page = ({ role }) => {
           type="primary"
           onClick={() => {
             setModalTest(true);
-            setStep(1);
+            setStep(0);
           }}
           style={{
             float: "right",
             marginBottom: "30px",
-            backgroundColor: "#2596be",
+            backgroundColor: "#00727A",
             color: "white",
           }}
           shape="round"
@@ -96,8 +97,9 @@ const Page = ({ role }) => {
       </Row>
       <AddTestModal
         step={step}
-        next={handleNext}
-        back={handleBack}
+        first={handleFirst}
+        second={handleSecond}
+        final={handleFinal}
         visible={modalTest}
         onCancel={() => {
           setModalTest(false);
