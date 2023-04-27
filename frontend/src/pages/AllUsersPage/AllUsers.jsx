@@ -27,7 +27,7 @@ const Page = () => {
         style={{
           float: "right",
           marginBottom: "15px",
-          backgroundColor: "#2596be",
+          backgroundColor: "#00727A",
           color: "white",
         }}
         shape="round"

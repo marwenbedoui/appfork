@@ -27,7 +27,10 @@ import {
   ArrowLeftOutlined,
   ArrowRightOutlined,
   CheckOutlined,
+  GithubOutlined,
+  LaptopOutlined,
 } from "@ant-design/icons";
+import "./styles/modals.css";
 const { Step } = Steps;
 
 export const EmailModal = ({ visible, onCancel }) => {
@@ -411,7 +414,7 @@ export const AddUserModal = ({ visible, onCancel }) => {
         <Form.Item>
           <Button
             htmlType="submit"
-            style={{ backgroundColor: "green", color: "white" }}
+            style={{ backgroundColor: "#00A482", color: "white" }}
           >
             {loading ? <Spin /> : "Ajouter"}
           </Button>
@@ -421,10 +424,18 @@ export const AddUserModal = ({ visible, onCancel }) => {
   );
 };
 
-export const AddTestModal = ({ visible, onCancel, step, next, back }) => {
+export const AddTestModal = ({
+  visible,
+  onCancel,
+  step,
+  final,
+  second,
+  first,
+}) => {
   const [form] = Form.useForm();
 
   const [loading, setLoading] = useState(false);
+  const [githubClick, setGithubClick] = useState(false);
   const [method, setMethod] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -446,11 +457,11 @@ export const AddTestModal = ({ visible, onCancel, step, next, back }) => {
     },
   ];
 
-  const handleNext = () => {
+  const handleNextInStepsModal = () => {
     setCurrentStep(currentStep + 1);
   };
 
-  const handlePrev = () => {
+  const handlePrevInStepsModal = () => {
     setCurrentStep(currentStep - 1);
   };
 
@@ -462,6 +473,55 @@ export const AddTestModal = ({ visible, onCancel, step, next, back }) => {
 
   const renderContent = () => {
     switch (step) {
+      case 0:
+        return (
+          <>
+            <div style={{ textAlign: "center", fontSize: "24px",marginBottom:"50px" }}>
+              Choose an option
+            </div>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <Button
+                type="primary"
+                shape="square"
+                icon={
+                  <GithubOutlined
+                    style={{ fontSize: "70px", lineHeight: "48px" }}
+                  />
+                }
+                size="large"
+                style={{
+                  backgroundColor: "#2A314D",
+                  width: "100px",
+                  height: "100px",
+                  marginRight: "20px",
+                }}
+                onClick={() => {
+                  second();
+                  setGithubClick(true);
+                }}
+                className="button"
+              />
+
+              <Button
+                type="primary"
+                shape="square"
+                icon={<LaptopOutlined style={{ fontSize: "70px" }} />}
+                size="large"
+                style={{
+                  marginLeft: "20px",
+                  backgroundColor: "#2A314D",
+                  width: "100px",
+                  height: "100px",
+                }}
+                onClick={() => {
+                  final();
+                  setGithubClick(false);
+                }}
+                className="button"
+              />
+            </div>
+          </>
+        );
       case 1:
         return (
           <>
@@ -477,8 +537,12 @@ export const AddTestModal = ({ visible, onCancel, step, next, back }) => {
             <div style={{ marginTop: 20 }}>
               {currentStep > 0 && (
                 <Button
-                  style={{ marginRight: 8, backgroundColor: "yellowgreen" }}
-                  onClick={handlePrev}
+                  style={{
+                    marginRight: 8,
+                    backgroundColor: "#00415A",
+                    color: "white",
+                  }}
+                  onClick={handlePrevInStepsModal}
                 >
                   <ArrowLeftOutlined /> Précédent
                 </Button>
@@ -486,7 +550,7 @@ export const AddTestModal = ({ visible, onCancel, step, next, back }) => {
               {currentStep < steps.length - 1 && (
                 <Button
                   type="primary"
-                  onClick={handleNext}
+                  onClick={handleNextInStepsModal}
                   style={{ backgroundColor: "#00A07C" }}
                 >
                   Suivant <ArrowRightOutlined />
@@ -496,7 +560,7 @@ export const AddTestModal = ({ visible, onCancel, step, next, back }) => {
                 <Button
                   type="primary"
                   style={{ backgroundColor: "#41B95F" }}
-                  onClick={next}
+                  onClick={second}
                 >
                   Etape suivante <CheckOutlined />
                 </Button>
@@ -545,40 +609,43 @@ export const AddTestModal = ({ visible, onCancel, step, next, back }) => {
                 >
                   <Input placeholder="Java test" type="text" name="testName" />
                 </Form.Item>
-                <Form.Item
-                  label="Lien du repo github"
-                  name="linkRepo"
-                  rules={[
-                    {
-                      required: true,
-                      message:
-                        "Veuillez saisir le lien du projet dans github !",
-                    },
-                  ]}
-                >
-                  <Input
-                    type="text"
+                {githubClick ? (
+                  <Form.Item
+                    label="Lien du repo github"
                     name="linkRepo"
-                    placeholder="github.com/abc.def"
-                  />
-                </Form.Item>
-                <Form.Item
-                  label="Chemin du projet"
-                  name="file"
-                  rules={[
-                    {
-                      required: true,
-                      message:
-                        "Veuillez saisir le lien du projet dans votre ordinateur !",
-                    },
-                  ]}
-                >
-                  <Input
-                    type="text"
+                    rules={[
+                      {
+                        required: true,
+                        message:
+                          "Veuillez saisir le lien du projet dans github !",
+                      },
+                    ]}
+                  >
+                    <Input
+                      type="text"
+                      name="linkRepo"
+                      placeholder="github.com/abc.def"
+                    />
+                  </Form.Item>
+                ) : (
+                  <Form.Item
+                    label="Chemin du projet"
                     name="file"
-                    placeholder="c://bureau/java-proj"
-                  />
-                </Form.Item>
+                    rules={[
+                      {
+                        required: true,
+                        message:
+                          "Veuillez saisir le lien du projet dans votre ordinateur !",
+                      },
+                    ]}
+                  >
+                    <Input
+                      type="text"
+                      name="file"
+                      placeholder="c://bureau/java-proj"
+                    />
+                  </Form.Item>
+                )}
                 <Form.Item
                   label="Protocole"
                   name="protocol"
@@ -817,16 +884,16 @@ export const AddTestModal = ({ visible, onCancel, step, next, back }) => {
                   <Space>
                     <Button
                       onClick={() => {
-                        back();
-                        setCurrentStep(0);
+                        first();
                       }}
-                      style={{ backgroundColor: "yellowgreen", color: "white" }}
+                      style={{ backgroundColor: "#00415A", color: "white" }}
                     >
                       <ArrowLeftOutlined /> Retour
                     </Button>
+
                     <Button
                       htmlType="submit"
-                      style={{ backgroundColor: "green", color: "white" }}
+                      style={{ backgroundColor: "#00A482", color: "white" }}
                     >
                       {loading ? <Spin /> : "Executer le test"}
                     </Button>
@@ -860,50 +927,75 @@ export const AddTestModal = ({ visible, onCancel, step, next, back }) => {
     onCancel();
   };
 
-  return step === 1 ? (
-    <Modal
-      closable={true}
-      maskClosable={true}
-      width={1000}
-      open={visible}
-      onCancel={() => {
-        onCancel();
-        setCurrentStep(0)
-      }}
-      style={{
-        left: step === 1 ? 0 : "-100%",
-        transition: "left 0.5s ease-in-out",
-      }}
-      title={
-        <div style={{ textAlign: "center", fontSize: "24px" }}>
-          Les étapes à suivre
-        </div>
-      }
-      footer={null}
-    >
-      {renderContent()}
-    </Modal>
-  ) : (
-    <Modal
-      closable={false}
-      maskClosable={false}
-      width={1000}
-      open={visible}
-      onCancel={onCancel}
-      style={{
-        left: step === 2 ? 0 : "100%",
-        transition: "left 0.5s ease-in-out",
-      }}
-      title={
-        <div style={{ textAlign: "center", fontSize: "24px" }}>
-          Formulaire pour un nouveau test
-        </div>
-      }
-      footer={null}
-    >
-      {renderContent()}
-    </Modal>
-  );
+  if (step === 0) {
+    return (
+      <Modal
+        closable={true}
+        maskClosable={true}
+        width={500}
+        open={visible}
+        onCancel={() => {
+          onCancel();
+          setCurrentStep(0);
+        }}
+        // title={
+        //   <div style={{ textAlign: "center", fontSize: "24px" }}>
+        //     Les étapes à suivre
+        //   </div>
+        // }
+        footer={null}
+      >
+        {renderContent()}
+      </Modal>
+    );
+  } else if (step === 1) {
+    return (
+      <Modal
+        closable={true}
+        maskClosable={true}
+        width={1000}
+        open={visible}
+        onCancel={() => {
+          onCancel();
+          setCurrentStep(0);
+        }}
+        style={{
+          left: step === 1 ? 0 : "-100%",
+          transition: "left 0.5s ease-in-out",
+        }}
+        title={
+          <div style={{ textAlign: "center", fontSize: "24px" }}>
+            Les étapes à suivre
+          </div>
+        }
+        footer={null}
+      >
+        {renderContent()}
+      </Modal>
+    );
+  } else if (step === 2) {
+    return (
+      <Modal
+        closable={false}
+        maskClosable={false}
+        width={1000}
+        open={visible}
+        onCancel={onCancel}
+        style={{
+          left: step === 2 ? 0 : "100%",
+          transition: "left 0.5s ease-in-out",
+        }}
+        title={
+          <div style={{ textAlign: "center", fontSize: "24px" }}>
+            Formulaire pour un nouveau test
+          </div>
+        }
+        footer={null}
+      >
+        {renderContent()}
+      </Modal>
+    );
+  }
 };
 
 export const TestStatusModel = ({ visible, onCancel, id, name }) => {
