@@ -2,126 +2,75 @@ import React, { useEffect, useState } from "react";
 import * as echarts from "echarts";
 import TesterService from "../services/TesterServices/TesterService";
 import AdminServices from "../services/AdminServices/AdminServices";
-import { Empty } from "antd";
 
-export const TestChart = ({ values, field }) => {
+export const TestChart = ({ values }) => {
   const xAxisData = values.map((data) => data.timestamp);
   const cpuData = values.map((data) => parseFloat(data.cpu));
   const memoryData = values.map((data) => parseFloat(data.memory));
-  const diskUse = values.map((data) => parseFloat(data.disk));
-  const recievedNet = values.map((data) => parseFloat(data.network.received));
-  const transferredNet = values.map((data) =>
-    parseFloat(data.network.transferred)
-  );
-  let result, color, format;
-  switch (field) {
-    case "CPU":
-      color = "#006064";
-      result = cpuData;
-      format = "%";
-      break;
-    case "Memory":
-      color = "orange";
-      result = memoryData;
-      format = "MB";
-      break;
-    case "Disk":
-      color = "red";
-      result = diskUse;
-      format = "%";
-      break;
-    case "Network":
-      result = { recievedNet, transferredNet };
-      break;
-    default:
-      console.log("Unknown command");
-  }
 
   const chartOptions = {
     title: {
-      text: `${field} Usage`,
+      text: "CPU and Memory Usage",
     },
     tooltip: {},
     legend: {
-      data: field === "Network" ? ["Received", "Transferred"] : [field],
+      data: ["CPU", "Memory"],
     },
     xAxis: {
       type: "category",
       data: xAxisData,
     },
-    yAxis:
-      field === "Network"
-        ? [
-            {
-              type: "value",
-              name: "Received",
-              axisLabel: {
-                formatter: "{value} MB",
-              },
-            },
-            {
-              type: "value",
-              name: "Transferred",
-              axisLabel: {
-                formatter: "{value} MB",
-              },
-            },
-          ]
-        : [
-            {
-              type: "value",
-              name: field,
-              axisLabel: {
-                formatter: `{value} ${format}`,
-              },
-            },
-          ],
+    yAxis: [
+      {
+        type: "value",
+        name: "CPU",
+        axisLabel: {
+          formatter: "{value} %",
+        },
+      },
+      {
+        type: "value",
+        name: "Memory",
+        axisLabel: {
+          formatter: "{value} MB",
+        },
+      },
+    ],
     dataZoom: [
       {
         type: "inside",
         start: 0,
-        end: 100,
+        end: 10,
       },
       {
         start: 0,
-        end: 100,
+        end: 10,
       },
     ],
-    series:
-      field === "Network"
-        ? [
-            {
-              name: "Received",
-              type: "line",
-              data: result.recievedNet,
-              yAxisIndex: 0,
-            },
-            {
-              name: "Transferred",
-              type: "line",
-              data: result.transferredNet,
-              yAxisIndex: 1,
-              lineStyle: {
-                type: "dashed",
-              },
-            },
-          ]
-        : [
-            {
-              name: field,
-              type: "line",
-              data: result,
-              yAxisIndex: 0,
-              color: color,
-            },
-          ],
+    series: [
+      {
+        name: "CPU",
+        type: "line",
+        data: cpuData,
+        yAxisIndex: 0,
+      },
+      {
+        name: "Memory",
+        type: "line",
+        data: memoryData,
+        yAxisIndex: 1,
+        lineStyle: {
+          type: "dashed",
+        },
+      },
+    ],
   };
 
   useEffect(() => {
-    const chart = echarts.init(document.getElementById(field));
+    const chart = echarts.init(document.getElementById("my-chart"));
     chart.setOption(chartOptions);
   });
-  return <div id={field} style={{ width: "100%", height: 500 }}></div>;
+  return <div id="my-chart" style={{ width: "100%", height: 500 }}></div>;
 };
 
 export const LineCharts = () => {
@@ -130,11 +79,8 @@ export const LineCharts = () => {
 
   useEffect(() => {
     const chartDom = document.getElementById("main");
-    if (!chartDom) return; // exit early if chartDom is not found
-
     const newChart = echarts.init(chartDom);
     setMyChart(newChart);
-
     return () => {
       newChart.dispose();
     };
@@ -147,7 +93,6 @@ export const LineCharts = () => {
       },
       [data]
     );
-
     const option = {
       title: {
         text: "Nombre de tests exécutés par jour",
@@ -191,20 +136,7 @@ export const LineCharts = () => {
     myChart && myChart.setOption(option);
   }, [myChart, data]);
 
-  return (
-    <>
-      {data.length ? (
-        <div id="main" style={{ width: "100%", height: 500 }} />
-      ) : (
-        <Empty
-          imageStyle={{
-            height: 200,
-          }}
-          description={<span>Aucune donnée pour le moment</span>}
-        />
-      )}
-    </>
-  );
+  return <div id="main" style={{ width: "100%", height: 500 }} />;
 };
 
 export const CircularChart = ({ isAdmin, id, name }) => {
@@ -213,11 +145,8 @@ export const CircularChart = ({ isAdmin, id, name }) => {
 
   useEffect(() => {
     const chartDom = document.getElementById(name);
-    if (!chartDom) return; // exit early if chartDom is not found
-
     const newChart = echarts.init(chartDom);
     setMyChart(newChart);
-
     return () => {
       newChart.dispose();
     };
@@ -300,18 +229,5 @@ export const CircularChart = ({ isAdmin, id, name }) => {
     myChart && myChart.setOption(option);
   }, [myChart, data, id, isAdmin]);
 
-  return (
-    <>
-      {data.length ? (
-        <div id={name} style={{ width: "100%", height: 500 }} />
-      ) : (
-        <Empty
-          imageStyle={{
-            height: 200,
-          }}
-          description="Aucune donnée pour le moment"
-        />
-      )}
-    </>
-  );
+  return <div id={name} style={{ width: "100%", height: 500 }} />;
 };
