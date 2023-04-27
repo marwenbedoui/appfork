@@ -126,11 +126,11 @@ async function diff(req, id, local) {
       );
     });
   } else {
-    await fs.mkdir(path.join(__dirname, "./", `clones/${id}`), (err) => {
+    fs.mkdir(path.join(__dirname, "./", `clones/${id}`), (err) => {
       if (err) throw err;
       console.log("Le dossier a été créé avec succès !");
     });
-    await exec(
+    exec(
       `git clone ${req.body.linkRepo}`,
       {
         cwd: path.join(__dirname, "./", `clones/${id}`),
@@ -141,53 +141,51 @@ async function diff(req, id, local) {
           fs.writeFileSync(bytecodeOutputPath, error.message, "utf-8");
           return;
         }
-      }
-    );
-    await exec(
-      command,
-      {
-        cwd: path.join(
-          __dirname,
-          `./`,
-          `clones/${id}/${reponame.repositoryName}`
-        ),
-      },
-      (error, stdout, stderr) => {
-        console.log(
-          path.join(__dirname, `./`, `clones/${id}/${reponame.repositoryName}`)
-        );
-        if (error) {
-          console.error(`2) Erreur: ${error.message}`);
-          fs.writeFileSync(bytecodeOutputPath, error.message, "utf-8");
-          return;
-        }
-        console.log("2", stdout);
+        exec(
+          command,
+          {
+            cwd: path.join(
+              __dirname,
+              `./`,
+              `clones/${id}/${reponame.repositoryName}`
+            ),
+            shell: "C:\\Windows\\System32\\cmd.exe",
+          },
+          (error, stdout, stderr) => {
+            if (error) {
+              console.error(`2) Erreur: ${error.message}`);
+              fs.writeFileSync(bytecodeOutputPath, error.message, "utf-8");
+              return;
+            }
+            console.log(stdout);
 
-        // Supprimer la chaîne "@@" du texte obtenu depuis la commande 'git diff'
-        if (typeof stdout === "string" || stdout instanceof String) {
-          stdout = stdout.replace(/@@.*?@@/g, "");
-        }
+            // Supprimer la chaîne "@@" du texte obtenu depuis la commande 'git diff'
+            if (typeof stdout === "string" || stdout instanceof String) {
+              stdout = stdout.replace(/@@.*?@@/g, "");
+            }
 
-        fs.writeFileSync(bytecodeOutputPath, stdout, "utf-8");
-        console.log("2) fichier généré avec succès");
-        const inputLines = stdout.split("\n");
+            fs.writeFileSync(bytecodeOutputPath, stdout, "utf-8");
+            console.log("2) fichier généré avec succès");
+            const inputLines = stdout.split("\n");
 
-        const linesWithPlus = inputLines.filter(
-          (line) => line.startsWith("+") && !/^\+@@\s+@@$/.test(line)
-        );
-        const linesWithMinus = inputLines.filter(
-          (line) => line.startsWith("-") && !/^\-@@\s+@@$/.test(line)
-        );
+            const linesWithPlus = inputLines.filter(
+              (line) => line.startsWith("+") && !/^\+@@\s+@@$/.test(line)
+            );
+            const linesWithMinus = inputLines.filter(
+              (line) => line.startsWith("-") && !/^\-@@\s+@@$/.test(line)
+            );
 
-        fs.writeFileSync(
-          outputFilePathWithPlus,
-          linesWithPlus.join("\n"),
-          "utf-8"
-        );
-        fs.writeFileSync(
-          outputFilePathWithMinus,
-          linesWithMinus.join("\n"),
-          "utf-8"
+            fs.writeFileSync(
+              outputFilePathWithPlus,
+              linesWithPlus.join("\n"),
+              "utf-8"
+            );
+            fs.writeFileSync(
+              outputFilePathWithMinus,
+              linesWithMinus.join("\n"),
+              "utf-8"
+            );
+          }
         );
       }
     );
