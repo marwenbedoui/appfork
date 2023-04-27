@@ -27,13 +27,13 @@ const Page = () => {
         style={{
           float: "right",
           marginBottom: "15px",
-          backgroundColor: "#2596be",
+          backgroundColor: "#00727A",
           color: "white",
         }}
         shape="round"
         icon={<UserAddOutlined spin={true} />}
       >
-        Add user
+        Ajouter utilisateur
       </Button>
 
       <AddUserModal onCancel={handleCancelAddUser} visible={modalAddUserForm} />
