@@ -245,7 +245,12 @@ const executeTest = async (req, res) => {
         test.pourcentage.failed =
           calculatePercentage(results).falsePercentage.toFixed(2);
         majority === true ? (test.status = "Passed") : (test.status = "failed");
-        await diff(req, testId, false);
+        if (req.body.file === undefined) {
+          await diff(req, testId, false);
+        }
+        if (req.body.linkRepo === undefined) {
+          await diff(req, testId, true);
+        }
         await test
           .save()
           .then((data) => res.send(data))

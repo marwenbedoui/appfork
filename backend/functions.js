@@ -69,7 +69,6 @@ async function diff(req, id, local) {
   const generatedDirPath = path.join(__dirname, "./", "/uploads/difference");
   const generatedDirPlus = path.join(__dirname, "./", "/uploads/diff-plus");
   const generatedDirMinus = path.join(__dirname, "./", "/uploads/diff-minus");
-  const reponame = extractGitHubRepoInfo(req.body.linkRepo);
   const outputFilePathWithPlus = path.join(
     generatedDirPlus,
     `diff-plus_${id}.txt`
@@ -126,6 +125,7 @@ async function diff(req, id, local) {
       );
     });
   } else {
+    const reponame = extractGitHubRepoInfo(req.body.linkRepo);
     fs.mkdir(path.join(__dirname, "./", `clones/${id}`), (err) => {
       if (err) throw err;
       console.log("Le dossier a été créé avec succès !");
@@ -157,9 +157,7 @@ async function diff(req, id, local) {
               fs.writeFileSync(bytecodeOutputPath, error.message, "utf-8");
               return;
             }
-            console.log(stdout);
 
-            // Supprimer la chaîne "@@" du texte obtenu depuis la commande 'git diff'
             if (typeof stdout === "string" || stdout instanceof String) {
               stdout = stdout.replace(/@@.*?@@/g, "");
             }
