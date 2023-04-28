@@ -1,6 +1,5 @@
 const Test = require("../models/testModel");
 const Rapport = require("../models/rapportModel");
-const Bytecode = require("../models/bytecodeModel");
 const util = require("util");
 const { spawn, exec } = require("child_process");
 const jwt = require("jsonwebtoken");

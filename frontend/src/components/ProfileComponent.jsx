@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Upload, Card, Tooltip, Tag } from "antd";
+import { Avatar, Upload, Card, Tooltip, Tag, Button } from "antd";
 import "./styles/ProfileComponent.css";
 import ProfileServices from "../services/ProfileServices";
 import { PasswordModal, EmailModal, InfoModal } from "./Modals";
@@ -11,6 +11,7 @@ import {
 } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import base64js from "base64-js";
+import "./styles/modals.css";
 const { Meta } = Card;
 
 function ProfileComponent() {
@@ -75,7 +76,7 @@ function ProfileComponent() {
         <p className="profile-email">Email: {userInfo.email}</p>
         <p className="profile-location">
           Role :{" "}
-          <Tag color="gold" style={{ fontSize: "20px" }}>
+          <Tag color="gold" style={{ fontSize: "20px",height:"30px",padding:"3px" }}>
             {userInfo.role}
           </Tag>
         </p>
@@ -168,11 +169,22 @@ function ProfileComponent() {
       }
       actions={[
         <Tooltip color="cyan" title="Mettre à jour l'adresse mail" key={"cyan"}>
-          <MailTwoTone
+          <Button
+            type="primary"
+            shape="square"
+            icon={
+              <MailTwoTone
+                key="MailSetting"
+                style={{ fontSize: "30px" }}
+                twoToneColor="#4682b4"
+              />
+            }
+            size="large"
+            style={{
+              backgroundColor: "#fff",
+            }}
             onClick={() => setModalMailVisible(true)}
-            key="MailSetting"
-            style={{ fontSize: "30px" }}
-            twoToneColor="#4682b4"
+            className="button"
           />
         </Tooltip>,
         <Tooltip
@@ -180,19 +192,41 @@ function ProfileComponent() {
           title="Mettre à jour le mot de passe"
           key={"lime"}
         >
-          <LockTwoTone
+          <Button
+            type="primary"
+            shape="square"
+            icon={
+              <LockTwoTone
+                key="passwordSetting"
+                style={{ fontSize: "30px" }}
+                twoToneColor="#4682b4"
+              />
+            }
+            size="large"
+            style={{
+              backgroundColor: "#fff",
+            }}
             onClick={() => setModalPasswordVisible(true)}
-            key="passwordSetting"
-            style={{ fontSize: "30px" }}
-            twoToneColor="#4682b4"
+            className="button"
           />
         </Tooltip>,
         <Tooltip color="purple" title="Mettre à jour vos info" key={"purple"}>
-          <SettingTwoTone
+          <Button
+            type="primary"
+            shape="square"
+            icon={
+              <SettingTwoTone
+                key="passwordSetting"
+                style={{ fontSize: "30px" }}
+                twoToneColor="#4682b4"
+              />
+            }
+            size="large"
+            style={{
+              backgroundColor: "#fff",
+            }}
             onClick={() => setModalInfoVisible(true)}
-            key="passwordSetting"
-            style={{ fontSize: "30px" }}
-            twoToneColor="#4682b4"
+            className="button"
           />
         </Tooltip>,
       ]}
