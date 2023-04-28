@@ -3,74 +3,124 @@ import * as echarts from "echarts";
 import TesterService from "../services/TesterServices/TesterService";
 import AdminServices from "../services/AdminServices/AdminServices";
 
-export const TestChart = ({ values }) => {
+export const TestChart = ({ values, field }) => {
   const xAxisData = values.map((data) => data.timestamp);
   const cpuData = values.map((data) => parseFloat(data.cpu));
   const memoryData = values.map((data) => parseFloat(data.memory));
+  const diskUse = values.map((data) => parseFloat(data.disk));
+  const recievedNet = values.map((data) => parseFloat(data.network.received));
+  const transferredNet = values.map((data) =>
+    parseFloat(data.network.transferred)
+  );
+  let result, color, format;
+  switch (field) {
+    case "CPU":
+      color = "#006064";
+      result = cpuData;
+      format = "%";
+      break;
+    case "Memory":
+      color = "orange";
+      result = memoryData;
+      format = "MB";
+      break;
+    case "Disk":
+      color = "red";
+      result = diskUse;
+      format = "%";
+      break;
+    case "Network":
+      result = { recievedNet, transferredNet };
+      break;
+    default:
+      console.log("Unknown command");
+  }
 
   const chartOptions = {
     title: {
-      text: "CPU and Memory Usage",
+      text: `${field} Usage`,
     },
     tooltip: {},
     legend: {
-      data: ["CPU", "Memory"],
+      data: field === "Network" ? ["Received", "Transferred"] : [field],
     },
     xAxis: {
       type: "category",
       data: xAxisData,
     },
-    yAxis: [
-      {
-        type: "value",
-        name: "CPU",
-        axisLabel: {
-          formatter: "{value} %",
-        },
-      },
-      {
-        type: "value",
-        name: "Memory",
-        axisLabel: {
-          formatter: "{value} MB",
-        },
-      },
-    ],
+    yAxis:
+      field === "Network"
+        ? [
+            {
+              type: "value",
+              name: "Received",
+              axisLabel: {
+                formatter: "{value} MB",
+              },
+            },
+            {
+              type: "value",
+              name: "Transferred",
+              axisLabel: {
+                formatter: "{value} MB",
+              },
+            },
+          ]
+        : [
+            {
+              type: "value",
+              name: field,
+              axisLabel: {
+                formatter: `{value} ${format}`,
+              },
+            },
+          ],
     dataZoom: [
       {
         type: "inside",
         start: 0,
-        end: 10,
+        end: 100,
       },
       {
         start: 0,
-        end: 10,
+        end: 100,
       },
     ],
-    series: [
-      {
-        name: "CPU",
-        type: "line",
-        data: cpuData,
-        yAxisIndex: 0,
-      },
-      {
-        name: "Memory",
-        type: "line",
-        data: memoryData,
-        yAxisIndex: 1,
-        lineStyle: {
-          type: "dashed",
-        },
-      },
-    ],
+    series:
+      field === "Network"
+        ? [
+            {
+              name: "Received",
+              type: "line",
+              data: result.recievedNet,
+              yAxisIndex: 0,
+            },
+            {
+              name: "Transferred",
+              type: "line",
+              data: result.transferredNet,
+              yAxisIndex: 1,
+              lineStyle: {
+                type: "dashed",
+              },
+            },
+          ]
+        : [
+            {
+              name: field,
+              type: "line",
+              data: result,
+              yAxisIndex: 0,
+              color: color,
+            },
+          ],
   };
 
   useEffect(() => {
-    const chart = echarts.init(document.getElementById("my-chart"));
+    const chart = echarts.init(document.getElementById(field));
     chart.setOption(chartOptions);
   });
-  return <div id="my-chart" style={{ width: "100%", height: 500 }}></div>;
+  return <div id={field} style={{ width: "100%", height: 500 }}></div>;
 };
 
 export const LineCharts = () => {
