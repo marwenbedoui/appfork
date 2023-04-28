@@ -126,13 +126,13 @@ const Page = ({ role }) => {
             <TestChart values={detail} field="CPU" />
           </Col>
           <Col span={12} style={{ marginBottom: "20px", marginTop: "20px" }}>
-            <TestChart values={detail} field="Memory" />
+            <TestChart values={detail} field="Mémoire" />
           </Col>
           <Col span={12} style={{ marginBottom: "20px", marginTop: "20px" }}>
-            <TestChart values={detail} field="Disk" />
+            <TestChart values={detail} field="Disque" />
           </Col>
           <Col span={12} style={{ marginBottom: "20px", marginTop: "20px" }}>
-            <TestChart values={detail} field="Network" />
+            <TestChart values={detail} field="Réseau" />
           </Col>
         </Row>
       </Col>

@@ -6,6 +6,7 @@ import LayoutComponent from "../../components/LayoutComponent";
 import TableComponent from "../../components/TableComponent";
 import AdminServices from "../../services/AdminServices/AdminServices";
 import { UserAddOutlined } from "@ant-design/icons";
+import "../historiquePage/historiquePage.css"
 
 const Page = () => {
   const [data, setData] = useState([]);
@@ -21,6 +22,7 @@ const Page = () => {
   return (
     <div>
       <Button
+        className="button"
         size="large"
         type="primary"
         onClick={() => setModalAddUserForm(true)}

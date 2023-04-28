@@ -9,7 +9,7 @@ export const TestChart = ({ values, field }) => {
   const memoryData = values.map((data) => parseFloat(data.memory));
   const diskUse = values.map((data) => parseFloat(data.disk));
   const recievedNet = values.map((data) => parseFloat(data.network.received));
-  const transferredNet = values.map((data) =>
+  const transféréNet = values.map((data) =>
     parseFloat(data.network.transferred)
   );
   let result, color, format;
@@ -19,18 +19,18 @@ export const TestChart = ({ values, field }) => {
       result = cpuData;
       format = "%";
       break;
-    case "Memory":
+    case "Mémoire":
       color = "orange";
       result = memoryData;
       format = "MB";
       break;
-    case "Disk":
+    case "Disque":
       color = "red";
       result = diskUse;
       format = "%";
       break;
-    case "Network":
-      result = { recievedNet, transferredNet };
+    case "Réseau":
+      result = { recievedNet, transféréNet };
       break;
     default:
       console.log("Unknown command");
@@ -38,29 +38,29 @@ export const TestChart = ({ values, field }) => {
 
   const chartOptions = {
     title: {
-      text: `${field} Usage`,
+      text: `utilisation du ${field}`,
     },
     tooltip: {},
     legend: {
-      data: field === "Network" ? ["Received", "Transferred"] : [field],
+      data: field === "Réseau" ? ["Reçu", "transféré"] : [field],
     },
     xAxis: {
       type: "category",
       data: xAxisData,
     },
     yAxis:
-      field === "Network"
+      field === "Réseau"
         ? [
             {
               type: "value",
-              name: "Received",
+              name: "Reçu",
               axisLabel: {
                 formatter: "{value} MB",
               },
             },
             {
               type: "value",
-              name: "Transferred",
+              name: "transféré",
               axisLabel: {
                 formatter: "{value} MB",
               },
@@ -87,18 +87,18 @@ export const TestChart = ({ values, field }) => {
       },
     ],
     series:
-      field === "Network"
+      field === "Réseau"
         ? [
             {
-              name: "Received",
+              name: "Reçu",
               type: "line",
               data: result.recievedNet,
               yAxisIndex: 0,
             },
             {
-              name: "Transferred",
+              name: "transféré",
               type: "line",
-              data: result.transferredNet,
+              data: result.transféréNet,
               yAxisIndex: 1,
               lineStyle: {
                 type: "dashed",

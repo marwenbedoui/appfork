@@ -44,6 +44,7 @@ const Page = ({ role }) => {
         ""
       ) : (
         <Button
+          className="button"
           size="large"
           type="primary"
           onClick={() => {
