@@ -52,10 +52,10 @@ def generate_csv():
     with open('rapports.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['timeStamp', 'elapsed', 'bytes', 'sentBytes',
-                        'Latency', 'Connect', 'processTime', 'responseCode', 'bytecode', 'success'])
+                        'Latency', 'Connect', 'processTime', 'responseCode', 'addedCode', 'removedCode', 'success'])
         for rapport in rapports:
             writer.writerow([rapport["timeStamp"], rapport["elapsed"], rapport["bytes"], rapport["sentBytes"],
-                            rapport["Latency"],  rapport["Connect"],  rapport["processTime"], rapport["responseCode"], rapport["bytecode"], rapport["success"]])
+                            rapport["Latency"],  rapport["Connect"],  rapport["processTime"], rapport["responseCode"], rapport["addedCode"], rapport["removedCode"], rapport["success"]])
 
     return 'Le fichier CSV a été généré.'
 
