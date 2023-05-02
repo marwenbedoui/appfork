@@ -12,6 +12,7 @@ import {
   Space,
   Table,
   Steps,
+  Typography,
 } from "antd";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
@@ -476,9 +477,22 @@ export const AddTestModal = ({
       case 0:
         return (
           <>
-            <div style={{ textAlign: "center", fontSize: "24px",marginBottom:"50px" }}>
-              Choose an option
+            <div
+              style={{
+                textAlign: "center",
+                fontSize: "24px",
+                marginBottom: "50px",
+              }}
+            >
+              Choisir une option
             </div>
+            <Typography style={{ margin: "5%" }}>
+              Pour accéder à notre projet, vous avez deux options:<br></br> Soit
+              tester notre projet via le lien du repository GitHub, soit
+              télécharger le projet directement sur votre ordinateur en
+              utilisant le chemin fourni. <br></br>À vous de choisir la méthode
+              qui vous convient le mieux !
+            </Typography>
             <div style={{ display: "flex", justifyContent: "center" }}>
               <Button
                 type="primary"

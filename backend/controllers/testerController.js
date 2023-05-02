@@ -228,11 +228,8 @@ const executeTest = async (req, res) => {
             ? parseInt(row.responseCode)
             : 400,
           success: row.success === 1,
-          // bytecode: savedBytecode
-          //   ? "http://localhost:5000/generated/" + savedBytecode._id
-          //   : "http://localhost:5000/generated/" +
-          //     item_bytecode[0]._id +
-          //     ".txt",
+          addedCode: `http://localhost:5000/diff-plus/diff-plus_${testId}.txt`,
+          removedCode: `http://localhost:5000/diff-minus/diff-minus_${testId}.txt`,
           test: testId,
         });
         rapport.save().catch((error) => console.error(error));
