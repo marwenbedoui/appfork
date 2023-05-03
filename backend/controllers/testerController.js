@@ -227,7 +227,7 @@ const executeTest = async (req, res) => {
           responseCode: !isNaN(row.responseCode)
             ? parseInt(row.responseCode)
             : 400,
-          success: row.success === 1,
+          success: row.success === "true" ? true : false,
           addedCode: `http://localhost:5000/diff-plus/diff-plus_${testId}.txt`,
           removedCode: `http://localhost:5000/diff-minus/diff-minus_${testId}.txt`,
           test: testId,

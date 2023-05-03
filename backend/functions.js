@@ -103,7 +103,7 @@ async function diff(req, id, local) {
       }
 
       fs.writeFileSync(bytecodeOutputPath, stdout, "utf-8");
-      console.log("1) fichier généré avec succès");
+      console.log("1) Fichier généré avec succès");
       const inputLines = stdout.split("\n");
 
       const linesWithPlus = inputLines.filter(
@@ -128,7 +128,7 @@ async function diff(req, id, local) {
     const reponame = extractGitHubRepoInfo(req.body.linkRepo);
     fs.mkdir(path.join(__dirname, "./", `clones/${id}`), (err) => {
       if (err) throw err;
-      console.log("Le dossier a été créé avec succès !");
+      console.log("1) Dossier créé avec succès");
     });
     exec(
       `git clone ${req.body.linkRepo}`,
@@ -163,7 +163,7 @@ async function diff(req, id, local) {
             }
 
             fs.writeFileSync(bytecodeOutputPath, stdout, "utf-8");
-            console.log("2) fichier généré avec succès");
+            console.log("2) Fichier généré avec succès");
             const inputLines = stdout.split("\n");
 
             const linesWithPlus = inputLines.filter(

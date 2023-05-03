@@ -1124,6 +1124,13 @@ export const TestDetailModal = ({ visible, onCancel, detailArray }) => {
       detail: "Nombre d'utilisateurs",
       value: detailArray.usersNumber,
     },
+    detailArray.linkRepo === undefined
+      ? { key: "7", detail: "Chemin du projet", value: detailArray.file }
+      : {
+          key: "7",
+          detail: "Lien repository github du projet",
+          value: detailArray.linkRepo,
+        },
   ];
   return (
     <Modal
@@ -1141,7 +1148,7 @@ export const TestDetailModal = ({ visible, onCancel, detailArray }) => {
       }
       onCancel={onCancel}
       open={visible}
-      width={400}
+      width={600}
       footer={null}
     >
       <Table
