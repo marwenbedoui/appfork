@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import * as echarts from "echarts";
 import TesterService from "../services/TesterServices/TesterService";
 import AdminServices from "../services/AdminServices/AdminServices";
@@ -131,18 +131,23 @@ export const LineCharts = () => {
     const chartDom = document.getElementById("main");
     const newChart = echarts.init(chartDom);
     setMyChart(newChart);
+
     return () => {
       newChart.dispose();
     };
   }, []);
 
   useEffect(() => {
-    TesterService.fetchTestsPerUser().then(
-      (a) => {
-        setData(a);
-      },
-      [data]
-    );
+    TesterService.fetchTestsPerUser().then((fetchedData) => {
+      setData(fetchedData);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!myChart || !data) {
+      return;
+    }
+
     const option = {
       title: {
         text: "Nombre de tests exécutés par jour",
@@ -174,16 +179,34 @@ export const LineCharts = () => {
           type: "value",
         },
       ],
+      dataZoom: [
+        {
+          type: "inside",
+          start: 0,
+          end: 100,
+        },
+        {
+          start: 0,
+          end: 100,
+        },
+      ],
       series: [
         {
           name: "Test exécuté",
           type: "bar",
           barWidth: "60%",
           data: data.map((item) => item.count),
+          itemStyle: {
+            color: "#008F7A",
+            decal: {
+              symbol: "none",
+            },
+          },
         },
       ],
     };
-    myChart && myChart.setOption(option);
+
+    myChart.setOption(option);
   }, [myChart, data]);
 
   return <div id="main" style={{ width: "100%", height: 500 }} />;
@@ -193,6 +216,16 @@ export const CircularChart = ({ isAdmin, id, name }) => {
   const [myChart, setMyChart] = useState(null);
   const [data, setData] = useState([]);
 
+  const fetchTestData = useCallback(() => {
+    const service = isAdmin ? AdminServices : TesterService;
+    const method = isAdmin
+      ? "getTestsStatusPerUserId"
+      : "fetchTestStatePerUser";
+    service[method](id).then((a) => {
+      setData(a);
+    });
+  }, [isAdmin, id]);
+
   useEffect(() => {
     const chartDom = document.getElementById(name);
     const newChart = echarts.init(chartDom);
@@ -201,19 +234,8 @@ export const CircularChart = ({ isAdmin, id, name }) => {
       newChart.dispose();
     };
   }, [name]);
-
-  useEffect(() => {
-    if (isAdmin) {
-      AdminServices.getTestsStatusPerUserId(id).then((a) => {
-        setData(a);
-      });
-    } else {
-      TesterService.fetchTestStatePerUser().then((a) => {
-        setData(a);
-      });
-    }
-
-    const option = {
+  const option = useMemo(
+    () => ({
       title: {
         text: "Pourcentage des status du test",
         left: "center",
@@ -244,7 +266,7 @@ export const CircularChart = ({ isAdmin, id, name }) => {
               value: data.failedTests,
               name: "Failed",
               itemStyle: {
-                color: "#CC0000",
+                color: "#A91B1E",
                 decal: {
                   symbol: "none",
                 },
@@ -254,7 +276,7 @@ export const CircularChart = ({ isAdmin, id, name }) => {
               value: data.passedTests,
               name: "Passed",
               itemStyle: {
-                color: "#00934C",
+                color: "green",
                 decal: {
                   symbol: "none",
                 },
@@ -275,9 +297,14 @@ export const CircularChart = ({ isAdmin, id, name }) => {
           ],
         },
       ],
-    };
-    myChart && myChart.setOption(option);
-  }, [myChart, data, id, isAdmin]);
+    }),
+    [data]
+  );
+  useEffect(() => {
+    fetchTestData();
+
+    myChart?.setOption(option);
+  }, [myChart, data, fetchTestData, option]);
 
   return <div id={name} style={{ width: "100%", height: 500 }} />;
 };

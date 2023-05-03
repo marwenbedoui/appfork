@@ -8,10 +8,10 @@ export default function DashbaordPage({ role }) {
   const Page = () => {
     return (
       <Row>
-        <Col span={12}>
+        <Col span={13}>
           <CircularChart isAdmin={false} name={"circular"} />
         </Col>
-        <Col span={12}>
+        <Col span={11}>
           <LineCharts />
         </Col>
       </Row>
