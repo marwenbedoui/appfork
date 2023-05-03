@@ -103,7 +103,7 @@ export const EmailModal = ({ visible, onCancel }) => {
           <Input.Password placeholder="Mot de passe" />
         </Form.Item>
         <Form.Item>
-          <Button htmlType="Envoyer">{loading ? <Spin /> : "MAJ email"}</Button>
+          <Button className="my-button" htmlType="Envoyer">{loading ? <Spin /> : "MAJ email"}</Button>
         </Form.Item>
       </Form>
     </Modal>
@@ -172,7 +172,7 @@ export const InfoModal = ({ visible, onCancel, info }) => {
         </Form.Item>
 
         <Form.Item>
-          <Button htmlType="Envoyer">
+          <Button htmlType="Envoyer" className="my-button">
             {loading ? <Spin /> : "MAJ Profil"}
           </Button>
         </Form.Item>
@@ -273,7 +273,7 @@ export const PasswordModal = ({ visible, onCancel }) => {
           <Input.Password placeholder="nouveau mot de passe" type="password" />
         </Form.Item>
         <Form.Item>
-          <Button htmlType="submit">
+          <Button htmlType="submit" className="my-button">
             {loading ? <Spin /> : "MAJ du mot de passe"}
           </Button>
         </Form.Item>
