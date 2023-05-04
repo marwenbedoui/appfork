@@ -153,13 +153,13 @@ const executeTest = async (req, res) => {
           }`;
 
           statsArray.push({
-            cpu: "0%",
-            memory: "0 MB",
+            cpu: 0,
+            memory: 0,
             network: {
-              received: "0 MB",
-              transferred: "0 MB",
+              received: 0,
+              transferred: 0,
             },
-            disk: "0 Go",
+            disk: 0,
             timestamp: formattedDate,
           });
           test.detail = statsArray;
@@ -172,13 +172,13 @@ const executeTest = async (req, res) => {
           const diskUsage = await si.fsSize();
 
           statsArray.push({
-            cpu: Math.abs(stats.cpu.toFixed(2) / 100) + " %",
-            memory: bytes(stats.memory),
+            cpu: Math.abs(stats.cpu.toFixed(2) / 100),
+            memory: stats.memory / 1000000,
             network: {
-              received: networkStats[0].rx_bytes / 1000000 + " MB",
-              transferred: networkStats[0].tx_bytes / 1000000 + " MB",
+              received: networkStats[0].rx_bytes / 1000000,
+              transferred: networkStats[0].tx_bytes / 1000000,
             },
-            disk: `${diskUsage[0].use}%`,
+            disk: `${diskUsage[0].use}`,
             timestamp: moment(stats.timestamp).format("YYYY-MM-DD HH:mm:ss"),
           });
           test.detail = statsArray;

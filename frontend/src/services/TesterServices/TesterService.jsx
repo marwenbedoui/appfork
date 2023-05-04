@@ -5,16 +5,19 @@ const API_URL = "http://localhost:5000/api/v1/tester/test";
 const token = localStorage.getItem("token");
 
 // const executerTest = async (data, nouv, files) => {
-const executerTest = async (data) => {
+const executerTest = async (data, ancien) => {
   let dataParsed, req;
   if (data.method === "post") {
     dataParsed = JSON.parse(data.data);
   } else {
     dataParsed = "";
   }
-  // if (nouv) {
+  let nom = data.testName;
+  if (ancien) {
+    nom = data.testName + "_" + data._id;
+  }
   req = {
-    testName: data.testName,
+    testName: nom,
     linkRepo: data.linkRepo,
     file: data.file,
     protocol: data.protocol,

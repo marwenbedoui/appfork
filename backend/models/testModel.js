@@ -54,21 +54,21 @@ const testSchema = new mongoose.Schema(
     detail: [
       {
         cpu: {
-          type: String,
+          type: Number,
         },
         memory: {
-          type: String,
+          type: Number,
         },
         network: {
           received: {
-            type: String,
+            type: Number,
           },
           transferred: {
-            type: String,
+            type: Number,
           },
         },
         disk: {
-          type: String,
+          type: Number,
         },
         timestamp: {
           type: String,
