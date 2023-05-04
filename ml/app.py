@@ -18,7 +18,7 @@ client = MongoClient(
 
 # select the database
 db = client[os.environ.get("MY_MONGO_DB")]
-collection = db["tests"]
+test_collection = db["tests"]
 rapports_collection = db["rapports"]
 
 
@@ -30,7 +30,7 @@ def hello():
 @app.route('/tests', methods=['GET'])
 def get_tests():
     # query the collection and retrieve all documents
-    tests = collection.find()
+    tests = test_collection.find()
 
     # create a list of test dictionaries
     test_list = []
@@ -45,18 +45,46 @@ def get_tests():
 
 @app.route('/rapports/csv')
 def generate_csv():
-    # Récupération des données de la collection "rapports"
-    rapports = rapports_collection.find()
-
-    # Configuration du fichier CSV
+    tests = test_collection.find() 
     with open('rapports.csv', 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['timeStamp', 'elapsed', 'bytes', 'sentBytes',
-                        'Latency', 'Connect', 'processTime', 'responseCode', 'addedCode', 'removedCode', 'success'])
-        for rapport in rapports:
-            writer.writerow([rapport["timeStamp"], rapport["elapsed"], rapport["bytes"], rapport["sentBytes"],
-                            rapport["Latency"],  rapport["Connect"],  rapport["processTime"], rapport["responseCode"], rapport["addedCode"], rapport["removedCode"], rapport["success"]])
-
+        writer.writerow(['cpu', 'memory', 'elapsed', 'bytes', 'sentBytes', 'Latency', 'Connect', 'processTime', 'addedCode', 'removedCode', 'success'])
+        
+        for test in tests:
+            id_test = test['_id']
+            cpu, memory = 0, 0
+            
+            for details in test["detail"]:
+                cpu += details["cpu"]
+                memory += details["memory"]
+                
+            cpu = cpu / len(test["detail"])
+            memory = memory / len(test["detail"])
+            success = False
+            if (test["status"] == "Passed"): 
+                success = True
+            rapports = rapports_collection.find({ "test": id_test })
+            elapsed, bytes_, sentBytes, Latency, Connect, processTime = 0, 0, 0, 0, 0, 0
+            count = rapports_collection.count_documents({ "test": id_test })
+            
+            for rapport in rapports:
+                elapsed += rapport["elapsed"]
+                bytes_ += rapport["bytes"]
+                sentBytes += rapport["sentBytes"]
+                Latency += rapport["Latency"]
+                Connect += rapport["Connect"]
+                processTime += rapport["processTime"]
+                removedCode = rapport["removedCode"]
+                addedCode = rapport["addedCode"]
+            elapsed = elapsed / count if count > 0 else 0
+            bytes_ = bytes_ / count if count > 0 else 0
+            sentBytes = sentBytes / count if count > 0 else 0
+            Latency = Latency / count if count > 0 else 0
+            Connect = Connect / count if count > 0 else 0
+            processTime = processTime / count if count > 0 else 0
+            
+            writer.writerow([cpu, memory, elapsed, bytes_, sentBytes, Latency, Connect, processTime, addedCode, removedCode, success])
+    
     return 'Le fichier CSV a été généré.'
 
 
