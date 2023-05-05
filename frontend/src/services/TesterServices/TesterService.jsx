@@ -1,6 +1,16 @@
 import axios from "axios";
 import jwtDecode from "jwt-decode";
 
+function extractNumbers(str) {
+  const regex = /(\d+)$/; // match one or more digits at the end of the string
+  const match = str.match(regex);
+  if (match) {
+    return match[1]; // return the matched digits as a string
+  } else {
+    return 0; // return 0 if the string doesn't end with a number
+  }
+}
+
 const API_URL = "http://localhost:5000/api/v1/tester/test";
 const token = localStorage.getItem("token");
 
@@ -14,7 +24,10 @@ const executerTest = async (data, ancien) => {
   }
   let nom = data.testName;
   if (ancien) {
-    nom = data.testName + "_" + data._id;
+    var numbers = extractNumbers(nom);
+    numbers++;
+    nom =
+      nom.substring(0, nom.length - numbers.toString().length) + " (" + numbers+")";
   }
   req = {
     testName: nom,
