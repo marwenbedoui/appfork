@@ -48,7 +48,7 @@ def generate_csv():
     tests = test_collection.find() 
     with open('rapports.csv', 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['cpu', 'memory', 'elapsed', 'bytes', 'sentBytes', 'Latency', 'Connect', 'processTime', 'addedCode', 'removedCode', 'success'])
+        writer.writerow(['cpu', 'memory','request number' , 'elapsed', 'bytes', 'sentBytes', 'Latency', 'Connect', 'processTime', 'addedCode', 'removedCode', 'success'])
         
         for test in tests:
             id_test = test['_id']
@@ -63,6 +63,7 @@ def generate_csv():
             success = False
             if (test["status"] == "Passed"): 
                 success = True
+            requestNumber = test["usersNumber"]
             rapports = rapports_collection.find({ "test": id_test })
             elapsed, bytes_, sentBytes, Latency, Connect, processTime = 0, 0, 0, 0, 0, 0
             count = rapports_collection.count_documents({ "test": id_test })
@@ -83,7 +84,7 @@ def generate_csv():
             Connect = Connect / count if count > 0 else 0
             processTime = processTime / count if count > 0 else 0
             
-            writer.writerow([cpu, memory, elapsed, bytes_, sentBytes, Latency, Connect, processTime, addedCode, removedCode, success])
+            writer.writerow([cpu, memory, requestNumber ,elapsed, bytes_, sentBytes, Latency, Connect, processTime, addedCode, removedCode, success])
     
     return 'Le fichier CSV a été généré.'
 
