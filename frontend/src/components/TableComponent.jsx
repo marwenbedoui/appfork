@@ -1,6 +1,7 @@
-import { Button, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Popconfirm, Space, Spin, Table, Tag } from "antd";
 import { useState, useEffect } from "react";
 import AdminServices from "../services/AdminServices/AdminServices";
+import { LoadingOutlined } from "@ant-design/icons";
 import { TestStatusModel } from "./Modals";
 
 const TableComponent = ({ data, isAdminPage, role }) => {
@@ -81,7 +82,18 @@ const TableComponent = ({ data, isAdminPage, role }) => {
             if (status === "Passed") {
               color = "green";
             }
-            return <Tag color={color}>{status.toUpperCase()}</Tag>;
+            return status.length === 0 ? (
+              <Spin
+                indicator={
+                  <LoadingOutlined
+                    style={{ fontSize: 24, color: "#00727A" }}
+                    spin
+                  />
+                }
+              />
+            ) : (
+              <Tag color={color}>{status.toUpperCase()}</Tag>
+            );
           },
         },
         {
