@@ -22,10 +22,10 @@ export const FormLogin = () => {
               window.location.reload("/");
             },
             (e) => {
-              const resMessage =
-                (e.response && e.response.data && e.response.data.msg) ||
-                e.message ||
-                e.toString();
+              const resMessage = "Email ou mot de passe erronés";
+                // (e.response && e.response.data && e.response.data.msg) ||
+                // e.message ||
+                // e.toString();
               setError(true);
               setMsg(resMessage);
             }
