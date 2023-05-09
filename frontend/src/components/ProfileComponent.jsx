@@ -11,7 +11,6 @@ import {
 } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import base64js from "base64-js";
-import "./styles/modals.css";
 const { Meta } = Card;
 
 function ProfileComponent() {
@@ -76,7 +75,10 @@ function ProfileComponent() {
         <p className="profile-email">Email: {userInfo.email}</p>
         <p className="profile-location">
           Role :{" "}
-          <Tag color="gold" style={{ fontSize: "20px",height:"30px",padding:"3px" }}>
+          <Tag
+            color="gold"
+            style={{ fontSize: "20px", height: "30px", padding: "3px" }}
+          >
             {userInfo.role}
           </Tag>
         </p>

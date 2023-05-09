@@ -2,12 +2,17 @@ import axios from "axios";
 import jwtDecode from "jwt-decode";
 
 function extractNumbers(str) {
-  const regex = /(\d+)$/; // match one or more digits at the end of the string
+  const regex = /(\d+)\)$/; // match one or more digits between parenthesis at the end of the string
   const match = str.match(regex);
   if (match) {
-    return match[1]; // return the matched digits as a string
+    const num = match[1];
+    if (num.length > 0) {
+      return num;
+    } else {
+      return 0; // return 0 if the string ends with empty parentheses
+    }
   } else {
-    return 0; // return 0 if the string doesn't end with a number
+    return -1; // return 0 if the string doesn't end with a number between parenthesis
   }
 }
 
@@ -25,9 +30,23 @@ const executerTest = async (data, ancien) => {
   let nom = data.testName;
   if (ancien) {
     var numbers = extractNumbers(nom);
-    numbers++;
-    nom =
-      nom.substring(0, nom.length - numbers.toString().length) + " (" + numbers+")";
+    if (numbers === -1) {
+      numbers = numbers + 2;
+      nom = nom + " (" + numbers + ")";
+    } else if (numbers === 0) {
+      numbers++;
+      nom =
+        nom.substring(0, nom.length - numbers.toString().length) +
+        " (" +
+        numbers +
+        ")";
+    } else {
+      numbers++;
+      nom =
+        nom.substring(0, nom.length - numbers.toString().length - 1) +
+        numbers +
+        ")";
+    }
   }
   req = {
     testName: nom,

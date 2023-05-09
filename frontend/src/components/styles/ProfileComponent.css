@@ -53,3 +53,10 @@
   font-weight: bold;
   margin-bottom: 10px;
 }
+
+
+.button:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  transform: translateY(-5px);
+  transition: all 0.3s ease;
+}
