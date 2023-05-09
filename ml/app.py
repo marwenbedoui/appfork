@@ -3,7 +3,7 @@ from flask import Flask, Response
 from dotenv import load_dotenv
 from pymongo import MongoClient
 import csv
-
+from functions import count_changes
 
 app = Flask(__name__)
 load_dotenv()
@@ -42,49 +42,47 @@ def get_tests():
     # return the list of tests as a JSON response
     return {"tests": test_list}
 
-
 @app.route('/rapports/csv')
 def generate_csv():
-    tests = test_collection.find() 
+    tests = test_collection.find()
+    headers = ['cpu', 'memory','request number','bytes', 'sentBytes',  'processTime', 'added_lines', 'removed_lines', 'loops_add', 'loops_remove', 'conditions_add', 'conditions_remove', 'success']
+    
     with open('rapports.csv', 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['cpu', 'memory','request number' , 'elapsed', 'bytes', 'sentBytes', 'Latency', 'Connect', 'processTime', 'addedCode', 'removedCode', 'success'])
+        writer.writerow(headers)
         
         for test in tests:
             id_test = test['_id']
-            cpu, memory = 0, 0
-            
-            for details in test["detail"]:
-                cpu += details["cpu"]
-                memory += details["memory"]
-                
-            cpu = cpu / len(test["detail"])
-            memory = memory / len(test["detail"])
-            success = False
-            if (test["status"] == "Passed"): 
-                success = True
+            details = test["detail"]
+            cpu = sum(detail["cpu"] for detail in details) / len(details)
+            memory = sum(detail["memory"] for detail in details) / len(details)
+            success = test["status"] == "Passed"
             requestNumber = test["usersNumber"]
-            rapports = rapports_collection.find({ "test": id_test })
-            elapsed, bytes_, sentBytes, Latency, Connect, processTime = 0, 0, 0, 0, 0, 0
-            count = rapports_collection.count_documents({ "test": id_test })
             
-            for rapport in rapports:
-                elapsed += rapport["elapsed"]
-                bytes_ += rapport["bytes"]
-                sentBytes += rapport["sentBytes"]
-                Latency += rapport["Latency"]
-                Connect += rapport["Connect"]
-                processTime += rapport["processTime"]
-                removedCode = rapport["removedCode"]
-                addedCode = rapport["addedCode"]
-            elapsed = elapsed / count if count > 0 else 0
-            bytes_ = bytes_ / count if count > 0 else 0
-            sentBytes = sentBytes / count if count > 0 else 0
-            Latency = Latency / count if count > 0 else 0
-            Connect = Connect / count if count > 0 else 0
-            processTime = processTime / count if count > 0 else 0
+            rapports = rapports_collection.aggregate([
+                {"$match": {"test": id_test}},
+                {"$group": {
+                    "_id": None,
+                    "bytes": {"$sum": "$bytes"},
+                    "sentBytes": {"$sum": "$sentBytes"},
+                    "processTime": {"$sum": "$processTime"},
+                    "count": {"$sum": 1}
+                }}
+            ])
+            rapports = list(rapports)
+            if len(rapports) > 0:
+                rapports = rapports[0]
+                bytes_ = rapports["bytes"] / rapports["count"]
+                sentBytes = rapports["sentBytes"] / rapports["count"]
+                processTime = rapports["processTime"] / rapports["count"]
+            else:
+                bytes_, sentBytes, processTime = 0, 0, 0
             
-            writer.writerow([cpu, memory, requestNumber ,elapsed, bytes_, sentBytes, Latency, Connect, processTime, addedCode, removedCode, success])
+            changes = [(count_changes(rapport["addedCode"], rapport["removedCode"])) for rapport in rapports_collection.find({ "test": id_test })]
+            added_lines, removed_lines, loops_add, loops_remove = sum(change[0] for change in changes), sum(change[1] for change in changes), sum(change[2] for change in changes), sum(change[3] for change in changes)
+            conditions_add, conditions_remove = sum(change[4] for change in changes), sum(change[5] for change in changes)
+
+            writer.writerow([cpu, memory, requestNumber, bytes_, sentBytes, processTime, added_lines, removed_lines, loops_add, loops_remove, conditions_add, conditions_remove, success])
     
     return 'Le fichier CSV a été généré.'
 

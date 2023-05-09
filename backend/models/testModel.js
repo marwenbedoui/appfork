@@ -51,6 +51,24 @@ const testSchema = new mongoose.Schema(
     file: {
       type: String,
     },
+    added_lines: {
+      type: Number,
+    },
+    removed_lines: {
+      type: Number,
+    },
+    loops_add: {
+      type: Number,
+    },
+    loops_remove: {
+      type: Number,
+    },
+    conditions_add: {
+      type: Number,
+    },
+    conditions_remove: {
+      type: Number,
+    },
     detail: [
       {
         cpu: {
