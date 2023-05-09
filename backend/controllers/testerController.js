@@ -9,7 +9,6 @@ const fs = require("fs");
 const csv = require("csv-parser");
 const { getTemplate } = require("../test/template/getTemplate");
 const { postTemplate } = require("../test/template/postTemplate");
-const bytes = require("bytes");
 const pidusage = require("pidusage");
 const moment = require("moment");
 const {
@@ -51,40 +50,6 @@ const executeTest = async (req, res) => {
   const testId = savedTest._id;
   const testFileName = `test_${testId}.jmx`;
 
-  //bytecode
-  // let v = [];
-  // let savedBytecode, item_bytecode;
-  // if (req.files.length === 0) {
-  //   item_bytecode = await Bytecode.find({ test: req.body.link });
-  // } else {
-  //   console.log(req.files);
-  //   for (let i = 0; i < req.files.length; i++) {
-  //     v.push(
-  //       Buffer.from(fs.readFileSync(req.files[i].path).toString("hex"), "hex")
-  //     );
-  //   }
-  //   const bytecode = new Bytecode({
-  //     timeStamp: new Date(),
-  //     bytes: v,
-  //     test: testId,
-  //   });
-  //   savedBytecode = await bytecode.save();
-  //   //the path to the bytecode file
-  //   const bytecodeFileName = `${savedBytecode._id}.txt`;
-  //   const generatedDirPath = path.join(__dirname, "../", "/uploads/generated");
-  //   const bytecodeOutputPath = path.join(generatedDirPath, bytecodeFileName);
-  //   const bytesArray = savedBytecode.bytes;
-  //   const text = bytesArray.join("\n\n\n");
-
-  //   // create the 'generated' directory if it doesn't exist
-  //   if (!fs.existsSync(generatedDirPath)) {
-  //     fs.mkdirSync(generatedDirPath);
-  //   }
-  //   //get the bytecode by id and save it to a file
-  //   fs.writeFileSync(bytecodeOutputPath, text, "utf-8");
-  // }
-
-  //the path to the jmx file
   const jmxOutputPath = path.join(
     __dirname,
     "../",
@@ -241,12 +206,21 @@ const executeTest = async (req, res) => {
         test.pourcentage.failed =
           calculatePercentage(results).falsePercentage.toFixed(2);
         majority === true ? (test.status = "Passed") : (test.status = "failed");
+        let diffStat;
         if (req.body.file === undefined) {
-          await diff(req, testId, false);
+          diffStat = await diff(req, testId, false);
         }
         if (req.body.linkRepo === undefined) {
-          await diff(req, testId, true);
+          diffStat = await diff(req, testId, true);
         }
+        console.log(diffStat);
+        // ((test.added_lines = diffStat[added_lines])),
+        //   (test.removed_lines = diffStat[removed_lines]),
+        //   (test.loops_add = diffStat[loops_add]),
+        //   (test.loops_remove = diffStat[loops_remove]),
+        //   (test.conditions_add = diffStat[conditions_add]),
+        //   (test.conditions_remove = diffStat[conditions_remove]);
+
         await test
           .save()
           .then((data) => res.send(data))

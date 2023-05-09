@@ -83,7 +83,12 @@ async function diff(req, id, local) {
   if (!fs.existsSync(generatedDirPath)) {
     fs.mkdirSync(generatedDirPath);
   }
-
+  let added_lines,
+    removed_lines,
+    loops_add,
+    loops_remove,
+    conditions_add,
+    conditions_remove;
   if (local) {
     exec(command, { cwd: req.body.file }, (error, stdout, stderr) => {
       if (error) {
@@ -107,10 +112,12 @@ async function diff(req, id, local) {
       const inputLines = stdout.split("\n");
 
       const linesWithPlus = inputLines.filter(
-        (line) => line.startsWith("+") && !/^\+@@\s+@@$/.test(line)
+        (line) =>
+          line.startsWith("+") && !/^\+\+\+/.test(line) && !/^@@/.test(line)
       );
       const linesWithMinus = inputLines.filter(
-        (line) => line.startsWith("-") && !/^\-@@\s+@@$/.test(line)
+        (line) =>
+          line.startsWith("-") && !/^\-\-\-/.test(line) && !/^@@/.test(line)
       );
 
       fs.writeFileSync(
@@ -123,6 +130,33 @@ async function diff(req, id, local) {
         linesWithMinus.join("\n"),
         "utf-8"
       );
+
+      added_lines =
+        (linesWithPlus.join("\n").match(/^\+.*/gm) || []).length -
+        (linesWithPlus.join("\n").match(/^\+\+\+.*/gm) || []).length;
+      removed_lines =
+        (linesWithMinus.join("\n").match(/^\-.*/gm) || []).length -
+        (linesWithMinus.join("\n").match(/^\-\-\-.*/gm) || []).length;
+      loops_add = (
+        linesWithPlus.join("\n").match(/(^|[^a-zA-Z0-9_])for\s*\(/g) || []
+      ).length;
+      loops_remove = (
+        linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])for\s*\(/g) || []
+      ).length;
+      conditions_add = (
+        linesWithPlus.join("\n").match(/(^|[^a-zA-Z0-9_])if\s*\(/g) || []
+      ).length;
+      conditions_remove = (
+        linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])if\s*\(/g) || []
+      ).length;
+      return {
+        added_lines,
+        removed_lines,
+        loops_add,
+        loops_remove,
+        conditions_add,
+        conditions_remove,
+      };
     });
   } else {
     const reponame = extractGitHubRepoInfo(req.body.linkRepo);
@@ -167,10 +201,16 @@ async function diff(req, id, local) {
             const inputLines = stdout.split("\n");
 
             const linesWithPlus = inputLines.filter(
-              (line) => line.startsWith("+") && !/^\+@@\s+@@$/.test(line)
+              (line) =>
+                line.startsWith("+") &&
+                !/^\+\+\+/.test(line) &&
+                !/^@@/.test(line)
             );
             const linesWithMinus = inputLines.filter(
-              (line) => line.startsWith("-") && !/^\-@@\s+@@$/.test(line)
+              (line) =>
+                line.startsWith("-") &&
+                !/^\-\-\-/.test(line) &&
+                !/^@@/.test(line)
             );
 
             fs.writeFileSync(
@@ -183,6 +223,34 @@ async function diff(req, id, local) {
               linesWithMinus.join("\n"),
               "utf-8"
             );
+
+            added_lines =
+              (linesWithPlus.join("\n").match(/^\+.*/gm) || []).length -
+              (linesWithPlus.join("\n").match(/^\+\+\+.*/gm) || []).length;
+            removed_lines =
+              (linesWithMinus.join("\n").match(/^\-.*/gm) || []).length -
+              (linesWithMinus.join("\n").match(/^\-\-\-.*/gm) || []).length;
+            loops_add = (
+              linesWithPlus.join("\n").match(/(^|[^a-zA-Z0-9_])for\s*\(/g) || []
+            ).length;
+            loops_remove = (
+              linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])for\s*\(/g) ||
+              []
+            ).length;
+            conditions_add = (
+              linesWithPlus.join("\n").match(/(^|[^a-zA-Z0-9_])if\s*\(/g) || []
+            ).length;
+            conditions_remove = (
+              linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])if\s*\(/g) || []
+            ).length;
+            return {
+              added_lines,
+              removed_lines,
+              loops_add,
+              loops_remove,
+              conditions_add,
+              conditions_remove,
+            };
           }
         );
       }
