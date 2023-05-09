@@ -31,7 +31,7 @@ import {
   GithubOutlined,
   LaptopOutlined,
 } from "@ant-design/icons";
-import "./styles/modals.css";
+import "./styles/buttons.css";
 const { Step } = Steps;
 
 export const EmailModal = ({ visible, onCancel }) => {
@@ -103,7 +103,9 @@ export const EmailModal = ({ visible, onCancel }) => {
           <Input.Password placeholder="Mot de passe" />
         </Form.Item>
         <Form.Item>
-          <Button className="my-button" htmlType="Envoyer">{loading ? <Spin /> : "MAJ email"}</Button>
+          <Button className="my-button" htmlType="Envoyer">
+            {loading ? <Spin /> : "MAJ email"}
+          </Button>
         </Form.Item>
       </Form>
     </Modal>
@@ -904,12 +906,13 @@ export const AddTestModal = ({
                     >
                       <ArrowLeftOutlined /> Retour
                     </Button>
-
                     <Button
+                      type="primary"
+                      loading={loading}
                       htmlType="submit"
                       style={{ backgroundColor: "#00A482", color: "white" }}
                     >
-                      {loading ? <Spin /> : "Executer le test"}
+                      {loading ? null : "Executer le test"}
                     </Button>
                   </Space>
                 </Form.Item>

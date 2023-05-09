@@ -12,6 +12,7 @@ import {
 } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import { TestDetailModal, TestPercentageModal } from "../../components/Modals";
+import "./resultTestPage.css";
 
 const Page = ({ role }) => {
   const [modalPercentageVisible, setModalPercentageVisible] = useState(false);
@@ -71,6 +72,7 @@ const Page = ({ role }) => {
               backgroundColor: "#36454F",
               color: "white",
             }}
+            className="button"
             icon={<EyeOutlined />}
             shape="round"
             onClick={() => setModalDetailVisible(true)}
@@ -85,12 +87,14 @@ const Page = ({ role }) => {
               backgroundColor: "#4682B4",
               color: "white",
             }}
+            className="button"
             icon={<PercentageOutlined />}
             shape="round"
             onClick={() => setModalPercentageVisible(true)}
           >
             Voir le pourcentage
           </Button>
+
           <Button
             size="large"
             type="primary"
@@ -99,12 +103,14 @@ const Page = ({ role }) => {
               backgroundColor: "#FFA07A",
               color: "white",
             }}
+            className={loading ? null : "button"}
             shape="round"
             htmlType="submit"
             onClick={() => executeTest(data)}
             icon={<RedoOutlined />}
+            loading={loading}
           >
-            {loading ? <Spin /> : "Executer le test"}
+            {loading ? null : "Executer le test"}
           </Button>
 
           <TestPercentageModal

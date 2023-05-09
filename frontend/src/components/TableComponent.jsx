@@ -7,14 +7,44 @@ const TableComponent = ({ data, isAdminPage, role }) => {
   const [columns, setColumns] = useState([]);
   const [modalStatusTest, setModalStatusTest] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleCancelTestsStatus = () => {
     setModalStatusTest(false);
   };
-
+  const handleTableChange = (pagination) => {
+    setCurrentPage(pagination.current);
+  };
+  const showTotal = (total, range) => {
+    return `${range[0]}-${range[1]} de ${total} éléments`;
+  };
   useEffect(() => {
+    const IndexColumn = {
+      title: "Numéro",
+      resizable: true,
+      width: 10,
+      key: "index",
+      render: (_, record, index) => {
+        var indexNumber = (currentPage - 1) * 6 + index + 1;
+
+        if (indexNumber % 2 === 0) {
+          return (
+            <div>
+              <Tag color="cyan">{indexNumber}</Tag>
+            </div>
+          );
+        } else {
+          return (
+            <div>
+              <Tag color="purple">{indexNumber}</Tag>
+            </div>
+          );
+        }
+      },
+    };
     if (!isAdminPage) {
       setColumns([
+        IndexColumn,
         {
           title: "Nom du test",
           dataIndex: "testName",
@@ -23,7 +53,9 @@ const TableComponent = ({ data, isAdminPage, role }) => {
             const route = `/${role}/test/${_id}`;
             return (
               <div style={{ textTransform: "capitalize" }}>
-                <a href={route}>{testName}</a>
+                <a style={{ color: "008F7A" }} href={route}>
+                  {testName}
+                </a>
               </div>
             );
           },
@@ -65,6 +97,7 @@ const TableComponent = ({ data, isAdminPage, role }) => {
       ]);
     } else {
       setColumns([
+        IndexColumn,
         {
           title: "First name",
           dataIndex: "firstname",
@@ -152,14 +185,17 @@ const TableComponent = ({ data, isAdminPage, role }) => {
         },
       ]);
     }
-  }, [isAdminPage, role, modalStatusTest, selectedId]);
+  }, [isAdminPage, role, modalStatusTest, selectedId, currentPage]);
 
   return (
     <Table
+      bordered
       columns={columns}
       dataSource={data}
+      onChange={handleTableChange}
       pagination={{
         pageSize: 6,
+        showTotal: showTotal,
       }}
       rowKey="_id"
     />
