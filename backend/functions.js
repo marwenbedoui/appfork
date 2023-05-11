@@ -94,12 +94,16 @@ async function generateFiles(
   const removed_lines =
     (linesWithMinus.join("\n").match(/^\-.*/gm) || []).length -
     (linesWithMinus.join("\n").match(/^\-\-\-.*/gm) || []).length;
-  const loops_add = (
-    linesWithPlus.join("\n").match(/(^|[^a-zA-Z0-9_])for\s*\(/g) || []
-  ).length;
-  const loops_remove = (
-    linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])for\s*\(/g) || []
-  ).length;
+  const loops_add =
+    (linesWithPlus.join("\n").match(/(^|[^a-zA-Z0-9_])for\s*\(/g) || [])
+      .length +
+    (linesWithPlus.join("\n").match(/(^|[^a-zA-Z0-9_])while\s*\(/g) || [])
+      .length;
+  const loops_remove =
+    (linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])for\s*\(/g) || [])
+      .length +
+    (linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])while\s*\(/g) || [])
+      .length;
   const conditions_add = (
     linesWithPlus.join("\n").match(/(^|[^a-zA-Z0-9_])if\s*\(/g) || []
   ).length;
@@ -172,12 +176,16 @@ async function cloneAndGenerateDiff(
     const removed_lines =
       (linesWithMinus.join("\n").match(/^\-.*/gm) || []).length -
       (linesWithMinus.join("\n").match(/^\-\-\-.*/gm) || []).length;
-    const loops_add = (
-      linesWithPlus.join("\n").match(/(^|[^a-zA-Z0-9_])for\s*\(/g) || []
-    ).length;
-    const loops_remove = (
-      linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])for\s*\(/g) || []
-    ).length;
+    const loops_add =
+      (linesWithPlus.join("\n").match(/(^|[^a-zA-Z0-9_])for\s*\(/g) || [])
+        .length +
+      (linesWithPlus.join("\n").match(/(^|[^a-zA-Z0-9_])while\s*\(/g) || [])
+        .length;
+    const loops_remove =
+      (linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])for\s*\(/g) || [])
+        .length +
+      (linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])while\s*\(/g) || [])
+        .length;
     const conditions_add = (
       linesWithPlus.join("\n").match(/(^|[^a-zA-Z0-9_])if\s*\(/g) || []
     ).length;
