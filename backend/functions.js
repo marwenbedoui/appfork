@@ -1,6 +1,7 @@
 const path = require("path");
 const fs = require("fs");
-const { exec } = require("child_process");
+const util = require("util");
+const exec = util.promisify(require("child_process").exec);
 
 function calculateMajority(arr) {
   let trueCount = 0;
@@ -40,26 +41,161 @@ function calculatePercentage(arr) {
 }
 
 function extractGitHubRepoInfo(gitHubRepoLink) {
-  // Créer une expression régulière pour extraire le nom d'utilisateur et le nom du repository
   const regex = /github.com\/([\w-]+)\/([\w-]+)/;
-
-  // Exécuter l'expression régulière sur le lien de repository GitHub
   const match = gitHubRepoLink.match(regex);
 
-  // Vérifier si la correspondance a réussi
   if (match !== null) {
-    // Extraire le nom d'utilisateur et le nom du repository à partir des groupes de capture
     const username = match[1];
     const repositoryName = match[2];
 
-    // Retourner un objet contenant le nom d'utilisateur et le nom du repository
     return {
       username,
       repositoryName,
     };
   } else {
-    // En cas d'échec, retourner null
     return null;
+  }
+}
+
+async function generateFiles(
+  req,
+  command,
+  outputFilePathWithPlus,
+  outputFilePathWithMinus,
+  bytecodeOutputPath
+) {
+  const { stdout, stderr } = await exec(command, { cwd: req.body.file });
+
+  if (stderr) {
+    console.error(`Erreur: ${stderr}`);
+    throw new Error(stderr);
+  }
+
+  let output = stdout.replace(/@@.*?@@/g, "");
+
+  fs.writeFileSync(bytecodeOutputPath, output, "utf-8");
+  console.log("Fichier généré avec succès");
+
+  const inputLines = output.split("\n");
+
+  const linesWithPlus = inputLines.filter(
+    (line) => line.startsWith("+") && !/^\+\+\+/.test(line) && !/^@@/.test(line)
+  );
+  const linesWithMinus = inputLines.filter(
+    (line) => line.startsWith("-") && !/^\-\-\-/.test(line) && !/^@@/.test(line)
+  );
+
+  fs.writeFileSync(outputFilePathWithPlus, linesWithPlus.join("\n"), "utf-8");
+  fs.writeFileSync(outputFilePathWithMinus, linesWithMinus.join("\n"), "utf-8");
+
+  const added_lines =
+    (linesWithPlus.join("\n").match(/^\+.*/gm) || []).length -
+    (linesWithPlus.join("\n").match(/^\+\+\+.*/gm) || []).length;
+  const removed_lines =
+    (linesWithMinus.join("\n").match(/^\-.*/gm) || []).length -
+    (linesWithMinus.join("\n").match(/^\-\-\-.*/gm) || []).length;
+  const loops_add = (
+    linesWithPlus.join("\n").match(/(^|[^a-zA-Z0-9_])for\s*\(/g) || []
+  ).length;
+  const loops_remove = (
+    linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])for\s*\(/g) || []
+  ).length;
+  const conditions_add = (
+    linesWithPlus.join("\n").match(/(^|[^a-zA-Z0-9_])if\s*\(/g) || []
+  ).length;
+  const conditions_remove = (
+    linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])if\s*\(/g) || []
+  ).length;
+  return {
+    added_lines,
+    removed_lines,
+    loops_add,
+    loops_remove,
+    conditions_add,
+    conditions_remove,
+  };
+}
+
+async function cloneAndGenerateDiff(
+  req,
+  id,
+  command,
+  reponame,
+  bytecodeOutputPath,
+  outputFilePathWithPlus,
+  outputFilePathWithMinus
+) {
+  try {
+    const { stdout: cloneOutput } = await util.promisify(exec)(
+      `git clone ${req.body.linkRepo}`,
+      {
+        cwd: path.join(__dirname, "./", `clones/${id}`),
+      }
+    );
+
+    let { stdout: diffOutput } = await util.promisify(exec)(command, {
+      cwd: path.join(
+        __dirname,
+        `./`,
+        `clones/${id}/${reponame.repositoryName}`
+      ),
+      shell: "C:\\Windows\\System32\\cmd.exe",
+    });
+
+    if (typeof diffOutput === "string" || diffOutput instanceof String) {
+      diffOutput = diffOutput.replace(/@@.*?@@/g, "");
+    }
+
+    fs.writeFileSync(bytecodeOutputPath, diffOutput, "utf-8");
+    console.log("2) Fichier généré avec succès");
+    const inputLines = diffOutput.split("\n");
+
+    const linesWithPlus = inputLines.filter(
+      (line) =>
+        line.startsWith("+") && !/^\+\+\+/.test(line) && !/^@@/.test(line)
+    );
+    const linesWithMinus = inputLines.filter(
+      (line) =>
+        line.startsWith("-") && !/^\-\-\-/.test(line) && !/^@@/.test(line)
+    );
+
+    fs.writeFileSync(outputFilePathWithPlus, linesWithPlus.join("\n"), "utf-8");
+    fs.writeFileSync(
+      outputFilePathWithMinus,
+      linesWithMinus.join("\n"),
+      "utf-8"
+    );
+
+    const added_lines =
+      (linesWithPlus.join("\n").match(/^\+.*/gm) || []).length -
+      (linesWithPlus.join("\n").match(/^\+\+\+.*/gm) || []).length;
+    const removed_lines =
+      (linesWithMinus.join("\n").match(/^\-.*/gm) || []).length -
+      (linesWithMinus.join("\n").match(/^\-\-\-.*/gm) || []).length;
+    const loops_add = (
+      linesWithPlus.join("\n").match(/(^|[^a-zA-Z0-9_])for\s*\(/g) || []
+    ).length;
+    const loops_remove = (
+      linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])for\s*\(/g) || []
+    ).length;
+    const conditions_add = (
+      linesWithPlus.join("\n").match(/(^|[^a-zA-Z0-9_])if\s*\(/g) || []
+    ).length;
+    const conditions_remove = (
+      linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])if\s*\(/g) || []
+    ).length;
+    return {
+      added_lines,
+      removed_lines,
+      loops_add,
+      loops_remove,
+      conditions_add,
+      conditions_remove,
+    };
+  } catch (error) {
+    console.error(`Error: ${error.message}`);
+    fs.writeFileSync(bytecodeOutputPath, error.message, "utf-8");
+    throw error;
   }
 }
 
@@ -79,182 +215,35 @@ async function diff(req, id, local) {
   );
   const bytecodeOutputPath = path.join(generatedDirPath, differenceFileName);
 
-  // create the 'generated' directory if it doesn't exist
   if (!fs.existsSync(generatedDirPath)) {
     fs.mkdirSync(generatedDirPath);
   }
-  let added_lines,
-    removed_lines,
-    loops_add,
-    loops_remove,
-    conditions_add,
-    conditions_remove;
+
   if (local) {
-    exec(command, { cwd: req.body.file }, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`1) Erreur: ${error.message}`);
-        fs.writeFileSync(bytecodeOutputPath, error.message, "utf-8");
-        return;
-      }
-      if (stderr) {
-        console.error(`1) Erreur: ${stderr}`);
-        fs.writeFileSync(bytecodeOutputPath, stderr, "utf-8");
-        return;
-      }
-
-      // Supprimer la chaîne "@@" du texte obtenu depuis la commande 'git diff'
-      if (typeof stdout === "string" || stdout instanceof String) {
-        stdout = stdout.replace(/@@.*?@@/g, "");
-      }
-
-      fs.writeFileSync(bytecodeOutputPath, stdout, "utf-8");
-      console.log("1) Fichier généré avec succès");
-      const inputLines = stdout.split("\n");
-
-      const linesWithPlus = inputLines.filter(
-        (line) =>
-          line.startsWith("+") && !/^\+\+\+/.test(line) && !/^@@/.test(line)
-      );
-      const linesWithMinus = inputLines.filter(
-        (line) =>
-          line.startsWith("-") && !/^\-\-\-/.test(line) && !/^@@/.test(line)
-      );
-
-      fs.writeFileSync(
-        outputFilePathWithPlus,
-        linesWithPlus.join("\n"),
-        "utf-8"
-      );
-      fs.writeFileSync(
-        outputFilePathWithMinus,
-        linesWithMinus.join("\n"),
-        "utf-8"
-      );
-
-      added_lines =
-        (linesWithPlus.join("\n").match(/^\+.*/gm) || []).length -
-        (linesWithPlus.join("\n").match(/^\+\+\+.*/gm) || []).length;
-      removed_lines =
-        (linesWithMinus.join("\n").match(/^\-.*/gm) || []).length -
-        (linesWithMinus.join("\n").match(/^\-\-\-.*/gm) || []).length;
-      loops_add = (
-        linesWithPlus.join("\n").match(/(^|[^a-zA-Z0-9_])for\s*\(/g) || []
-      ).length;
-      loops_remove = (
-        linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])for\s*\(/g) || []
-      ).length;
-      conditions_add = (
-        linesWithPlus.join("\n").match(/(^|[^a-zA-Z0-9_])if\s*\(/g) || []
-      ).length;
-      conditions_remove = (
-        linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])if\s*\(/g) || []
-      ).length;
-      return {
-        added_lines,
-        removed_lines,
-        loops_add,
-        loops_remove,
-        conditions_add,
-        conditions_remove,
-      };
-    });
+    const a = generateFiles(
+      req,
+      command,
+      outputFilePathWithPlus,
+      outputFilePathWithMinus,
+      bytecodeOutputPath
+    );
+    return a;
   } else {
     const reponame = extractGitHubRepoInfo(req.body.linkRepo);
     fs.mkdir(path.join(__dirname, "./", `clones/${id}`), (err) => {
       if (err) throw err;
       console.log("1) Dossier créé avec succès");
     });
-    exec(
-      `git clone ${req.body.linkRepo}`,
-      {
-        cwd: path.join(__dirname, "./", `clones/${id}`),
-      },
-      (error, stdout) => {
-        if (error) {
-          console.error(`1) Error: ${error.message}`);
-          fs.writeFileSync(bytecodeOutputPath, error.message, "utf-8");
-          return;
-        }
-        exec(
-          command,
-          {
-            cwd: path.join(
-              __dirname,
-              `./`,
-              `clones/${id}/${reponame.repositoryName}`
-            ),
-            shell: "C:\\Windows\\System32\\cmd.exe",
-          },
-          (error, stdout, stderr) => {
-            if (error) {
-              console.error(`2) Erreur: ${error.message}`);
-              fs.writeFileSync(bytecodeOutputPath, error.message, "utf-8");
-              return;
-            }
-
-            if (typeof stdout === "string" || stdout instanceof String) {
-              stdout = stdout.replace(/@@.*?@@/g, "");
-            }
-
-            fs.writeFileSync(bytecodeOutputPath, stdout, "utf-8");
-            console.log("2) Fichier généré avec succès");
-            const inputLines = stdout.split("\n");
-
-            const linesWithPlus = inputLines.filter(
-              (line) =>
-                line.startsWith("+") &&
-                !/^\+\+\+/.test(line) &&
-                !/^@@/.test(line)
-            );
-            const linesWithMinus = inputLines.filter(
-              (line) =>
-                line.startsWith("-") &&
-                !/^\-\-\-/.test(line) &&
-                !/^@@/.test(line)
-            );
-
-            fs.writeFileSync(
-              outputFilePathWithPlus,
-              linesWithPlus.join("\n"),
-              "utf-8"
-            );
-            fs.writeFileSync(
-              outputFilePathWithMinus,
-              linesWithMinus.join("\n"),
-              "utf-8"
-            );
-
-            added_lines =
-              (linesWithPlus.join("\n").match(/^\+.*/gm) || []).length -
-              (linesWithPlus.join("\n").match(/^\+\+\+.*/gm) || []).length;
-            removed_lines =
-              (linesWithMinus.join("\n").match(/^\-.*/gm) || []).length -
-              (linesWithMinus.join("\n").match(/^\-\-\-.*/gm) || []).length;
-            loops_add = (
-              linesWithPlus.join("\n").match(/(^|[^a-zA-Z0-9_])for\s*\(/g) || []
-            ).length;
-            loops_remove = (
-              linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])for\s*\(/g) ||
-              []
-            ).length;
-            conditions_add = (
-              linesWithPlus.join("\n").match(/(^|[^a-zA-Z0-9_])if\s*\(/g) || []
-            ).length;
-            conditions_remove = (
-              linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])if\s*\(/g) || []
-            ).length;
-            return {
-              added_lines,
-              removed_lines,
-              loops_add,
-              loops_remove,
-              conditions_add,
-              conditions_remove,
-            };
-          }
-        );
-      }
+    const a = cloneAndGenerateDiff(
+      req,
+      id,
+      command,
+      reponame,
+      bytecodeOutputPath,
+      outputFilePathWithPlus,
+      outputFilePathWithMinus
     );
+    return a;
   }
 }
 

@@ -206,20 +206,27 @@ const executeTest = async (req, res) => {
         test.pourcentage.failed =
           calculatePercentage(results).falsePercentage.toFixed(2);
         majority === true ? (test.status = "Passed") : (test.status = "failed");
-        let diffStat;
+        let diffStat = {
+          added_lines: 0,
+          removed_lines: 0,
+          loops_add: 0,
+          loops_remove: 0,
+          conditions_add: 0,
+          conditions_remove: 0,
+        };
         if (req.body.file === undefined) {
           diffStat = await diff(req, testId, false);
         }
         if (req.body.linkRepo === undefined) {
           diffStat = await diff(req, testId, true);
         }
-        console.log(diffStat);
-        // ((test.added_lines = diffStat[added_lines])),
-        //   (test.removed_lines = diffStat[removed_lines]),
-        //   (test.loops_add = diffStat[loops_add]),
-        //   (test.loops_remove = diffStat[loops_remove]),
-        //   (test.conditions_add = diffStat[conditions_add]),
-        //   (test.conditions_remove = diffStat[conditions_remove]);
+
+        test.added_lines = diffStat.added_lines;
+        test.removed_lines = diffStat.removed_lines;
+        test.loops_add = diffStat.loops_add;
+        test.loops_remove = diffStat.loops_remove;
+        test.conditions_add = diffStat.conditions_add;
+        test.conditions_remove = diffStat.conditions_remove;
 
         await test
           .save()
