@@ -58,7 +58,12 @@ def generate_csv():
             memory = sum(detail["memory"] for detail in details) / len(details)
             success = test["status"] == "Passed"
             requestNumber = test["usersNumber"]
-            
+            added_lines = test["added_lines"]
+            removed_lines = test["removed_lines"]
+            loops_add = test["loops_add"]
+            loops_remove = test["loops_remove"]
+            conditions_add = test["conditions_add"]
+            conditions_remove = test["conditions_remove"]
             rapports = rapports_collection.aggregate([
                 {"$match": {"test": id_test}},
                 {"$group": {
@@ -78,9 +83,9 @@ def generate_csv():
             else:
                 bytes_, sentBytes, processTime = 0, 0, 0
             
-            changes = [(count_changes(rapport["addedCode"], rapport["removedCode"])) for rapport in rapports_collection.find({ "test": id_test })]
-            added_lines, removed_lines, loops_add, loops_remove = sum(change[0] for change in changes), sum(change[1] for change in changes), sum(change[2] for change in changes), sum(change[3] for change in changes)
-            conditions_add, conditions_remove = sum(change[4] for change in changes), sum(change[5] for change in changes)
+            # changes = [(count_changes(rapport["addedCode"], rapport["removedCode"])) for rapport in rapports_collection.find({ "test": id_test })]
+            # added_lines, removed_lines, loops_add, loops_remove = sum(change[0] for change in changes), sum(change[1] for change in changes), sum(change[2] for change in changes), sum(change[3] for change in changes)
+            # conditions_add, conditions_remove = sum(change[4] for change in changes), sum(change[5] for change in changes)
 
             writer.writerow([cpu, memory, requestNumber, bytes_, sentBytes, processTime, added_lines, removed_lines, loops_add, loops_remove, conditions_add, conditions_remove, success])
     
