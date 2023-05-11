@@ -63,7 +63,7 @@ const Page = ({ role }) => {
           Nouveau test
         </Button>
       )}
-      <Row>
+      <Row style={{marginBottom:"20px"}} >
         <Col span={5}>
           <Input
             placeholder="Nom du test"

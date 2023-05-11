@@ -13,10 +13,13 @@ import {
 import { toast } from "react-toastify";
 import { TestDetailModal, TestPercentageModal } from "../../components/Modals";
 import "./resultTestPage.css";
+import AuthVerifyService from "../../services/AuthServices/AuthVerifyService";
+import ProfileServices from "../../services/ProfileServices";
 
 const Page = ({ role }) => {
   const [modalPercentageVisible, setModalPercentageVisible] = useState(false);
   const [modalDetailVisible, setModalDetailVisible] = useState(false);
+  const [verifyUserTest, setVerifyUserTest] = useState(false);
   const [data, setData] = useState([]);
   const [detail, setDetail] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -52,7 +55,17 @@ const Page = ({ role }) => {
       .catch((error) => {
         console.error(error);
       });
-  }, [id]);
+    ProfileServices.getInfos()
+      .then((response) => {
+        response._id === data.createdBy
+          ? setVerifyUserTest(true)
+          : setVerifyUserTest(false);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [id, verifyUserTest, data.createdBy]);
+  const isAuthVerifyValid = AuthVerifyService.authVerify() === 1;
 
   if (!detail) {
     return <Empty tip="Loading" size="large" />;
@@ -94,15 +107,23 @@ const Page = ({ role }) => {
           >
             Voir le pourcentage
           </Button>
-
           <Button
+            disabled={isAuthVerifyValid || !verifyUserTest}
             size="large"
             type="primary"
-            style={{
-              float: "right",
-              backgroundColor: "#FFA07A",
-              color: "white",
-            }}
+            style={
+              !isAuthVerifyValid || verifyUserTest
+                ? {
+                    float: "right",
+                    backgroundColor: "#ffa07a",
+                    color: "white",
+                  }
+                : {
+                    float: "right",
+                    backgroundColor: "#A2AF9F",
+                    color: "white",
+                  }
+            }
             className={loading ? null : "button"}
             shape="round"
             htmlType="submit"
