@@ -2,6 +2,7 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import ProfilePage from "../pages/profilePage/profilePage";
 import DashbaordPage from "../pages/dashboardPage/dashboardPage";
 import HistoriquePage from "../pages/historiquePage/historiquePage";
+import ResultTestPage from "../pages/resultTestPage/resultTestPage";
 
 export const SimpleUserRouters = () => {
   return (
@@ -14,6 +15,9 @@ export const SimpleUserRouters = () => {
       </Route>
       <Route exact path="/simpleUser/profile">
         <ProfilePage role="simpleUser" />
+      </Route>
+      <Route exact path="/simpleUser/test/:id">
+        <ResultTestPage role="simpleUser" />
       </Route>
       <Route exact path="*">
         <Redirect to="/simpleUser/accueil" />
