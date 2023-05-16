@@ -104,7 +104,7 @@ export const EmailModal = ({ visible, onCancel }) => {
         </Form.Item>
         <Form.Item>
           <Button className="my-button" htmlType="Envoyer">
-            {loading ? <Spin /> : "MAJ email"}
+            {loading ? <Spin /> : "Modifier"}
           </Button>
         </Form.Item>
       </Form>
@@ -175,7 +175,7 @@ export const InfoModal = ({ visible, onCancel, info }) => {
 
         <Form.Item>
           <Button htmlType="Envoyer" className="my-button">
-            {loading ? <Spin /> : "MAJ Profil"}
+            {loading ? <Spin /> : "Modifier"}
           </Button>
         </Form.Item>
       </Form>
@@ -276,7 +276,7 @@ export const PasswordModal = ({ visible, onCancel }) => {
         </Form.Item>
         <Form.Item>
           <Button htmlType="submit" className="my-button">
-            {loading ? <Spin /> : "MAJ du mot de passe"}
+            {loading ? <Spin /> : "Modifier"}
           </Button>
         </Form.Item>
       </Form>
@@ -405,11 +405,11 @@ export const AddUserModal = ({ visible, onCancel }) => {
             options={[
               {
                 value: "tester",
-                label: "Tester",
+                label: "Testeur",
               },
               {
                 value: "simpleUser",
-                label: "Simple User",
+                label: "User",
               },
             ]}
           />
@@ -1161,6 +1161,20 @@ export const TestDetailModal = ({ visible, onCancel, detailArray }) => {
         bordered
         size="small"
       />
+    </Modal>
+  );
+};
+
+export const PredictionModal = ({ visible, onCancel }) => {
+  return (
+    <Modal open={visible} onCancel={onCancel} footer={null} width={1000}>
+      <div>handleCancelPredict cnwqio vqvnqiovn</div>
+      <Button
+        style={{ backgroundColor: "#2596be", color: "white" }}
+        onClick={onCancel}
+      >
+        Fermer
+      </Button>
     </Modal>
   );
 };

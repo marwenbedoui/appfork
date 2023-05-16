@@ -11,6 +11,7 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import ProfileServices from "../services/ProfileServices";
 import base64js from "base64-js";
+import "./styles/ProfileComponent.css";
 
 const { Content, Footer, Sider } = Layout;
 
