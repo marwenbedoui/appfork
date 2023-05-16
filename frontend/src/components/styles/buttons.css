@@ -26,3 +26,36 @@
     background-position: left;
   }
 }
+
+
+.profile-button {
+  background-color: #00AAA9 ;
+  border: none;
+  color: white;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: background-color 0.5s ease;
+}
+
+.profile-button:hover {
+  background-color: #845ec2;
+  background-size: 200%;
+  background-position: left;
+  color: white!important;
+  animation: gradient-animation 2s linear infinite;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  transform: translateY(-5px);
+  transition: all 0.3s ease;
+}
+
+@keyframes gradient-animation {
+  0% {
+    background-position: left;
+  }
+  50% {
+    background-position: right;
+  }
+  100% {
+    background-position: left;
+  }
+}

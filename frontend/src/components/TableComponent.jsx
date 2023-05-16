@@ -133,10 +133,13 @@ const TableComponent = ({ data, isAdminPage, role }) => {
             let color = "geekblue";
             if (role === "admin") {
               color = "volcano";
+              return <Tag color={color}>ADMIN</Tag>;
             } else if (role === "tester") {
               color = "green";
+              return <Tag color={color}>TESTEUR</Tag>;
             }
-            return <Tag color={color}>{role.toUpperCase()}</Tag>;
+            return <Tag color={color}>USER</Tag>;
+            
           },
         },
         {
@@ -169,8 +172,8 @@ const TableComponent = ({ data, isAdminPage, role }) => {
                     title="Supprimer l'utilisateur"
                     description="Êtes-vous sûr de vouloir supprimer cet utilisateur ?"
                     onConfirm={() => AdminServices.deleteUserById(_id)}
-                    okText="Yes"
-                    cancelText="No"
+                    okText="Oui"
+                    cancelText="Non"
                   >
                     <Button type="primary" danger>
                       Supprimer
