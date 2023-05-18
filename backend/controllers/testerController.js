@@ -11,11 +11,11 @@ const { getTemplate } = require("../test/template/getTemplate");
 const { postTemplate } = require("../test/template/postTemplate");
 const pidusage = require("pidusage");
 const moment = require("moment");
+const request = require("request");
 const {
   calculatePercentage,
   calculateMajority,
   diff,
-  removeFolderIfExists,
 } = require("../functions");
 const si = require("systeminformation");
 
@@ -347,6 +347,41 @@ const getTestById = async (req, res) => {
     });
 };
 
+
+const prePredictTest = async (req, res) => {
+  let diffStat = {};
+
+  if (req.body.file === undefined) {
+    diffStat = await diff(req, false);
+  } else if (req.body.linkRepo === undefined) {
+    diffStat = await diff(req, true);
+  }
+
+  const requestData = {
+    requestNumber: req.body.usersNumber,
+    ...diffStat,
+  };
+
+  const options = {
+    url: "http://127.0.0.1:5001/predict",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(requestData),
+  };
+
+  request(options, (error, response, body) => {
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    const data = JSON.parse(body);
+    console.log(data);
+  });
+};
+
 //exports
 exports.executeTest = executeTest;
 exports.getAllTests = getAllTests;
@@ -354,3 +389,4 @@ exports.AllTestsState = AllTestsState;
 exports.TestsPerUser = TestsPerUser;
 exports.getTestById = getTestById;
 exports.getAllTestsByTester = getAllTestsByTester;
+exports.prePredictTest = prePredictTest;
