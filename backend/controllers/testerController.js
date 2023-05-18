@@ -15,6 +15,7 @@ const {
   calculatePercentage,
   calculateMajority,
   diff,
+  removeFolderIfExists,
 } = require("../functions");
 const si = require("systeminformation");
 
@@ -49,7 +50,6 @@ const executeTest = async (req, res) => {
   const savedTest = await test.save();
   const testId = savedTest._id;
   const testFileName = `test_${testId}.jmx`;
-
   const jmxOutputPath = path.join(
     __dirname,
     "../",
