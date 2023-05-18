@@ -168,6 +168,17 @@ const getTestById = async (id) => {
   }
 };
 
+const predictTest = async (data,req) => {
+
+  const result = await axios.post(API_URL, req, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return result.data;
+};
+
 const TesterService = {
   executerTest,
   fetchAllTests,
@@ -175,6 +186,7 @@ const TesterService = {
   fetchTestStatePerUser,
   fetchTestsPerUser,
   getTestById,
+  predictTest,
 };
 
 export default TesterService;
