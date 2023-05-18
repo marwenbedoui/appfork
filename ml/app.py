@@ -1,92 +1,44 @@
 import os
-from flask import Flask, Response
+from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from pymongo import MongoClient
-import csv
-from functions import count_changes
+from functions import datasetGeneration, prediction
+import json
 
 app = Flask(__name__)
 load_dotenv()
-
-# Enable debug mode
-# Auto reload when saving
 app.debug = True
 
-# create a MongoClient instance
 client = MongoClient(
     os.environ.get("MY_MONGO_CLIENT"))
 
-# select the database
 db = client[os.environ.get("MY_MONGO_DB")]
 test_collection = db["tests"]
 rapports_collection = db["rapports"]
 
-
-@app.route('/')
-def hello():
-    return 'Hello,World'
-
-
-@app.route('/tests', methods=['GET'])
-def get_tests():
-    # query the collection and retrieve all documents
-    tests = test_collection.find()
-
-    # create a list of test dictionaries
-    test_list = []
-    for test in tests:
-        test_dict = {"testName": test["testName"], "port": test["port"],
-                     "url": test["url"], "method": test["method"], "usersNumber": test["usersNumber"]}
-        test_list.append(test_dict)
-
-    # return the list of tests as a JSON response
-    return {"tests": test_list}
-
-@app.route('/rapports/csv')
+@app.route('/rapports/csv', methods=['GET'])
 def generate_csv():
-    tests = test_collection.find()
-    headers = ['cpu', 'memory','request number','bytes', 'sentBytes',  'processTime', 'added_lines', 'removed_lines', 'loops_add', 'loops_remove', 'conditions_add', 'conditions_remove', 'success']
-    
-    with open('rapports.csv', 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(headers)
-        
-        for test in tests:
-            id_test = test['_id']
-            details = test["detail"]
-            cpu = sum(detail["cpu"] for detail in details) / len(details)
-            memory = sum(detail["memory"] for detail in details) / len(details)
-            success = test["status"] == "Passed"
-            requestNumber = test["usersNumber"]
-            added_lines = test["added_lines"]
-            removed_lines = test["removed_lines"]
-            loops_add = test["loops_add"]
-            loops_remove = test["loops_remove"]
-            conditions_add = test["conditions_add"]
-            conditions_remove = test["conditions_remove"]
-            rapports = rapports_collection.aggregate([
-                {"$match": {"test": id_test}},
-                {"$group": {
-                    "_id": None,
-                    "bytes": {"$sum": "$bytes"},
-                    "sentBytes": {"$sum": "$sentBytes"},
-                    "processTime": {"$sum": "$processTime"},
-                    "count": {"$sum": 1}
-                }}
-            ])
-            rapports = list(rapports)
-            if len(rapports) > 0:
-                rapports = rapports[0]
-                bytes_ = rapports["bytes"] / rapports["count"]
-                sentBytes = rapports["sentBytes"] / rapports["count"]
-                processTime = rapports["processTime"] / rapports["count"]
-            else:
-                bytes_, sentBytes, processTime = 0, 0, 0
-            
-            writer.writerow([cpu, memory, requestNumber, bytes_, sentBytes, processTime, added_lines, removed_lines, loops_add, loops_remove, conditions_add, conditions_remove, success])
-    
-    return 'Le fichier CSV a été généré.'
+    datasetGeneration(test_collection)            
+    return '<center><h1>Le fichier CSV est généré avec succès</h1><center>'
 
+@app.route('/predict', methods=['GET'])
+def statusPredict():
+    requestNumber = request.json.get('requestNumber')
+    added_lines = request.json.get('added_lines')
+    removed_lines = request.json.get('removed_lines')
+    loops_add = request.json.get('loops_add')
+    loops_remove = request.json.get('loops_remove')
+    conditions_add = request.json.get('conditions_add')
+    conditions_remove = request.json.get('conditions_remove')
+    
+    pred = prediction(requestNumber, added_lines, removed_lines, loops_add, loops_remove, conditions_add, conditions_remove)
+    bool_python = bool(pred)
+    json_data = json.dumps(bool_python)
+    
+    donnees = {
+        'prediction':json_data,
+    }
+    return jsonify(donnees)
 
 if __name__ == '__main__':
     app.run(host="localhost", port=os.environ.get("FLASK_RUN_PORT"))
