@@ -169,7 +169,6 @@ async function cloneAndGenerateDiff(
       linesWithMinus.join("\n"),
       "utf-8"
     );
-
     const added_lines =
       (linesWithPlus.join("\n").match(/^\+.*/gm) || []).length -
       (linesWithPlus.join("\n").match(/^\+\+\+.*/gm) || []).length;
@@ -192,6 +191,7 @@ async function cloneAndGenerateDiff(
     const conditions_remove = (
       linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])if\s*\(/g) || []
     ).length;
+    removeFolderIfExists(path.join(__dirname, "./", `/clones/${id}`));
     return {
       added_lines,
       removed_lines,
@@ -255,6 +255,27 @@ async function diff(req, id, local) {
   }
 }
 
+function removeFolderIfExists(folderPath) {
+  if (fs.existsSync(folderPath)) {
+    const files = fs.readdirSync(folderPath);
+
+    files.forEach((file) => {
+      const filePath = path.join(folderPath, file);
+      if (fs.lstatSync(filePath).isDirectory()) {
+        removeFolderIfExists(filePath);
+      } else {
+        fs.unlinkSync(filePath);
+      }
+    });
+
+    fs.rmdirSync(folderPath);
+    console.log(`Folder has been removed.`);
+  } else {
+    console.log(`Folder "${folderPath}" does not exist.`);
+  }
+}
+
 exports.calculateMajority = calculateMajority;
 exports.calculatePercentage = calculatePercentage;
 exports.diff = diff;
+exports.removeFolderIfExists = removeFolderIfExists;

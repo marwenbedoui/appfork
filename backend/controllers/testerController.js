@@ -15,6 +15,7 @@ const {
   calculatePercentage,
   calculateMajority,
   diff,
+  removeFolderIfExists,
 } = require("../functions");
 const si = require("systeminformation");
 
@@ -49,7 +50,6 @@ const executeTest = async (req, res) => {
   const savedTest = await test.save();
   const testId = savedTest._id;
   const testFileName = `test_${testId}.jmx`;
-
   const jmxOutputPath = path.join(
     __dirname,
     "../",
@@ -281,16 +281,11 @@ const getAllTestsByTester = (req, res) => {
     });
 };
 
-const TestStatePerUser = (req, res) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-  const currentUser = jwt.verify(token, process.env.TOKEN_KEY);
-  Test.find({ createdBy: currentUser.userId }).then((total) => {
-    Test.find({ createdBy: currentUser.userId, status: "Passed" })
+const AllTestsState = (req, res) => {
+  Test.find().then((total) => {
+    Test.find({ status: "Passed" })
       .then((passed) => {
-        res.set("Access-Control-Expose-Headers", "X-Total-Count");
         Test.find({
-          createdBy: currentUser.userId,
           status: "failed",
         }).then((failed) => {
           res.status(200).json({
@@ -353,7 +348,7 @@ const getTestById = async (req, res) => {
 //exports
 exports.executeTest = executeTest;
 exports.getAllTests = getAllTests;
-exports.TestStatePerUser = TestStatePerUser;
+exports.AllTestsState = AllTestsState;
 exports.TestsPerUser = TestsPerUser;
 exports.getTestById = getTestById;
 exports.getAllTestsByTester = getAllTestsByTester;
