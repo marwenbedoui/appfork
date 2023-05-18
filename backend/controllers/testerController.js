@@ -241,22 +241,24 @@ const executeTest = async (req, res) => {
   });
 };
 
-const getAllTests = (req, res) => {
-  Test.find();
-  var total = Test.count();
-  Test.find()
-    .populate("createdBy")
-    .exec()
-    .then((data) => {
-      res.set("Access-Control-Expose-Headers", "X-Total-Count");
-      res.set("X-Total-Count", total);
-      res.status(200).json(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Error",
-      });
+const getAllTests = async (req, res) => {
+  try {
+    const total = await Test.countDocuments();
+    const data = await Test.find(
+      {},
+      { testName: 1, createdAt: 1, createdBy: 1, status: 1 }
+    )
+      .populate("createdBy", "lastname firstname")
+      .exec();
+
+    res.set("Access-Control-Expose-Headers", "X-Total-Count");
+    res.set("X-Total-Count", total);
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || "Error",
     });
+  }
 };
 
 const getAllTestsByTester = (req, res) => {

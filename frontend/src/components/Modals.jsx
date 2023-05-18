@@ -23,13 +23,14 @@ import TesterService from "../services/TesterServices/TesterService";
 import { CircularChart } from "./ChartsComponent";
 import AuthVerifyService from "../services/AuthServices/AuthVerifyService";
 import {
-  // FileAddOutlined,
-  // DeleteTwoTone,
   ArrowLeftOutlined,
   ArrowRightOutlined,
   CheckOutlined,
   GithubOutlined,
   LaptopOutlined,
+  FolderOpenOutlined,
+  LinkOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import "./styles/buttons.css";
 const { Step } = Steps;
@@ -427,13 +428,14 @@ export const AddUserModal = ({ visible, onCancel }) => {
   );
 };
 
-export const AddTestModal = ({
+export const AddTestOrPredictionModal = ({
   visible,
   onCancel,
   step,
   final,
   second,
   first,
+  testUseCase,
 }) => {
   const [form] = Form.useForm();
 
@@ -585,115 +587,119 @@ export const AddTestModal = ({
           </>
         );
       case 2:
-        return (
-          <Form
-            layout="vertical"
-            enctype="multipart/form-data"
-            form={form}
-            onFinish={onFinish}
-            labelCol={{
-              span: 8,
-            }}
-            wrapperCol={{
-              span: 16,
-            }}
-            style={{
-              maxWidth: 1200,
-              marginTop: 50,
-            }}
-            initialValues={{
-              remember: true,
-            }}
-            autoComplete="off"
-            onValuesChange={(changedValues) => {
-              if (changedValues.disablePort) {
-                form.setFieldsValue({ port: 0 });
-              }
-            }}
-          >
-            <Row>
-              <Col span={10} offset={2}>
-                <Form.Item
-                  label="Nom du test"
-                  name="testName"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Veuillez saisir le nom du test !",
-                    },
-                  ]}
-                >
-                  <Input placeholder="Java test" type="text" name="testName" />
-                </Form.Item>
-                {githubClick ? (
+        if (testUseCase) {
+          return (
+            <Form
+              layout="vertical"
+              form={form}
+              onFinish={onFinish}
+              labelCol={{
+                span: 8,
+              }}
+              wrapperCol={{
+                span: 16,
+              }}
+              style={{
+                maxWidth: 1200,
+                marginTop: 50,
+              }}
+              initialValues={{
+                remember: true,
+              }}
+              autoComplete="off"
+              onValuesChange={(changedValues) => {
+                if (changedValues.disablePort) {
+                  form.setFieldsValue({ port: 0 });
+                }
+              }}
+            >
+              <Row>
+                <Col span={10} offset={2}>
                   <Form.Item
-                    label="Lien du repo github"
-                    name="linkRepo"
+                    label="Nom du test"
+                    name="testName"
                     rules={[
                       {
                         required: true,
-                        message:
-                          "Veuillez saisir le lien du projet dans github !",
+                        message: "Veuillez saisir le nom du test !",
                       },
                     ]}
                   >
                     <Input
+                      placeholder="Java test"
                       type="text"
+                      name="testName"
+                    />
+                  </Form.Item>
+                  {githubClick ? (
+                    <Form.Item
+                      label="Lien du repo github"
                       name="linkRepo"
-                      placeholder="github.com/abc.def"
-                    />
-                  </Form.Item>
-                ) : (
+                      rules={[
+                        {
+                          required: true,
+                          message:
+                            "Veuillez saisir le lien du projet dans github !",
+                        },
+                      ]}
+                    >
+                      <Input
+                        type="text"
+                        name="linkRepo"
+                        placeholder="github.com/abc.def"
+                      />
+                    </Form.Item>
+                  ) : (
+                    <Form.Item
+                      label="Chemin du projet"
+                      name="file"
+                      rules={[
+                        {
+                          required: true,
+                          message:
+                            "Veuillez saisir le lien du projet dans votre ordinateur !",
+                        },
+                      ]}
+                    >
+                      <Input
+                        type="text"
+                        name="file"
+                        placeholder="c://bureau/java-proj"
+                      />
+                    </Form.Item>
+                  )}
                   <Form.Item
-                    label="Chemin du projet"
-                    name="file"
+                    label="Protocole"
+                    name="protocol"
                     rules={[
                       {
                         required: true,
-                        message:
-                          "Veuillez saisir le lien du projet dans votre ordinateur !",
+                        message: "Veuillez saisir le protocol du test !",
                       },
                     ]}
                   >
-                    <Input
-                      type="text"
-                      name="file"
-                      placeholder="c://bureau/java-proj"
+                    <Select
+                      defaultValue={""}
+                      placeholder="http / https / .."
+                      style={{ width: "100%" }}
+                      name="protocol"
+                      options={[
+                        { value: "http", label: "HTTP" },
+                        { value: "https", label: "HTTPS" },
+                      ]}
                     />
                   </Form.Item>
-                )}
-                <Form.Item
-                  label="Protocole"
-                  name="protocol"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Veuillez saisir le protocol du test !",
-                    },
-                  ]}
-                >
-                  <Select
-                    defaultValue={""}
-                    placeholder="http / https / .."
-                    style={{ width: "100%" }}
-                    name="protocol"
-                    options={[
-                      { value: "http", label: "HTTP" },
-                      { value: "https", label: "HTTPS" },
+                  <Form.Item
+                    label="URL"
+                    name="url"
+                    rules={[
+                      { required: true, message: "Veuillez saisir l'URL !" },
                     ]}
-                  />
-                </Form.Item>
-                <Form.Item
-                  label="URL"
-                  name="url"
-                  rules={[
-                    { required: true, message: "Veuillez saisir l'URL !" },
-                  ]}
-                >
-                  <Input placeholder="google.com" type="text" name="url" />
-                </Form.Item>
+                  >
+                    <Input placeholder="google.com" type="text" name="url" />
+                  </Form.Item>
 
-                {/* <Form.Item
+                  {/* <Form.Item
                   label="Upload bytecode"
                   name="files"
                   rules={[
@@ -797,129 +803,247 @@ export const AddTestModal = ({
                     </div>
                   </div>
                 </Form.Item> */}
-              </Col>
-              <Col span={11} offset={1}>
-                <Form.Item label="Port" name="port">
-                  <Row>
-                    <Col span={8}>
-                      <Form.Item
-                        name="disablePort"
-                        valuePropName="checked"
-                        noStyle
-                      >
-                        <Checkbox>No Port</Checkbox>
-                      </Form.Item>
-                    </Col>
-                    <Col span={16}>
-                      <Input
-                        placeholder="8888"
-                        defaultValue={"0"}
-                        type="text"
-                        name="port"
-                        disabled={form.getFieldValue("disablePort")}
-                      />
-                    </Col>
-                  </Row>
-                </Form.Item>
-                <Form.Item
-                  label="Chemin"
-                  name="path"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Veuillez saisir le chemin !",
-                    },
-                  ]}
-                >
-                  <Input type="text" name="path" placeholder="/about" />
-                </Form.Item>
-
-                <Form.Item
-                  label="Nombre&nbsp;d'utilisateurs"
-                  name="usersNumber"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Veuillez saisir le nombre d'utilisateurs !",
-                    },
-                    ({ getFieldValue }) => ({
-                      validator(_, value) {
-                        if (value > 0) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(
-                          new Error("Ce champs doit etre supérieur à zero")
-                        );
-                      },
-                    }),
-                  ]}
-                >
-                  <Input name="usersNumber" />
-                </Form.Item>
-                <Form.Item
-                  label="Méthode"
-                  name="method"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Veuillez saisir la méthode !",
-                    },
-                  ]}
-                >
-                  <Select
-                    defaultValue={""}
-                    placeholder="POST GET ..."
-                    style={{ width: "100%" }}
-                    name="method"
-                    onChange={handleMethodChange}
-                    options={[
-                      { value: "get", label: "GET" },
-                      { value: "post", label: "POST" },
-                    ]}
-                  />
-                </Form.Item>
-                {method === "post" && (
+                </Col>
+                <Col span={11} offset={1}>
+                  <Form.Item label="Port" name="port">
+                    <Row>
+                      <Col span={8}>
+                        <Form.Item
+                          name="disablePort"
+                          valuePropName="checked"
+                          noStyle
+                        >
+                          <Checkbox>No Port</Checkbox>
+                        </Form.Item>
+                      </Col>
+                      <Col span={16}>
+                        <Input
+                          placeholder="8888"
+                          defaultValue={"0"}
+                          type="text"
+                          name="port"
+                          disabled={form.getFieldValue("disablePort")}
+                        />
+                      </Col>
+                    </Row>
+                  </Form.Item>
                   <Form.Item
-                    label="Le corps de la requête"
-                    name="data"
+                    label="Chemin"
+                    name="path"
                     rules={[
                       {
                         required: true,
-                        message: "Veuillez saisir le corps en format JSON !",
+                        message: "Veuillez saisir le chemin !",
                       },
                     ]}
                   >
-                    <Input.TextArea
-                      placeholder="Request body in JSON format"
-                      name="data"
-                      autoSize={{ minRows: 3, maxRows: 12 }}
+                    <Input type="text" name="path" placeholder="/about" />
+                  </Form.Item>
+
+                  <Form.Item
+                    label="Nombre&nbsp;d'utilisateurs"
+                    name="usersNumber"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Veuillez saisir le nombre d'utilisateurs !",
+                      },
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          if (value > 0) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(
+                            new Error("Ce champs doit etre supérieur à zero")
+                          );
+                        },
+                      }),
+                    ]}
+                  >
+                    <Input name="usersNumber" />
+                  </Form.Item>
+                  <Form.Item
+                    label="Méthode"
+                    name="method"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Veuillez saisir la méthode !",
+                      },
+                    ]}
+                  >
+                    <Select
+                      defaultValue={""}
+                      placeholder="POST GET ..."
+                      style={{ width: "100%" }}
+                      name="method"
+                      onChange={handleMethodChange}
+                      options={[
+                        { value: "get", label: "GET" },
+                        { value: "post", label: "POST" },
+                      ]}
                     />
                   </Form.Item>
-                )}
-                <Form.Item>
-                  <Space>
-                    <Button
-                      onClick={() => {
-                        first();
-                      }}
-                      style={{ backgroundColor: "#00415A", color: "white" }}
+                  {method === "post" && (
+                    <Form.Item
+                      label="Le corps de la requête"
+                      name="data"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Veuillez saisir le corps en format JSON !",
+                        },
+                      ]}
                     >
-                      <ArrowLeftOutlined /> Retour
-                    </Button>
-                    <Button
-                      type="primary"
-                      loading={loading}
-                      htmlType="submit"
-                      style={{ backgroundColor: "#00A482", color: "white" }}
+                      <Input.TextArea
+                        placeholder="Request body in JSON format"
+                        name="data"
+                        autoSize={{ minRows: 3, maxRows: 12 }}
+                      />
+                    </Form.Item>
+                  )}
+                  <Form.Item>
+                    <Space>
+                      <Button
+                        onClick={() => {
+                          first();
+                        }}
+                        style={{ backgroundColor: "#00415A", color: "white" }}
+                      >
+                        <ArrowLeftOutlined /> Retour
+                      </Button>
+                      <Button
+                        type="primary"
+                        loading={loading}
+                        htmlType="submit"
+                        style={{ backgroundColor: "#00A482", color: "white" }}
+                      >
+                        {loading ? null : "Executer le test"}
+                      </Button>
+                    </Space>
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Form>
+          );
+        } else {
+          return (
+            <Form
+              layout="vertical"
+              enctype="multipart/form-data"
+              form={form}
+              onFinish={onPredict}
+              labelCol={{
+                span: 8,
+              }}
+              wrapperCol={{
+                span: 16,
+              }}
+              style={{
+                maxWidth: 1000,
+                marginTop: 50,
+              }}
+              initialValues={{
+                remember: true,
+              }}
+              autoComplete="off"
+            >
+              <Row style={{ marginLeft: "100px" }}>
+                <Col span={24}>
+                  {githubClick ? (
+                    <Form.Item
+                      label="Lien du repo github"
+                      name="linkRepo"
+                      labelCol={{ span: 24 }}
+                      wrapperCol={{ span: 16 }}
+                      rules={[
+                        {
+                          required: true,
+                          message:
+                            "Veuillez saisir le lien du projet dans github!",
+                        },
+                      ]}
                     >
-                      {loading ? null : "Executer le test"}
-                    </Button>
-                  </Space>
-                </Form.Item>
-              </Col>
-            </Row>
-          </Form>
-        );
+                      <Input
+                        prefix={<LinkOutlined />}
+                        type="text"
+                        name="linkRepo"
+                        placeholder="github.com/abc.def"
+                      />
+                    </Form.Item>
+                  ) : (
+                    <Form.Item
+                      label="Chemin du projet"
+                      name="file"
+                      labelCol={{ span: 24 }}
+                      wrapperCol={{ span: 16 }}
+                      rules={[
+                        {
+                          required: true,
+                          message:
+                            "Veuillez saisir le lien du projet dans votre ordinateur!",
+                        },
+                      ]}
+                    >
+                      <Input
+                        prefix={<FolderOpenOutlined />}
+                        type="text"
+                        name="file"
+                        placeholder="c://bureau/java-proj"
+                      />
+                    </Form.Item>
+                  )}
+                </Col>
+                <Col span={24}>
+                  <Form.Item
+                    label="Nombre&nbsp;d'utilisateurs"
+                    name="usersNumber"
+                    labelCol={{ span: 24 }}
+                    wrapperCol={{ span: 16 }}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Veuillez saisir le nombre d'utilisateurs!",
+                      },
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          if (value > 0) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(
+                            new Error("Ce champ doit être supérieur à zéro")
+                          );
+                        },
+                      }),
+                    ]}
+                  >
+                    <Input prefix={<UserOutlined />} name="usersNumber" />
+                  </Form.Item>
+                  <Form.Item wrapperCol={{ span: 24 }}>
+                    <Space>
+                      <Button
+                        onClick={() => {
+                          first();
+                        }}
+                        style={{ backgroundColor: "#00415A", color: "white" }}
+                      >
+                        <ArrowLeftOutlined /> Retour
+                      </Button>
+                      <Button
+                        type="primary"
+                        loading={loading}
+                        htmlType="submit"
+                        style={{ backgroundColor: "#00A482", color: "white" }}
+                      >
+                        {loading ? null : "Prédiction"}
+                      </Button>
+                    </Space>
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Form>
+          );
+        }
       default:
         return null;
     }
@@ -940,6 +1064,25 @@ export const AddTestModal = ({
       .catch(() => {
         toast.danger("Test echoué");
       });
+    setLoading(false);
+    onCancel();
+  };
+  const onPredict = async (values) => {
+    setLoading(true);
+    //const role = AuthVerifyService.userRole();
+    //console.log(values);
+    //await TesterService.executerTest(values, false, files)
+    // await TesterService.executerTest(values, false)
+    //   .then((res) => {
+    //     if (values.data) onCancel();
+    //     toast.success("Test effectué avec succès");
+    //     onCancel();
+    //     window.location.href = `/${role}/test/${res._id}`;
+    //   })
+    //   .catch(() => {
+    //     toast.danger("Test echoué");
+    //   });
+    console.log(values);
     setLoading(false);
     onCancel();
   };
@@ -995,7 +1138,7 @@ export const AddTestModal = ({
       <Modal
         closable={false}
         maskClosable={false}
-        width={1000}
+        width={testUseCase ? 1000 : 500}
         open={visible}
         onCancel={onCancel}
         style={{
@@ -1004,7 +1147,9 @@ export const AddTestModal = ({
         }}
         title={
           <div style={{ textAlign: "center", fontSize: "24px" }}>
-            Formulaire pour un nouveau test
+            {testUseCase
+              ? "Formulaire pour un nouveau test"
+              : "Formulaire pour prédire résultat d'un test"}
           </div>
         }
         footer={null}
@@ -1161,20 +1306,6 @@ export const TestDetailModal = ({ visible, onCancel, detailArray }) => {
         bordered
         size="small"
       />
-    </Modal>
-  );
-};
-
-export const PredictionModal = ({ visible, onCancel }) => {
-  return (
-    <Modal open={visible} onCancel={onCancel} footer={null} width={1000}>
-      <div>handleCancelPredict cnwqio vqvnqiovn</div>
-      <Button
-        style={{ backgroundColor: "#2596be", color: "white" }}
-        onClick={onCancel}
-      >
-        Fermer
-      </Button>
     </Modal>
   );
 };
