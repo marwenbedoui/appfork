@@ -9,14 +9,9 @@ import {
   PercentageOutlined,
   RedoOutlined,
   EyeOutlined,
-  FallOutlined,
 } from "@ant-design/icons";
 import { toast } from "react-toastify";
-import {
-  PredictionModal,
-  TestDetailModal,
-  TestPercentageModal,
-} from "../../components/Modals";
+import { TestDetailModal, TestPercentageModal } from "../../components/Modals";
 import "./resultTestPage.css";
 import AuthVerifyService from "../../services/AuthServices/AuthVerifyService";
 import ProfileServices from "../../services/ProfileServices";
@@ -24,7 +19,6 @@ import ProfileServices from "../../services/ProfileServices";
 const Page = ({ role }) => {
   const [modalPercentageVisible, setModalPercentageVisible] = useState(false);
   const [modalDetailVisible, setModalDetailVisible] = useState(false);
-  const [modalPredictionVisible, setModalPredictionVisible] = useState(false);
   const [verifyUserTest, setVerifyUserTest] = useState(false);
   const [data, setData] = useState([]);
   const [detail, setDetail] = useState([]);
@@ -37,9 +31,6 @@ const Page = ({ role }) => {
   };
   const handleCancelDetail = () => {
     setModalDetailVisible(false);
-  };
-  const handleCancelPredict = () => {
-    setModalPredictionVisible(false);
   };
 
   const executeTest = async (data) => {
@@ -106,7 +97,7 @@ const Page = ({ role }) => {
             type="primary"
             style={{
               float: "right",
-              backgroundColor: "#51BA8E",
+              backgroundColor: "#4682B4",
               color: "white",
             }}
             className="button"
@@ -115,21 +106,6 @@ const Page = ({ role }) => {
             onClick={() => setModalPercentageVisible(true)}
           >
             Voir le pourcentage
-          </Button>
-          <Button
-            size="large"
-            type="primary"
-            style={{
-              float: "right",
-              backgroundColor: "#4682B4",
-              color: "white",
-            }}
-            className="button"
-            icon={<FallOutlined />}
-            shape="round"
-            onClick={() => setModalPredictionVisible(true)}
-          >
-            Prédiction
           </Button>
           <Button
             disabled={isAuthVerifyValid || !verifyUserTest}
@@ -162,10 +138,6 @@ const Page = ({ role }) => {
             onCancel={handleCancelPercentage}
             visible={modalPercentageVisible}
             percentage={data.pourcentage}
-          />
-          <PredictionModal
-            onCancel={handleCancelPredict}
-            visible={modalPredictionVisible}
           />
           <TestDetailModal
             onCancel={handleCancelDetail}

@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import TableComponent from "../../components/TableComponent";
 import TalanLogo from "../../assets/talan-logo.png";
-import { Button, Col, Input, Row, Select } from "antd";
+import { Button, Col, Input, Row, Select, Space } from "antd";
 import "./historiquePage.css";
-import { AddTestModal } from "../../components/Modals";
+import { AddTestOrPredictionModal } from "../../components/Modals";
 import TesterService from "../../services/TesterServices/TesterService";
 import LayoutComponent from "../../components/LayoutComponent";
-import { FileAddOutlined } from "@ant-design/icons";
+import { FileAddOutlined, RadarChartOutlined } from "@ant-design/icons";
 import ProfileServices from "../../services/ProfileServices";
 
 const Page = ({ role }) => {
   const [modalTest, setModalTest] = useState(false);
+  const [testUseCase, setTestUseCase] = useState(false);
   const [statut, setStatut] = useState("");
   const [name, setName] = useState("");
   const [owner, setOwner] = useState("");
@@ -43,27 +44,50 @@ const Page = ({ role }) => {
       {role === "simpleUser" ? (
         ""
       ) : (
-        <Button
-          className="button"
-          size="large"
-          type="primary"
-          onClick={() => {
-            setModalTest(true);
-            setStep(0);
-          }}
-          style={{
-            float: "right",
-            marginBottom: "30px",
-            backgroundColor: "#00727A",
-            color: "white",
-          }}
-          shape="round"
-          icon={<FileAddOutlined spin={true} />}
-        >
-          Nouveau test
-        </Button>
+        <Space style={{ float: "right" }}>
+          <Button
+            className="button"
+            size="large"
+            type="primary"
+            onClick={() => {
+              setModalTest(true);
+              setStep(0);
+              setTestUseCase(true);
+            }}
+            style={{
+              float: "right",
+              marginRight: "10px",
+              backgroundColor: "#00727A",
+              color: "white",
+            }}
+            shape="round"
+            icon={<FileAddOutlined spin={true} />}
+          >
+            Nouveau test
+          </Button>
+
+          <Button
+            className="button"
+            size="large"
+            type="primary"
+            onClick={() => {
+              setModalTest(true);
+              setStep(0);
+              setTestUseCase(false);
+            }}
+            style={{
+              float: "right",
+              backgroundColor: "#A86DA5",
+              color: "white",
+            }}
+            shape="round"
+            icon={<RadarChartOutlined spin={true} />}
+          >
+            Prédiction
+          </Button>
+        </Space>
       )}
-      <Row style={{marginBottom:"20px"}} >
+      <Row style={{ marginBottom: "20px" }}>
         <Col span={5}>
           <Input
             placeholder="Nom du test"
@@ -96,7 +120,8 @@ const Page = ({ role }) => {
           />
         </Col>
       </Row>
-      <AddTestModal
+      <AddTestOrPredictionModal
+        testUseCase={testUseCase}
         step={step}
         first={handleFirst}
         second={handleSecond}
