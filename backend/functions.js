@@ -40,7 +40,7 @@ function calculatePercentage(arr) {
   return { truePercentage, falsePercentage };
 }
 
-function extractGitHubRepoInfo(gitHubRepoLink) {
+const extractGitHubRepoInfo = (gitHubRepoLink) => {
   const regex = /github.com\/([\w-]+)\/([\w-]+)/;
   const match = gitHubRepoLink.match(regex);
 
@@ -55,26 +55,28 @@ function extractGitHubRepoInfo(gitHubRepoLink) {
   } else {
     return null;
   }
-}
+};
 
-async function generateFiles(
+const generateFiles = async (
   req,
   command,
   outputFilePathWithPlus,
   outputFilePathWithMinus,
   bytecodeOutputPath
-) {
-  const { stdout, stderr } = await exec(command, { cwd: req.body.file });
+) => {
+  const { stdout, stderr } = await util.promisify(exec)(command, {
+    cwd: req.body.file,
+  });
 
   if (stderr) {
-    console.error(`Erreur: ${stderr}`);
+    console.error(`Error: ${stderr}`);
     throw new Error(stderr);
   }
 
   let output = stdout.replace(/@@.*?@@/g, "");
 
   fs.writeFileSync(bytecodeOutputPath, output, "utf-8");
-  console.log("Fichier généré avec succès");
+  console.log("File generated successfully");
 
   const inputLines = output.split("\n");
 
@@ -110,6 +112,7 @@ async function generateFiles(
   const conditions_remove = (
     linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])if\s*\(/g) || []
   ).length;
+
   return {
     added_lines,
     removed_lines,
@@ -118,9 +121,9 @@ async function generateFiles(
     conditions_add,
     conditions_remove,
   };
-}
+};
 
-async function cloneAndGenerateDiff(
+const cloneAndGenerateDiff = async (
   req,
   id,
   command,
@@ -128,21 +131,17 @@ async function cloneAndGenerateDiff(
   bytecodeOutputPath,
   outputFilePathWithPlus,
   outputFilePathWithMinus
-) {
+) => {
   try {
     const { stdout: cloneOutput } = await util.promisify(exec)(
       `git clone ${req.body.linkRepo}`,
       {
-        cwd: path.join(__dirname, "./", `clones/${id}`),
+        cwd: path.join(__dirname, `./clones/${id}`),
       }
     );
 
     let { stdout: diffOutput } = await util.promisify(exec)(command, {
-      cwd: path.join(
-        __dirname,
-        `./`,
-        `clones/${id}/${reponame.repositoryName}`
-      ),
+      cwd: path.join(__dirname, `./clones/${id}/${reponame.repositoryName}`),
       shell: "C:\\Windows\\System32\\cmd.exe",
     });
 
@@ -151,7 +150,7 @@ async function cloneAndGenerateDiff(
     }
 
     fs.writeFileSync(bytecodeOutputPath, diffOutput, "utf-8");
-    console.log("2) Fichier généré avec succès");
+    console.log("File generated successfully");
     const inputLines = diffOutput.split("\n");
 
     const linesWithPlus = inputLines.filter(
@@ -191,7 +190,7 @@ async function cloneAndGenerateDiff(
     const conditions_remove = (
       linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])if\s*\(/g) || []
     ).length;
-    removeFolderIfExists(path.join(__dirname, "./", `/clones/${id}`));
+
     return {
       added_lines,
       removed_lines,
@@ -205,21 +204,29 @@ async function cloneAndGenerateDiff(
     fs.writeFileSync(bytecodeOutputPath, error.message, "utf-8");
     throw error;
   }
-}
+};
 
-async function diff(req, id, local) {
+const diff = async (req, local, id) => {
   const command = "git diff HEAD~1 HEAD";
+  const generatedDirPath = path.join(__dirname, "./uploads/difference");
+  const generatedDirPlus = path.join(__dirname, "./uploads/diff-plus");
+  const generatedDirMinus = path.join(__dirname, "./uploads/diff-minus");
+  let key;
+
+  if (id) {
+    key = id;
+  } else {
+    key = Math.random();
+  }
+  console.log(key);
   const differenceFileName = `difference_${id}.txt`;
-  const generatedDirPath = path.join(__dirname, "./", "/uploads/difference");
-  const generatedDirPlus = path.join(__dirname, "./", "/uploads/diff-plus");
-  const generatedDirMinus = path.join(__dirname, "./", "/uploads/diff-minus");
   const outputFilePathWithPlus = path.join(
     generatedDirPlus,
-    `diff-plus_${id}.txt`
+    `diff-plus_${key}.txt`
   );
   const outputFilePathWithMinus = path.join(
     generatedDirMinus,
-    `diff-minus_${id}.txt`
+    `diff-minus_${key}.txt`
   );
   const bytecodeOutputPath = path.join(generatedDirPath, differenceFileName);
 
@@ -228,7 +235,7 @@ async function diff(req, id, local) {
   }
 
   if (local) {
-    const a = generateFiles(
+    const a = await generateFiles(
       req,
       command,
       outputFilePathWithPlus,
@@ -238,24 +245,25 @@ async function diff(req, id, local) {
     return a;
   } else {
     const reponame = extractGitHubRepoInfo(req.body.linkRepo);
-    fs.mkdir(path.join(__dirname, "./", `clones/${id}`), (err) => {
+    fs.mkdir(path.join(__dirname, `./clones/${key}`), (err) => {
       if (err) throw err;
-      console.log("1) Dossier créé avec succès");
+      console.log("1) Folder created successfully");
     });
-    const a = cloneAndGenerateDiff(
+    const a = await cloneAndGenerateDiff(
       req,
-      id,
+      key,
       command,
       reponame,
       bytecodeOutputPath,
       outputFilePathWithPlus,
       outputFilePathWithMinus
     );
+    removeFolderIfExists(path.join(__dirname, `./clones/${key}`));
     return a;
   }
-}
+};
 
-function removeFolderIfExists(folderPath) {
+const removeFolderIfExists = (folderPath) => {
   if (fs.existsSync(folderPath)) {
     const files = fs.readdirSync(folderPath);
 
@@ -273,7 +281,7 @@ function removeFolderIfExists(folderPath) {
   } else {
     console.log(`Folder "${folderPath}" does not exist.`);
   }
-}
+};
 
 exports.calculateMajority = calculateMajority;
 exports.calculatePercentage = calculatePercentage;
