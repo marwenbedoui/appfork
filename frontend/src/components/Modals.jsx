@@ -13,7 +13,6 @@ import {
   Table,
   Steps,
   Typography,
-  Card,
   Result,
 } from "antd";
 import React, { useState } from "react";
@@ -33,10 +32,10 @@ import {
   FolderOpenOutlined,
   LinkOutlined,
   UserOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons";
 import "./styles/buttons.css";
 const { Step } = Steps;
-const { Text } = Typography;
 export const EmailModal = ({ visible, onCancel }) => {
   const [form] = Form.useForm();
 
@@ -1046,26 +1045,91 @@ export const AddTestOrPredictionModal = ({
               </Row>
             </Form>
           ) : (
-            <Card title="Prediction Result" bordered={false}>
+            <div
+              style={{
+                backgroundColor: "#f5f5f5",
+                padding: "15px",
+                borderRadius: "8px",
+                boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+                textAlign: "center",
+              }}
+            >
               {loadingPrediction ? (
-                <Spin size="large" />
-              ) : prediction !== null && loadingPrediction === false ? (
-                <Result
-                  status="success"
-                  title="Prediction Successful"
-                  subTitle="The prediction result is:"
-                  extra={[
-                    <Text strong>{String(prediction)}</Text>,
-                    <Button onClick={() => {
-                      setLoadingPrediction(false);
-                      setPrediction(null)
-                    }}>
-                      Get Back
-                    </Button>,
-                  ]}
+                <Spin
+                  size="large"
+                  tip="Données en cours de traitement"
+                  indicator={
+                    <LoadingOutlined
+                      style={{
+                        fontSize: 24,
+                      }}
+                      spin
+                    />
+                  }
                 />
-              ) : null}
-            </Card>
+              ) : prediction !== null && loadingPrediction === false ? (
+                prediction === true ? (
+                  <Result
+                    status="success"
+                    title="Résultat de prédiction est : VRAI"
+                    extra={[
+                      <Button
+                        className="my-button"
+                        size="large"
+                        shape="round"
+                        // style={{ backgroundColor: "#008F7A" }}
+                        //type="primary"
+                        onClick={() => {
+                          setLoadingPrediction(false);
+                          setPrediction(null);
+                        }}
+                      >
+                        Retour
+                      </Button>,
+                    ]}
+                  />
+                ) : (
+                  <Result
+                    status="error"
+                    title="Résultat de prédiction est : FAUX"
+                    extra={[
+                      <Button
+                        size="large"
+                        shape="round"
+                        style={{ backgroundColor: "#008F7A" }}
+                        type="primary"
+                        onClick={() => {
+                          setLoadingPrediction(false);
+                          setPrediction(null);
+                        }}
+                      >
+                        Retour
+                      </Button>,
+                    ]}
+                  />
+                )
+              ) : // <div>
+              //   <h2 style={{ color: "#52c41a", marginBottom: "16px" }}>
+              //     Prediction Successful
+              //   </h2>
+              //   <p style={{ fontSize: "18px", marginBottom: "16px" }}>
+              //     The prediction result is:
+              //   </p>
+              //   <p style={{ fontSize: "24px", fontWeight: "bold" }}>
+              //     {String(prediction)}
+              //   </p>
+              //   <Button
+              //     onClick={() => {
+              //       setLoadingPrediction(false);
+              //       setPrediction(null);
+              //     }}
+              //     style={{ marginTop: "16px" }}
+              //   >
+              //     Get Back
+              //   </Button>
+              // </div>
+              null}
+            </div>
           );
         }
       default:

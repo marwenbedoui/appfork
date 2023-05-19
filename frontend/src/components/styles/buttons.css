@@ -8,11 +8,14 @@
 }
 
 .my-button:hover {
-  background-color: aliceblue;
+  background-color: #4D8076;
   background-size: 200%;
   background-position: left;
-  color: white;
+  color: white!important;
   animation: gradient-animation 2s linear infinite;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  transform: translateY(-3px);
+  transition: all 0.3s ease;
 }
 
 @keyframes gradient-animation {
