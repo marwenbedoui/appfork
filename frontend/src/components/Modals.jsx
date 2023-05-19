@@ -442,11 +442,11 @@ export const AddTestOrPredictionModal = ({
   const [form] = Form.useForm();
 
   const [loading, setLoading] = useState(false);
+  const [loadingPrediction, setLoadingPrediction] = useState(false);
   const [githubClick, setGithubClick] = useState(false);
   const [method, setMethod] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
   const [prediction, setPrediction] = useState(null);
-  const [error, setError] = useState(null);
 
   const steps = [
     {
@@ -931,7 +931,7 @@ export const AddTestOrPredictionModal = ({
             </Form>
           );
         } else {
-          return !loading ? (
+          return loading === false && prediction === null ? (
             <Form
               layout="vertical"
               form={form}
@@ -1047,16 +1047,22 @@ export const AddTestOrPredictionModal = ({
             </Form>
           ) : (
             <Card title="Prediction Result" bordered={false}>
-              {loading ? (
+              {loadingPrediction ? (
                 <Spin size="large" />
-              ) : error ? (
-                <Result status="error" title={error} />
-              ) : prediction !== null ? (
+              ) : prediction !== null && loadingPrediction === false ? (
                 <Result
                   status="success"
                   title="Prediction Successful"
                   subTitle="The prediction result is:"
-                  extra={<Text strong>{String(prediction)}</Text>}
+                  extra={[
+                    <Text strong>{String(prediction)}</Text>,
+                    <Button onClick={() => {
+                      setLoadingPrediction(false);
+                      setPrediction(null)
+                    }}>
+                      Get Back
+                    </Button>,
+                  ]}
                 />
               ) : null}
             </Card>
@@ -1087,17 +1093,18 @@ export const AddTestOrPredictionModal = ({
   };
   const onPredict = async (values) => {
     setLoading(true);
-
+    setLoadingPrediction(true);
     try {
       const res = await TesterService.predictTest(values);
       const parsedPrediction = JSON.parse(res.prediction);
       setPrediction(parsedPrediction);
-      setError(null);
+      setLoading(false);
+      setLoadingPrediction(false);
     } catch (err) {
-      setError("Prédiction échouée");
       setPrediction(null);
     } finally {
-      //setLoading(false);
+      setLoading(false);
+      setLoadingPrediction(false);
       //onCancel();
     }
   };
