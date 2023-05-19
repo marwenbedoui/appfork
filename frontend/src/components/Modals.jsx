@@ -13,6 +13,8 @@ import {
   Table,
   Steps,
   Typography,
+  Card,
+  Result,
 } from "antd";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
@@ -34,7 +36,7 @@ import {
 } from "@ant-design/icons";
 import "./styles/buttons.css";
 const { Step } = Steps;
-
+const { Text } = Typography;
 export const EmailModal = ({ visible, onCancel }) => {
   const [form] = Form.useForm();
 
@@ -443,6 +445,8 @@ export const AddTestOrPredictionModal = ({
   const [githubClick, setGithubClick] = useState(false);
   const [method, setMethod] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
+  const [prediction, setPrediction] = useState(null);
+  const [error, setError] = useState(null);
 
   const steps = [
     {
@@ -927,10 +931,9 @@ export const AddTestOrPredictionModal = ({
             </Form>
           );
         } else {
-          return (
+          return !loading ? (
             <Form
               layout="vertical"
-              enctype="multipart/form-data"
               form={form}
               onFinish={onPredict}
               labelCol={{
@@ -1042,6 +1045,21 @@ export const AddTestOrPredictionModal = ({
                 </Col>
               </Row>
             </Form>
+          ) : (
+            <Card title="Prediction Result" bordered={false}>
+              {loading ? (
+                <Spin size="large" />
+              ) : error ? (
+                <Result status="error" title={error} />
+              ) : prediction !== null ? (
+                <Result
+                  status="success"
+                  title="Prediction Successful"
+                  subTitle="The prediction result is:"
+                  extra={<Text strong>{String(prediction)}</Text>}
+                />
+              ) : null}
+            </Card>
           );
         }
       default:
@@ -1069,22 +1087,19 @@ export const AddTestOrPredictionModal = ({
   };
   const onPredict = async (values) => {
     setLoading(true);
-    //const role = AuthVerifyService.userRole();
-    //console.log(values);
-    //await TesterService.executerTest(values, false, files)
-    // await TesterService.executerTest(values, false)
-    //   .then((res) => {
-    //     if (values.data) onCancel();
-    //     toast.success("Test effectué avec succès");
-    //     onCancel();
-    //     window.location.href = `/${role}/test/${res._id}`;
-    //   })
-    //   .catch(() => {
-    //     toast.danger("Test echoué");
-    //   });
-    console.log(values);
-    setLoading(false);
-    onCancel();
+
+    try {
+      const res = await TesterService.predictTest(values);
+      const parsedPrediction = JSON.parse(res.prediction);
+      setPrediction(parsedPrediction);
+      setError(null);
+    } catch (err) {
+      setError("Prédiction échouée");
+      setPrediction(null);
+    } finally {
+      //setLoading(false);
+      //onCancel();
+    }
   };
 
   if (step === 0) {
