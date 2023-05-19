@@ -347,7 +347,6 @@ const getTestById = async (req, res) => {
     });
 };
 
-
 const prePredictTest = async (req, res) => {
   let diffStat = {};
 
@@ -376,9 +375,8 @@ const prePredictTest = async (req, res) => {
       console.error(error);
       return;
     }
-
     const data = JSON.parse(body);
-    console.log(data);
+    res.status(200).send(data);
   });
 };
 

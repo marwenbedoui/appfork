@@ -168,14 +168,19 @@ const getTestById = async (id) => {
   }
 };
 
-const predictTest = async (data,req) => {
-
-  const result = await axios.post(API_URL, req, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "multipart/form-data",
+const predictTest = async (data) => {
+  const result = await axios.post(
+    `${API_URL}/predict`,
+    {
+      usersNumber: parseInt(data.usersNumber),
+      linkRepo: data.linkRepo,
     },
-  });
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   return result.data;
 };
 
