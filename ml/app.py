@@ -23,7 +23,7 @@ rapports_collection = db["rapports"]
 
 @app.route('/rapports/csv', methods=['GET'])
 def generate_csv():
-    datasetGeneration(test_collection)
+    datasetGeneration(test_collection, rapports_collection)
     return '<center><h1>Le fichier CSV est généré avec succès</h1><center>'
 
 
@@ -39,11 +39,14 @@ def statusPredict():
 
     pred = prediction(requestNumber, added_lines, removed_lines,
                       loops_add, loops_remove, conditions_add, conditions_remove)
-    bool_python = bool(pred)
-    json_data = json.dumps(bool_python)
+    success_predicted = bool(pred["success"])
+    processTime_predicted = float(pred["processTime"])
+    json_data = json.dumps({'success_predicted': success_predicted,
+                           'processTime_predicted': processTime_predicted})
 
     donnees = {
-        'prediction': json_data,
+        'success': success_predicted,
+        'processTime': processTime_predicted/60000,
     }
     return jsonify(donnees)
 
