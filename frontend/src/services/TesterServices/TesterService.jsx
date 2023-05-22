@@ -174,6 +174,7 @@ const predictTest = async (data) => {
     {
       usersNumber: parseInt(data.usersNumber),
       linkRepo: data.linkRepo,
+      file: data.file,
     },
     {
       headers: {

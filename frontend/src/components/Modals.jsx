@@ -445,7 +445,10 @@ export const AddTestOrPredictionModal = ({
   const [githubClick, setGithubClick] = useState(false);
   const [method, setMethod] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
-  const [prediction, setPrediction] = useState(null);
+  const [prediction, setPrediction] = useState({
+    success: null,
+    processTime: null,
+  });
 
   const steps = [
     {
@@ -930,7 +933,8 @@ export const AddTestOrPredictionModal = ({
             </Form>
           );
         } else {
-          return loading === false && prediction === null ? (
+          return loading === false &&
+            (prediction.success === null || prediction.processTime === null) ? (
             <Form
               layout="vertical"
               form={form}
@@ -1067,68 +1071,34 @@ export const AddTestOrPredictionModal = ({
                     />
                   }
                 />
-              ) : prediction !== null && loadingPrediction === false ? (
-                prediction === true ? (
-                  <Result
-                    status="success"
-                    title="Résultat de prédiction est : VRAI"
-                    extra={[
-                      <Button
-                        className="my-button"
-                        size="large"
-                        shape="round"
-                        // style={{ backgroundColor: "#008F7A" }}
-                        //type="primary"
-                        onClick={() => {
-                          setLoadingPrediction(false);
-                          setPrediction(null);
-                        }}
-                      >
-                        Retour
-                      </Button>,
-                    ]}
-                  />
-                ) : (
-                  <Result
-                    status="error"
-                    title="Résultat de prédiction est : FAUX"
-                    extra={[
-                      <Button
-                        size="large"
-                        shape="round"
-                        style={{ backgroundColor: "#008F7A" }}
-                        type="primary"
-                        onClick={() => {
-                          setLoadingPrediction(false);
-                          setPrediction(null);
-                        }}
-                      >
-                        Retour
-                      </Button>,
-                    ]}
-                  />
-                )
-              ) : // <div>
-              //   <h2 style={{ color: "#52c41a", marginBottom: "16px" }}>
-              //     Prediction Successful
-              //   </h2>
-              //   <p style={{ fontSize: "18px", marginBottom: "16px" }}>
-              //     The prediction result is:
-              //   </p>
-              //   <p style={{ fontSize: "24px", fontWeight: "bold" }}>
-              //     {String(prediction)}
-              //   </p>
-              //   <Button
-              //     onClick={() => {
-              //       setLoadingPrediction(false);
-              //       setPrediction(null);
-              //     }}
-              //     style={{ marginTop: "16px" }}
-              //   >
-              //     Get Back
-              //   </Button>
-              // </div>
-              null}
+              ) : prediction.success !== null &&
+                prediction.processTime !== null &&
+                loadingPrediction === false ? (
+                <Result
+                  status={prediction.success ? "success" : "error"}
+                  title={`Résultat de prédiction est : ${
+                    prediction.success ? "Réussi" : "Échoué"
+                  }`}
+                  subTitle={`La durée prévue d'exécution d'un test : ${prediction.processTime} minutes`}
+                  extra={[
+                    <Button
+                      key="return-button"
+                      className="my-button"
+                      size="large"
+                      shape="round"
+                      onClick={() => {
+                        setLoadingPrediction(false);
+                        setPrediction({
+                          success: null,
+                          processTime: null,
+                        });
+                      }}
+                    >
+                      Retour
+                    </Button>,
+                  ]}
+                />
+              ) : null}
             </div>
           );
         }
@@ -1160,16 +1130,26 @@ export const AddTestOrPredictionModal = ({
     setLoadingPrediction(true);
     try {
       const res = await TesterService.predictTest(values);
-      const parsedPrediction = JSON.parse(res.prediction);
-      setPrediction(parsedPrediction);
+      const minutes = Math.floor(res.processTime);
+      const seconds = Math.floor((res.processTime - minutes) * 60);
+
+      // Format minutes and seconds with leading zeros if needed
+      const formattedMinutes = minutes.toString().padStart(2, "0");
+      const formattedSeconds = seconds.toString().padStart(2, "0");
+      setPrediction({
+        success: res.success,
+        processTime: formattedMinutes + ":" + formattedSeconds,
+      });
       setLoading(false);
       setLoadingPrediction(false);
     } catch (err) {
-      setPrediction(null);
+      setPrediction({
+        success: null,
+        processTime: null,
+      });
     } finally {
       setLoading(false);
       setLoadingPrediction(false);
-      //onCancel();
     }
   };
 
@@ -1184,11 +1164,6 @@ export const AddTestOrPredictionModal = ({
           onCancel();
           setCurrentStep(0);
         }}
-        // title={
-        //   <div style={{ textAlign: "center", fontSize: "24px" }}>
-        //     Les étapes à suivre
-        //   </div>
-        // }
         footer={null}
       >
         {renderContent()}
