@@ -45,6 +45,8 @@ const executeTest = async (req, res) => {
     status,
     data,
     testName: req.body.testName,
+    cpuCapacity: (await si.cpu()).speed,
+    memoryCapacity: ((await si.mem()).total / Math.pow(1024, 3)).toFixed(3),
   });
 
   const savedTest = await test.save();

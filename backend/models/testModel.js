@@ -51,6 +51,12 @@ const testSchema = new mongoose.Schema(
     file: {
       type: String,
     },
+    cpuCapacity: {
+      type: Number,
+    },
+    memoryCapacity: {
+      type: Number,
+    },
     added_lines: {
       type: Number,
     },
