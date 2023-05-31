@@ -29,6 +29,8 @@ def generate_csv():
 
 @app.route('/predict', methods=['POST'])
 def statusPredict():
+    cpuCapacity = request.json.get('cpuCapacity')
+    memoryCapacity = request.json.get('memoryCapacity')
     requestNumber = request.json.get('requestNumber')
     added_lines = request.json.get('added_lines')
     removed_lines = request.json.get('removed_lines')
@@ -37,16 +39,16 @@ def statusPredict():
     conditions_add = request.json.get('conditions_add')
     conditions_remove = request.json.get('conditions_remove')
 
-    pred = prediction(requestNumber, added_lines, removed_lines,
+    pred = prediction(cpuCapacity, memoryCapacity, requestNumber, added_lines, removed_lines,
                       loops_add, loops_remove, conditions_add, conditions_remove)
     success_predicted = bool(pred["success"])
-    processTime_predicted = float(pred["processTime"])
+    processTime_predicted = abs(float(pred["processTime"]))
     json_data = json.dumps({'success_predicted': success_predicted,
-                           'processTime_predicted': processTime_predicted})
+                            'processTime_predicted': processTime_predicted})
 
     donnees = {
         'success': success_predicted,
-        'processTime': processTime_predicted/60000,
+        'processTime': processTime_predicted / 60000
     }
     return jsonify(donnees)
 

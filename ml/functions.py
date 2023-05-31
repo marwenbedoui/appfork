@@ -45,8 +45,8 @@ def datasetGeneration(test_collection, rapports_collection):
                             loops_remove, conditions_add, conditions_remove, processTime, success])
 
 
-def prediction(requestNumber, added_lines, removed_lines, loops_add, loops_remove, conditions_add, conditions_remove):
-    data = pd.read_csv('ancien_rapports.csv')
+def prediction(cpuCapacity, memoryCapacity, requestNumber, added_lines, removed_lines, loops_add, loops_remove, conditions_add, conditions_remove):
+    data = pd.read_csv('rapports.csv')
     X = data.drop(['success', 'processTime'], axis=1)
     y_success = data['success']
     y_processTime = data['processTime']
@@ -62,7 +62,7 @@ def prediction(requestNumber, added_lines, removed_lines, loops_add, loops_remov
     regressor_processTime = LinearRegression()
     regressor_processTime.fit(X_train, y_train_processTime)
 
-    X_new = pd.DataFrame({'requestNumber': [requestNumber], 'added_lines': [added_lines], 'removed_lines': [removed_lines], 'loops_add': [
+    X_new = pd.DataFrame({'cpuCapacity': [cpuCapacity], 'memoryCapacity': [memoryCapacity], 'requestNumber': [requestNumber], 'added_lines': [added_lines], 'removed_lines': [removed_lines], 'loops_add': [
                          loops_add], 'loops_remove': [loops_remove], 'conditions_add': [conditions_add], 'conditions_remove': [conditions_remove]})
     y_new = {}
     y_new['processTime'] = regressor_processTime.predict(X_new)
