@@ -357,8 +357,9 @@ const prePredictTest = async (req, res) => {
   } else if (req.body.linkRepo === undefined) {
     diffStat = await diff(req, true);
   }
-
   const requestData = {
+    cpuCapacity: (await si.cpu()).speed,
+    memoryCapacity: ((await si.mem()).total / Math.pow(1024, 3)).toFixed(3),
     requestNumber: req.body.usersNumber,
     ...diffStat,
   };
