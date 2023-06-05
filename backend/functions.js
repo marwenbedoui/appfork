@@ -168,6 +168,7 @@ const cloneAndGenerateDiff = async (
       linesWithMinus.join("\n"),
       "utf-8"
     );
+
     const added_lines =
       (linesWithPlus.join("\n").match(/^\+.*/gm) || []).length -
       (linesWithPlus.join("\n").match(/^\+\+\+.*/gm) || []).length;
@@ -190,7 +191,6 @@ const cloneAndGenerateDiff = async (
     const conditions_remove = (
       linesWithMinus.join("\n").match(/(^|[^a-zA-Z0-9_])if\s*\(/g) || []
     ).length;
-
     return {
       added_lines,
       removed_lines,
@@ -286,4 +286,3 @@ const removeFolderIfExists = (folderPath) => {
 exports.calculateMajority = calculateMajority;
 exports.calculatePercentage = calculatePercentage;
 exports.diff = diff;
-exports.removeFolderIfExists = removeFolderIfExists;
