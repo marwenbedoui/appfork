@@ -1,4 +1,4 @@
-requestnumber,added_lines,removed_lines,loops_add,loops_remove,conditions_add,conditions_remove,processTime,success
+requestNumber,added_lines,removed_lines,loops_add,loops_remove,conditions_add,conditions_remove,processTime,success
 10000,20,8,2,1,1,0,95890.3392,True
 50000,20,8,2,1,1,0,61750.52408,False
 1000,20,8,2,1,1,0,23586.76,True
